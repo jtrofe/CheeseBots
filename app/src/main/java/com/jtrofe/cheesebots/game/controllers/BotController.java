@@ -83,6 +83,8 @@ public class BotController extends Controller{
 
         //TODO add explosion or something
 
+        mEngine.AddBotDestroyed();
+
         for(int i=0;i<20;i++){
             Particle particle = new Particle(b.GetPosition(), Color.YELLOW, 40);
             mEngine.AddBody(particle);

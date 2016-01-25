@@ -5,7 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.jtrofe.cheesebots.MainActivity;
+import com.jtrofe.cheesebots.customviews.GameSurfaceView;
 import com.jtrofe.cheesebots.game.controllers.BotController;
 import com.jtrofe.cheesebots.game.controllers.ParticleController;
 import com.jtrofe.cheesebots.game.gameobjects.Cheese;
@@ -28,6 +31,23 @@ public class Engine{
     private List<GameObject> mBodies;
     private List<GameObject> mBodiesToAdd;
     private List<GameObject> mBodiesToRemove;
+
+    private GameSurfaceView mGameSurfaceView;
+
+    private int mBotsDestroyed;
+
+    public void AddBotDestroyed(){
+        mBotsDestroyed ++;
+        final TextView v = (TextView) mGameSurfaceView.UserInterface.GetView("destroyedCounter");
+
+        MainActivity.RunOnUI(new Runnable() {
+            @Override
+            public void run() {
+                v.setText(mBotsDestroyed + "");
+            }
+        });
+    }
+
 
     private int mWorldWidth;
     private int mWorldHeight;
@@ -52,9 +72,10 @@ public class Engine{
      * @param worldWidth Screen width
      * @param worldHeight Screen height
      */
-    public Engine(int worldWidth, int worldHeight){
+    public Engine(int worldWidth, int worldHeight, GameSurfaceView gameSurfaceView){
         this.mWorldWidth = worldWidth;
         this.mWorldHeight = worldHeight;
+        this.mGameSurfaceView = gameSurfaceView;
 
         mBodies = new ArrayList<>();
         mBodiesToAdd = new ArrayList<>();
@@ -73,6 +94,8 @@ public class Engine{
         debugBitmap = Bitmap.createBitmap(worldWidth, worldHeight,
                 Bitmap.Config.ARGB_8888);
         debugCanvas = new Canvas(debugBitmap);
+
+        mBotsDestroyed = 0;
     }
 
     public void AddBody(GameObject b){
@@ -241,6 +264,8 @@ public class Engine{
     //-------------------------------------------------------//
     public Bundle SaveState(Bundle savedInstanceState){
 
+        savedInstanceState.putInt("botsDestroyed", mBotsDestroyed);
+
         List<Cheese> cheese = new ArrayList<>();
 
         for(GameObject obj:mBodies){
@@ -259,6 +284,8 @@ public class Engine{
     }
 
     public void RestoreState(Bundle savedInstanceState){
+
+        mBotsDestroyed = savedInstanceState.getInt("botsDestroyed");
 
         //System.out.println("Getting cheese");
 

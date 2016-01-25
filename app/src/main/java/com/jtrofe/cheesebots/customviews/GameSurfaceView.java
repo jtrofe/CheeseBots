@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.jtrofe.cheesebots.R;
+import com.jtrofe.cheesebots.game.UI;
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
 import com.jtrofe.cheesebots.game.gameobjects.Cheese;
 import com.jtrofe.cheesebots.game.gameobjects.Flail;
@@ -37,6 +38,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
 
     private Engine mEngine;
     private Bundle mSavedState;
+
+    public UI UserInterface;
 
     public GameSurfaceView(Context context, Bundle savedInstanceState){
         super(context);
@@ -70,11 +73,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             }
         });
 
+        UserInterface = new UI();
 
         int w = 1000;
         int h = 1500;
 
-        mEngine = new Engine(w, h);
+        mEngine = new Engine(w, h, this);
     }
 
     @Override
@@ -193,9 +197,18 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
                 mEngine.AddBody(obj);
             }
 
+            int cheeseMargin = getResources().getInteger(R.integer.cheese_margin);
+
             for (int i = 0; i < NUM_CHEESE; i++) {
                 float radius = rnd.nextFloat() * 40 + 40;
-                Cheese cheese = new Cheese(Vec.Random(screenWidth, screenHeight), null, radius);
+
+                Vec pos = Vec.Random(screenWidth - cheeseMargin * 2, screenHeight - cheeseMargin * 2);
+
+                pos.x += cheeseMargin;
+                pos.y += cheeseMargin;
+
+
+                Cheese cheese = new Cheese(pos, null, radius);
                 mEngine.AddBody(cheese);
             }
 
