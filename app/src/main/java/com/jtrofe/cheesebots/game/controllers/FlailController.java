@@ -149,13 +149,16 @@ public class FlailController extends Controller{
 
             v.Draw(mEngine.debugCanvas, point_of_collision, p);
 
+            //TODO note: removing force applied to flail makes the game easier
             m.flail.ApplyForce(v.ScalarMultiply(40), point_of_collision);
             m.bot.ApplyForce(v.ScalarMultiply(-40), point_of_collision);
 
             // Calculate amount to damage the bot
             float momentum = m.flail.GetLinearVelocity().Length() * m.flail.GetMass();
-            float damage = momentum / 100;
-            m.bot.ReduceHealth(damage);
+            float damage = momentum / 30;
+
+            if(damage > 0.5f)
+                m.bot.ReduceHealth(damage);
 
 
             if(m.flail.GetLinearVelocity().LengthSquared() > 100) {

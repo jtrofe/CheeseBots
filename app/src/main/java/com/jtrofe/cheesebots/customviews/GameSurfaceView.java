@@ -187,13 +187,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             ic = Bitmap.createBitmap(100, 60, Bitmap.Config.ARGB_8888);
             ic.eraseColor(Color.argb(200, 255, 0, 180));
 
-            int NUM_BOTS = 5;
-            int NUM_CHEESE = 3;
+            int NUM_BOTS = 10;
+            int NUM_CHEESE = 4;
 
             Random rnd = new Random();
 
             for (int i = 0; i < NUM_BOTS; i++) {
-                Bot obj = new Bot(Vec.Random(screenWidth, screenHeight), ic, 50, 0.08f);
+                Bot obj = new Bot(Vec.Random(screenWidth, screenHeight), ic, 50, 0.02f);
                 mEngine.AddBody(obj);
             }
 

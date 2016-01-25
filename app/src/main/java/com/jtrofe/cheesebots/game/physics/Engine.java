@@ -52,6 +52,14 @@ public class Engine{
     private int mWorldWidth;
     private int mWorldHeight;
 
+    public int GetWorldWidth(){
+        return mWorldWidth;
+    }
+
+    public int GetWorldHeight(){
+        return mWorldHeight;
+    }
+
     private List<Controller> mControllers;
 
     public boolean Dragging;

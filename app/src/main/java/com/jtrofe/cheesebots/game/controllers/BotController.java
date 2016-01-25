@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots.game.controllers;
 
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
@@ -11,6 +12,7 @@ import com.jtrofe.cheesebots.game.physics.Engine;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by MAIN on 1/23/16
@@ -91,8 +93,39 @@ public class BotController extends Controller{
         }
 
         mEngine.RemoveBody(b);
+        AddBot();
 
         mEngine.mJitterControl.StartJitter(20);
+    }
+
+    private void AddBot(){
+        Random rnd = new Random();
+        float x;
+        float y;
+        if(rnd.nextFloat() > 0.5){
+            x = rnd.nextFloat() * (mEngine.GetWorldWidth() + 200) - 100;
+
+            if(rnd.nextFloat() > 0.5){
+                y = mEngine.GetWorldHeight() + 100;
+            }else{
+                y = -100;
+            }
+        }else{
+            y = rnd.nextFloat() * (mEngine.GetWorldHeight() + 200) - 100;
+
+            if(rnd.nextFloat() > 0.5){
+                x = mEngine.GetWorldWidth() + 100;
+            }else{
+                x = -100;
+            }
+        }
+
+        Bitmap ic = Bitmap.createBitmap(100, 60, Bitmap.Config.ARGB_8888);
+        ic.eraseColor(Color.argb(200, 255, 0, 180));
+
+        Bot b = new Bot(Vec.Random(x, y), ic, 30, 0.02f);
+
+        mEngine.AddBody(b);
     }
 
 
