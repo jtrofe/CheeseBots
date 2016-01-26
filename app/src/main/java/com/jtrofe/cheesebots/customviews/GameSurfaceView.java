@@ -2,15 +2,16 @@ package com.jtrofe.cheesebots.customviews;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
+import com.jtrofe.cheesebots.GameApplication;
+import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.R;
 import com.jtrofe.cheesebots.game.UI;
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
@@ -37,48 +38,37 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
     private int screenHeight;
 
     private Engine mEngine;
-    private Bundle mSavedState;
 
     public UI UserInterface;
 
-    public GameSurfaceView(Context context, Bundle savedInstanceState){
+    public GameSurfaceView(Context context, UI userInterface){
         super(context);
 
-        System.out.println("____SurfaceView() created");
-        if(savedInstanceState != null) {
-            this.mSavedState = (Bundle) savedInstanceState.clone();
-        }else{
-            this.mSavedState = null;
-        }
+        this.UserInterface = userInterface;
 
         holder = getHolder();
-        holder.addCallback(new SurfaceHolder.Callback() {
+        holder.addCallback(surfaceCallback);
+
+        if(GameApplication.GameEngine == null) {
+            mEngine = new Engine(1000, 1500, this);
+
+            GameApplication.GameEngine = mEngine;
+        }else{
+            mEngine = GameApplication.GameEngine;
+            mEngine.SetSurfaceView(this);
+
+            UpdateUI();
+        }
+    }
+
+    public void UpdateUI(){
+        MainActivity.RunOnUI(new Runnable() {
             @Override
-            public void surfaceCreated(SurfaceHolder holder){
-
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                screenWidth = width;
-                screenHeight = height;
-
-                mEngine.SetWorldBounds(screenWidth, screenHeight);
-
-                Initialize();
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
+            public void run() {
+                TextView v = (TextView) UserInterface.GetView("destroyedCounter");
+                v.setText(String.valueOf(mEngine.GetBotsDestroyed()));
             }
         });
-
-        UserInterface = new UI();
-
-        int w = 1000;
-        int h = 1500;
-
-        mEngine = new Engine(w, h, this);
     }
 
     @Override
@@ -171,16 +161,26 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         }
     }
 
+    private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {}
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            screenWidth = width;
+            screenHeight = height;
+
+            mEngine.SetWorldBounds(screenWidth, screenHeight);
+
+            Initialize();
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {}
+    };
 
     private void Initialize(){
-        //System.out.println("Initializing.......\n" + "Has state? " + (mSavedState != null));
-        //System.out.println("Engine started? " + mEngine.Initialized);
-        System.out.println("____SurfaceView surfaceChanged() called");
-        if(mSavedState != null){
-            RestoreState(mSavedState);
-
-            //this.mSavedState = null;
-        }else if(!mEngine.Initialized){
+        if(!mEngine.Initialized){
             mEngine.Initialized = true;
             Bitmap ic;// = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 
@@ -216,19 +216,5 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             Flail flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 20, 0.5f, 50);
             mEngine.AddBody(flail);
         }
-    }
-
-
-
-    public Bundle SaveState(Bundle savedInstanceState){
-
-        savedInstanceState = mEngine.SaveState(savedInstanceState);
-
-        return savedInstanceState;
-    }
-
-    public void RestoreState(Bundle savedInstanceState){
-
-        mEngine.RestoreState(savedInstanceState);
     }
 }

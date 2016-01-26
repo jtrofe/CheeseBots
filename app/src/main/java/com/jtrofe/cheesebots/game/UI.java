@@ -22,7 +22,6 @@ public class UI{
 
     public View GetView(String tag){
         for(View v:mViews){
-            System.out.println(v.getTag());
             if(v.getTag().toString().equals(tag)){
                 return v;
             }

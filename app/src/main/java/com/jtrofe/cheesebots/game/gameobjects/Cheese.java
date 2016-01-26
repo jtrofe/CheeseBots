@@ -5,15 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 /**
  * Basic cheese
  */
-public class Cheese extends GameObject implements Parcelable{
+public class Cheese extends GameObject{
 
     protected float mRadius;
     protected float mAmountLeft;
@@ -56,42 +54,5 @@ public class Cheese extends GameObject implements Parcelable{
         if(mAmountLeft <= 0){
             mAmountLeft = 0;
         }
-    }
-
-    //------------------------------------//
-    //----THINGS FOR SAVING GAME STATE----//
-    //------------------------------------//
-    public static final Parcelable.Creator<Cheese> CREATOR = new Parcelable.Creator<Cheese>() {
-        public Cheese createFromParcel(Parcel in) {
-            return new Cheese(in) {
-            };
-        }
-
-        public Cheese[] newArray(int size) {
-            return new Cheese[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    // Write the game object to parcel, and additionally:
-    // mRadius
-    // mAmountLeft
-    //
-    public void writeToParcel(Parcel dest, int flags){
-        super.writeToParcel(dest, flags);
-
-        dest.writeFloat(mRadius);
-        dest.writeFloat(mAmountLeft);
-    }
-
-    private Cheese(Parcel in){
-        super(in);
-
-        mRadius = in.readFloat();
-        mAmountLeft = in.readFloat();
     }
 }

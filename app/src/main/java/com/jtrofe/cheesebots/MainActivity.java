@@ -3,7 +3,6 @@ package com.jtrofe.cheesebots;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -11,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.jtrofe.cheesebots.customviews.GameSurfaceView;
+import com.jtrofe.cheesebots.game.UI;
 
 
 public class MainActivity extends Activity{
@@ -63,44 +63,24 @@ public class MainActivity extends Activity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        System.out.println("MainActivity.onCreate() called");
-        System.out.println("__savedInstanceState is null? " + (savedInstanceState == null));
-
 
         setContentView(R.layout.activity_main);
 
         TextView scoreView = (TextView) findViewById(R.id.destroyedCounter);
 
-        gameView = new GameSurfaceView(this, savedInstanceState);
+        UI userInterface = new UI();
+        userInterface.AddView(scoreView);
 
-        gameView.UserInterface.AddView(scoreView);
+        gameView = new GameSurfaceView(this, userInterface);
 
 
         FrameLayout frame = (FrameLayout) findViewById(R.id.gameFrame);
-
         frame.addView(gameView);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState){
-        super.onSaveInstanceState(savedInstanceState);
-
-        System.out.println("MainActivity.onSaveInstanceState() called");
-        savedInstanceState = gameView.SaveState(savedInstanceState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState){
-        super.onRestoreInstanceState(savedInstanceState);
-
-        System.out.println("MainActivity.onRestoreInstanceState() called");
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-
-        System.out.println("MainActivity.onDestroy() called");
     }
 
     @Override
@@ -110,16 +90,12 @@ public class MainActivity extends Activity{
 
         // Hide the system UI
         removeNavigation();
-
-        System.out.println("MainActivity.onResume() called");
     }
 
     @Override
     protected void onPause(){
         super.onPause();
         gameView.Pause();
-
-        System.out.println("MainActivity.onPause() called");
     }
 
     public static void RunOnUI(Runnable r){

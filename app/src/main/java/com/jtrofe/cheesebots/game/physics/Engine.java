@@ -4,14 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.widget.TextView;
 
 import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.customviews.GameSurfaceView;
 import com.jtrofe.cheesebots.game.controllers.BotController;
 import com.jtrofe.cheesebots.game.controllers.ParticleController;
-import com.jtrofe.cheesebots.game.gameobjects.Cheese;
 import com.jtrofe.cheesebots.game.gameobjects.GameObject;
 import com.jtrofe.cheesebots.game.controllers.CheeseController;
 import com.jtrofe.cheesebots.game.controllers.Controller;
@@ -34,20 +32,21 @@ public class Engine{
 
     private GameSurfaceView mGameSurfaceView;
 
+    public void SetSurfaceView(GameSurfaceView gameSurfaceView){
+        this.mGameSurfaceView = gameSurfaceView;
+    }
+
     private int mBotsDestroyed;
 
     public void AddBotDestroyed(){
         mBotsDestroyed ++;
-        final TextView v = (TextView) mGameSurfaceView.UserInterface.GetView("destroyedCounter");
 
-        MainActivity.RunOnUI(new Runnable() {
-            @Override
-            public void run() {
-                v.setText(mBotsDestroyed + "");
-            }
-        });
+        mGameSurfaceView.UpdateUI();
     }
 
+    public int GetBotsDestroyed(){
+        return mBotsDestroyed;
+    }
 
     private int mWorldWidth;
     private int mWorldHeight;
@@ -264,44 +263,6 @@ public class Engine{
             }else{
                 mEngine.SetOffset(new Vec());
             }
-        }
-    }
-
-    //-------------------------------------------------------//
-    //----Methods for saving and restoring the game state----//
-    //-------------------------------------------------------//
-    public Bundle SaveState(Bundle savedInstanceState){
-
-        savedInstanceState.putInt("botsDestroyed", mBotsDestroyed);
-
-        List<Cheese> cheese = new ArrayList<>();
-
-        for(GameObject obj:mBodies){
-            if(obj.GetType() == GameObject.TYPE_CHEESE){
-                cheese.add((Cheese) obj);
-            }
-        }
-
-        Cheese[] cheeseArray = cheese.toArray(new Cheese[cheese.size()]);
-
-        //System.out.println("Saving cheese");
-        System.out.println("__savedInstanceState.put -> " + cheeseArray.length);
-
-        savedInstanceState.putParcelableArray("cheeseArray", cheeseArray);
-        return savedInstanceState;
-    }
-
-    public void RestoreState(Bundle savedInstanceState){
-
-        mBotsDestroyed = savedInstanceState.getInt("botsDestroyed");
-
-        //System.out.println("Getting cheese");
-
-        Cheese[] cheeseArray = (Cheese[]) savedInstanceState.getParcelableArray("cheeseArray");
-
-        System.out.println("__savedInstanceState.get = " + cheeseArray.length);
-        for(Cheese c:cheeseArray){
-            mBodies.add(c);
         }
     }
 }

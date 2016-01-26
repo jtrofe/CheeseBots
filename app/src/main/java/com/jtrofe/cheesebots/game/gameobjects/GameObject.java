@@ -3,15 +3,13 @@ package com.jtrofe.cheesebots.game.gameobjects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 /**
  * The basic object everything will extend
  */
-public abstract class GameObject implements Parcelable{
+public abstract class GameObject{
 
     public static float QUARTER_CIRCLE = (float) Math.PI/2;
 
@@ -196,87 +194,5 @@ public abstract class GameObject implements Parcelable{
         matrix.postTranslate(mPosition.x - mHalfWidth, mPosition.y - mHalfHeight);
 
         canvas.drawBitmap(mImage, matrix, null);
-    }
-
-
-
-    //------------------------------------//
-    //----THINGS FOR SAVING GAME STATE----//
-    //------------------------------------//
-
-
-    public static final Parcelable.Creator<GameObject> CREATOR = new Parcelable.Creator<GameObject>() {
-        public GameObject createFromParcel(Parcel in) {
-            return new GameObject(in) {
-            };
-        }
-
-        public GameObject[] newArray(int size) {
-            return new GameObject[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    // PARCEL VALUE ORDER:
-    // mType
-    // mMass
-    // mInvMass - Derived
-    // mMomentOfInertia
-    // mInvMoment - Derived
-    // mHalfWidth
-    // mHalfHeight
-    // mFriction
-    // mPosition.x
-    // mPosition.y
-    // mLinearVelocity.x
-    // mLinearVelocity.y
-    // mForce.x
-    // mForce.y
-    // mAngle
-    // mAngularVelocity
-    // mTorque
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mType);
-        dest.writeFloat(mMass);
-        // Here is where mInvMass would be
-        dest.writeFloat(mMomentOfInertia);
-        // Here is where mInvMoment would be
-        dest.writeInt(mHalfWidth);
-        dest.writeInt(mHalfHeight);
-        dest.writeFloat(mFriction);
-        dest.writeFloat(mPosition.x);
-        dest.writeFloat(mPosition.y);
-        dest.writeFloat(mLinearVelocity.x);
-        dest.writeFloat(mLinearVelocity.y);
-        dest.writeFloat(mForce.x);
-        dest.writeFloat(mForce.y);
-        dest.writeFloat(mAngle);
-        dest.writeFloat(mAngularVelocity);
-        dest.writeFloat(mTorque);
-    }
-
-    protected GameObject(Parcel in) {
-        mType = in.readInt();
-        mMass = in.readFloat();
-        mInvMass = 1 / mMass;
-        mMomentOfInertia = in.readFloat();
-        mInvMoment = 1 / mMomentOfInertia;
-        mHalfWidth = in.readInt();
-        mHalfHeight = in.readInt();
-        mFriction = in.readFloat();
-        mPosition.x = in.readFloat();
-        mPosition.y = in.readFloat();
-        mLinearVelocity.x = in.readFloat();
-        mLinearVelocity.y = in.readFloat();
-        mForce.x = in.readFloat();
-        mForce.y = in.readFloat();
-        mAngle = in.readFloat();
-        mAngularVelocity = in.readFloat();
-        mTorque = in.readFloat();
     }
 }
