@@ -67,9 +67,11 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
 
         TextView scoreView = (TextView) findViewById(R.id.destroyedCounter);
+        TextView timerView = (TextView) findViewById(R.id.timerView);
 
         UI userInterface = new UI();
         userInterface.AddView(scoreView);
+        userInterface.AddView(timerView);
 
         gameView = new GameSurfaceView(this, userInterface);
 

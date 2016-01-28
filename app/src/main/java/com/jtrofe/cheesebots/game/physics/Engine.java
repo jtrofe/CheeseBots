@@ -3,13 +3,16 @@ package com.jtrofe.cheesebots.game.physics;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.widget.TextView;
 
 import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.customviews.GameSurfaceView;
+import com.jtrofe.cheesebots.game.Levels.GameLevel;
 import com.jtrofe.cheesebots.game.controllers.BotController;
 import com.jtrofe.cheesebots.game.controllers.ParticleController;
+import com.jtrofe.cheesebots.game.gameobjects.Flail;
 import com.jtrofe.cheesebots.game.gameobjects.GameObject;
 import com.jtrofe.cheesebots.game.controllers.CheeseController;
 import com.jtrofe.cheesebots.game.controllers.Controller;
@@ -30,11 +33,23 @@ public class Engine{
     private List<GameObject> mBodiesToAdd;
     private List<GameObject> mBodiesToRemove;
 
+    private List<TouchPoint> mTouchPointsToRemove;
+
     private GameSurfaceView mGameSurfaceView;
+
 
     public void SetSurfaceView(GameSurfaceView gameSurfaceView){
         this.mGameSurfaceView = gameSurfaceView;
     }
+
+    /**
+     * Level Variables
+     */
+    public int MaxBots;
+    public int MaxBotsOnScreen;
+    public boolean HasTimeLimit;
+    public int TimeLimit;
+    public long CurrentTime;
 
     private int mBotsDestroyed;
 
@@ -62,7 +77,7 @@ public class Engine{
     private List<Controller> mControllers;
 
     public boolean Dragging;
-    public Vec TouchPoint;
+    public Vec DragPoint;
 
     // For jitter effects
     public JitterControl mJitterControl;
@@ -97,7 +112,6 @@ public class Engine{
 
         mJitterControl = new JitterControl(this);
 
-
         debugBitmap = Bitmap.createBitmap(worldWidth, worldHeight,
                 Bitmap.Config.ARGB_8888);
         debugCanvas = new Canvas(debugBitmap);
@@ -123,6 +137,9 @@ public class Engine{
         mBodies.removeAll(mBodiesToRemove);
 
         mBodiesToRemove = new ArrayList<>();
+
+        Touches.removeAll(mTouchPointsToRemove);
+        mTouchPointsToRemove = new ArrayList<>();
     }
 
     public void SetWorldBounds(int worldWidth, int worldHeight){
@@ -190,7 +207,10 @@ public class Engine{
 
     public void Draw(Canvas canvas){
 
-        Bitmap objectBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(),
+        if(mBodies.size() == 0) return;
+
+
+        Bitmap objectBitmap = Bitmap.createBitmap(mGameSurfaceView.GetWidth(), mGameSurfaceView.GetHeight(),
                 Bitmap.Config.ARGB_8888);
         Canvas objectCanvas = new Canvas(objectBitmap);
 
@@ -203,7 +223,19 @@ public class Engine{
             b.Draw(objectCanvas);
         }
 
-        canvas.drawBitmap(objectBitmap, mOffset.x, mOffset.y, null);
+        Matrix m;
+
+        if(!mGameSurfaceView.IsLandscape()){
+            //TODO make this work, it slows everything down
+            m = new Matrix(mGameSurfaceView.PortraitMatrix);
+        }else{
+            m = new Matrix();
+        }
+
+        m.postTranslate(mOffset.x, mOffset.y);
+
+        canvas.drawBitmap(objectBitmap, m, null);
+        //canvas.drawBitmap(objectBitmap, mOffset.x, mOffset.y, null);
 
         if(debugBitmap != null)
             canvas.drawBitmap(debugBitmap, mOffset.x, mOffset.y, null);
@@ -262,6 +294,49 @@ public class Engine{
                 mCountdown --;
             }else{
                 mEngine.SetOffset(new Vec());
+            }
+        }
+    }
+
+
+    public List<TouchPoint> Touches = new ArrayList<>();
+    public static class TouchPoint{
+        public Vec Point;
+        public int ID;
+        public boolean InUse; // Is a flail using this point
+
+        public TouchPoint(Vec point, int id){
+            this.Point = point;
+            this.ID = id;
+            this.InUse = false;
+        }
+    }
+
+    public TouchPoint GetTouchPointById(int id){
+        for(TouchPoint t:Touches){
+            if(t.ID == id){
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public void RemoveTouchPoint(int id){
+        for(TouchPoint t:Touches){
+            if(t.ID == id){
+                mTouchPointsToRemove.add(t);
+                Touches.remove(t);
+                return;
+            }
+        }
+    }
+
+    public void SetAvailableTouchPoint(Flail f){
+        for(TouchPoint t:Touches){
+            if(!t.InUse){
+                f.TouchPointId = t.ID;
+                t.InUse = true;
+                return;
             }
         }
     }

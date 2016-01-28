@@ -29,23 +29,56 @@ public class FlailController extends Controller{
         List<GameObject> flailList = mEngine.GetType(GameObject.TYPE_FLAIL);
         List<GameObject> botList = mEngine.GetType(GameObject.TYPE_BOT);
 
+        // Validate the touch points on the flails
+        for(GameObject f:flailList){
+            Flail flail = (Flail) f;
+
+            if(flail.TouchPointId == -1){
+                // Find an available touch point
+
+                mEngine.SetAvailableTouchPoint(flail);
+            }else{
+                // Check if the point still exists. If not, find an available one
+
+                if(mEngine.GetTouchPointById(flail.TouchPointId) == null){
+                    flail.TouchPointId = -1;
+                    mEngine.SetAvailableTouchPoint(flail);
+                }
+            }
+        }
+
+
+
         for(GameObject f:flailList){
             Flail flail = (Flail) f;
 
             // If the user is dragging across the screen, move the
             //   flail to the touch point
-            if(mEngine.Dragging){
+            //if(mEngine.Dragging){
+            if(flail.TouchPointId != -1){
                 // Hooke's law:
                 //  F = kX
 
                 float k = ((Flail) f).GetK();
-                Vec X = mEngine.TouchPoint.Subtract(f.GetPosition());
 
-                Vec F = X.ScalarMultiply(k);
+                Engine.TouchPoint p = mEngine.GetTouchPointById(flail.TouchPointId);
 
-                F = F.Clamp(300); // Max force that will be applied
+                if(p != null) {
+                    Vec T = mEngine.GetTouchPointById(flail.TouchPointId).Point;
+                    Vec X = T.Subtract(f.GetPosition());
+                    //Vec X = mEngine.DragPoint.Subtract(f.GetPosition());
 
-                f.ApplyForce(F, f.GetPosition());
+                    Vec F = X.ScalarMultiply(k);
+
+                    F = F.Clamp(300); // Max force that will be applied
+
+                    f.ApplyForce(F, f.GetPosition());
+                    flail.HandlePoint = p.Point.Clone();
+                }else{
+                    flail.HandlePoint = null;
+                }
+            }else{
+                flail.HandlePoint = null;
             }
 
             List<Manifold> possible_collisions = broadPhase(flail, botList);
@@ -150,7 +183,8 @@ public class FlailController extends Controller{
             v.Draw(mEngine.debugCanvas, point_of_collision, p);
 
             //TODO note: removing force applied to flail makes the game easier
-            m.flail.ApplyForce(v.ScalarMultiply(40), point_of_collision);
+            if(!m.flail.PlowThrough)
+                m.flail.ApplyForce(v.ScalarMultiply(40), point_of_collision);
             m.bot.ApplyForce(v.ScalarMultiply(-40), point_of_collision);
 
             // Calculate amount to damage the bot

@@ -26,10 +26,17 @@ public class Flail extends GameObject{
      * Physics variables
      */
     protected float mK;
+    public boolean PlowThrough = false; // If true, flail will not bounce off robots
 
     public float GetK(){
         return mK;
     }
+
+    /**
+     * Control variables
+     */
+    public int TouchPointId = -1;
+    public Vec HandlePoint;
 
     /**
      * Drawing variables
@@ -53,7 +60,7 @@ public class Flail extends GameObject{
         this.mChainPaint = new Paint();
         this.mChainPaint.setStyle(Paint.Style.STROKE);
         this.mChainPaint.setStrokeWidth(2);
-        this.mChainPaint.setColor(Color.RED);
+        this.mChainPaint.setColor(Color.WHITE);
     }
 
     /**
@@ -66,7 +73,12 @@ public class Flail extends GameObject{
         Paint p = new Paint();
         p.setColor(Color.argb(200, 255, 255, 0));
 
+
+        if(HandlePoint != null){
+            canvas.drawLine(mPosition.x, mPosition.y, HandlePoint.x, HandlePoint.y, mChainPaint);
+        }
         canvas.drawCircle(mPosition.x, mPosition.y, mRadius, p);
+
         //canvas.drawBitmap(mImage, mPosition.x - mHalfWidth, mPosition.y - mHalfHeight, null);
     }
 }
