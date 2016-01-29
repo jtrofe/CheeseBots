@@ -3,13 +3,9 @@ package com.jtrofe.cheesebots.game.physics;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.widget.TextView;
 
-import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.customviews.GameSurfaceView;
-import com.jtrofe.cheesebots.game.Levels.GameLevel;
 import com.jtrofe.cheesebots.game.controllers.BotController;
 import com.jtrofe.cheesebots.game.controllers.ParticleController;
 import com.jtrofe.cheesebots.game.gameobjects.Flail;
@@ -28,6 +24,7 @@ import java.util.Random;
 public class Engine{
 
     public boolean Initialized = false;
+    public boolean LevelComplete = false;
 
     private List<GameObject> mBodies;
     private List<GameObject> mBodiesToAdd;
@@ -49,14 +46,14 @@ public class Engine{
     public int MaxBotsOnScreen;
     public boolean HasTimeLimit;
     public int TimeLimit;
+    public long StartTime;
     public long CurrentTime;
 
     private int mBotsDestroyed;
 
     public void AddBotDestroyed(){
-        mBotsDestroyed ++;
-
-        mGameSurfaceView.UpdateUI();
+        if(mBotsDestroyed < Integer.MAX_VALUE)
+            mBotsDestroyed ++;
     }
 
     public int GetBotsDestroyed(){
@@ -75,9 +72,6 @@ public class Engine{
     }
 
     private List<Controller> mControllers;
-
-    public boolean Dragging;
-    public Vec DragPoint;
 
     // For jitter effects
     public JitterControl mJitterControl;
@@ -189,6 +183,8 @@ public class Engine{
      */
     public void Step(float timeStep){
 
+        if(!Initialized || LevelComplete) return;
+
         resetForces();
 
         computeForces();
@@ -200,6 +196,35 @@ public class Engine{
         //    removed
         addWaitingBodies();
         removeWaitingBodies();
+
+        // Update the timer if there is one
+        if(HasTimeLimit){
+            CurrentTime = System.currentTimeMillis() - StartTime;
+        }
+
+        if(mBodies.size() > 0)
+            LevelComplete = checkGameEndConditions();
+    }
+
+    private boolean checkGameEndConditions(){
+        if(GetType(GameObject.TYPE_CHEESE).size() == 0){
+            mGameSurfaceView.OnLevelEnd(false);
+            return true;
+        }
+
+        if(HasTimeLimit){
+            if(CurrentTime / 1000 >= TimeLimit){
+                mGameSurfaceView.OnLevelEnd(true);
+                return true;
+            }
+        }
+
+        if(mBotsDestroyed >= MaxBots){
+            mGameSurfaceView.OnLevelEnd(true);
+            return true;
+        }
+
+        return false;
     }
 
     private Bitmap debugBitmap;
@@ -209,41 +234,33 @@ public class Engine{
 
         if(mBodies.size() == 0) return;
 
+        int canvasSave = canvas.save();
+        if(!mGameSurfaceView.IsLandscape()){
+            canvas.rotate(90, canvas.getWidth()/2, canvas.getWidth()/2);
+        }
 
-        Bitmap objectBitmap = Bitmap.createBitmap(mGameSurfaceView.GetWidth(), mGameSurfaceView.GetHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas objectCanvas = new Canvas(objectBitmap);
+        canvas.translate(mOffset.x, mOffset.y);
 
+        // TODO come up with a better background
         Paint p = new Paint();
         p.setStyle(Paint.Style.STROKE);
         p.setColor(Color.WHITE);
-        objectCanvas.drawRect(50, 50, mWorldWidth - 50, mWorldHeight - 50, p);
+        canvas.drawRect(50, 50, mWorldWidth - 50, mWorldHeight - 50, p);
+
 
         for(GameObject b:mBodies){
-            b.Draw(objectCanvas);
+            b.Draw(canvas);
         }
 
-        Matrix m;
-
-        if(!mGameSurfaceView.IsLandscape()){
-            //TODO make this work, it slows everything down
-            m = new Matrix(mGameSurfaceView.PortraitMatrix);
-        }else{
-            m = new Matrix();
-        }
-
-        m.postTranslate(mOffset.x, mOffset.y);
-
-        canvas.drawBitmap(objectBitmap, m, null);
-        //canvas.drawBitmap(objectBitmap, mOffset.x, mOffset.y, null);
-
-        if(debugBitmap != null)
+        // TODO debug stuff before release
+        /*if(debugBitmap != null)
             canvas.drawBitmap(debugBitmap, mOffset.x, mOffset.y, null);
-
-
         debugBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(),
                 Bitmap.Config.ARGB_8888);
-        debugCanvas = new Canvas(debugBitmap);
+        debugCanvas = new Canvas(debugBitmap);*/
+
+        // Restore the orientation of the canvas
+        canvas.restoreToCount(canvasSave);
     }
 
 

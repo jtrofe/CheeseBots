@@ -5,11 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.jtrofe.cheesebots.GameApplication;
@@ -76,95 +77,119 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             mEngine.SetSurfaceView(this);
         }
 
-        UpdateUI();
+        updateUI();
     }
 
-    public void UpdateUI(){
+    private void updateUI(){
         MainActivity.RunOnUI(new Runnable() {
             @Override
             public void run() {
                 TextView v = (TextView) UserInterface.GetView("destroyedCounter");
-                v.setText(String.valueOf(mEngine.GetBotsDestroyed()));
+
+                int botsKilled = mEngine.GetBotsDestroyed();
+                if(mEngine.MaxBots < Integer.MAX_VALUE){
+                    botsKilled = mEngine.MaxBots - botsKilled;
+                }
+
+                String destroyed = String.valueOf(botsKilled);
+
+                v.setText(destroyed);
+
+                if(mEngine.HasTimeLimit){
+                    int seconds = mEngine.TimeLimit - (int) Math.floor(mEngine.CurrentTime / 1000);
+
+                    if(seconds < 0) seconds = 0;
+
+                    int minutes = (int) Math.floor(seconds / 60);
+                    seconds -= minutes * 60;
+
+                    String s = String.valueOf(seconds);
+                    if(seconds < 10) s = "0" + s;
+
+                    String m = String.valueOf(minutes);
+                    if(minutes < 10) m = "0" + m;
+
+
+                    TextView timerView = (TextView) UserInterface.GetView("timerView");
+                    timerView.setText(m + ":" + s);
+                }
             }
         });
     }
 
+    private Vec translateCoordinates(float x, float y){
+        if(IsLandscape()){
+            return new Vec(x, y);
+        }
+        float dx = x - (screenHeight/2);
+        float dy = y - (screenHeight/2);
+
+        float nx = screenHeight/2 + dy;
+        float ny = screenHeight/2 - dx;
+
+        return new Vec(nx, ny);
+    }
+
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event){
+        Vec touchPoint;
+        int pointerIndex = event.getActionIndex();
+        int pointerId;
 
-        int index = event.getActionIndex();
-
-        Paint p = new Paint();
-        p.setColor(Color.RED);
-
-        float x, y;
         switch(event.getAction() & MotionEvent.ACTION_MASK){
-            case MotionEvent.ACTION_DOWN: {
-                x = event.getX(index);
-                y = event.getY(index);
+            case MotionEvent.ACTION_DOWN:{
+                touchPoint = translateCoordinates(event.getX(pointerIndex),
+                                                  event.getY(pointerIndex));
 
-                int id = event.getPointerId(index);
+                pointerId = event.getPointerId(pointerIndex);
 
-                mEngine.Touches.add(new Engine.TouchPoint(new Vec(x, y), id));
+                mEngine.Touches.add(new Engine.TouchPoint(touchPoint, pointerId));
 
 
-                break;
+                return true;
             }
             case MotionEvent.ACTION_POINTER_DOWN:{
-                int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+                pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
                         >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
 
-                x = event.getX(pointerIndex);
-                y = event.getY(pointerIndex);
+                touchPoint = translateCoordinates(event.getX(pointerIndex), event.getY(pointerIndex));
 
-                int id = event.getPointerId(pointerIndex);
+                pointerId = event.getPointerId(pointerIndex);
 
-                mEngine.Touches.add(new Engine.TouchPoint(new Vec(x, y), id));
+                mEngine.Touches.add(new Engine.TouchPoint(touchPoint, pointerId));
 
-
-                break;
+                return true;
             }
-            case MotionEvent.ACTION_MOVE:
-                for(int i=0;i<event.getPointerCount();i++){
-                    int pointerId = event.getPointerId(i);
+            case MotionEvent.ACTION_MOVE:{
+                for(pointerIndex=0;pointerIndex<event.getPointerCount();pointerIndex++){
+                    pointerId = event.getPointerId(pointerIndex);
 
                     Engine.TouchPoint t = mEngine.GetTouchPointById(pointerId);
 
-                    t.Point.x = event.getX(i);
-                    t.Point.y = event.getY(i);
+                    touchPoint = translateCoordinates(event.getX(pointerIndex),
+                                                      event.getY(pointerIndex));
 
+                    t.Point = touchPoint.Clone();
                 }
 
-                break;
+                return true;
+            }
             case MotionEvent.ACTION_POINTER_UP:{
-                int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+                pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
                         >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                int pointerId = event.getPointerId(pointerIndex);
+                pointerId = event.getPointerId(pointerIndex);
 
                 mEngine.RemoveTouchPoint(pointerId);
 
-
-                break;}
-            case MotionEvent.ACTION_UP:
-                int pointerId = event.getPointerId(index);
+                return true;
+            }
+            case MotionEvent.ACTION_UP:{
+                pointerId = event.getPointerId(pointerIndex);
                 mEngine.RemoveTouchPoint(pointerId);
-                //mEngine.Touches = new ArrayList<>();
-                break;
+                return true;
+            }
 
             default:
-        }
-
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
-            mEngine.Dragging = true;
-            mEngine.DragPoint = new Vec(event.getX(), event.getY());
-            return true;
-        }else if(event.getAction() == MotionEvent.ACTION_UP){
-            mEngine.Dragging = false;
-            mEngine.DragPoint = null;
-            return true;
-        }else if(event.getAction() == MotionEvent.ACTION_MOVE){
-            mEngine.DragPoint = new Vec(event.getX(), event.getY());
-            return true;
         }
 
         return super.onTouchEvent(event);
@@ -224,6 +249,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
                 holder.unlockCanvasAndPost(canvas);
             }
 
+            updateUI();
+
             float deltaTime = (System.currentTimeMillis() - started);
             int sleepTime = (int) (FRAME_PERIOD - deltaTime);
             if (sleepTime > 0) {
@@ -268,14 +295,52 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
 
     private void InitializeLevel(){
         mEngine.Initialized = true;
+        mEngine.LevelComplete = false;
 
-        GameLevel level = new Level0();
+        final GameLevel level = new Level0();
+
+        if(!level.InitialMessage.isEmpty()){
+            MainActivity.RunOnUI(new Runnable() {
+                @Override
+                public void run() {
+                    final TextView v = (TextView) UserInterface.GetView("messageText");
+
+                    Animation out = new AlphaAnimation(1.0f, 0.0f);
+                    out.setDuration(4000);
+
+                    out.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            v.setText("");
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+
+                    v.setText(level.InitialMessage);
+                    v.startAnimation(out);
+                }
+            });
+        }
+
 
         mEngine.MaxBots = level.MaxBots;
         mEngine.MaxBotsOnScreen = level.MaxBotsOnScreen;
 
         mEngine.HasTimeLimit = level.HasTimeLimit;
         mEngine.TimeLimit = level.TimeLimit;
+        if(level.HasTimeLimit){
+            mEngine.StartTime = System.currentTimeMillis();
+            mEngine.CurrentTime = mEngine.StartTime;
+        }
 
 
         Bitmap ic;// = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
@@ -315,11 +380,27 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         }
 
         Flail flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 20, 0.5f, 50);
-        flail.PlowThrough = true;
+        //flail.PlowThrough = true;
         mEngine.AddBody(flail);
 
         /*flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 60, 0.3f, 40);
         flail.PlowThrough = true;
         mEngine.AddBody(flail);*/
+    }
+
+    public void OnLevelEnd(final boolean won){
+        MainActivity.RunOnUI(new Runnable() {
+            @Override
+            public void run() {
+                TextView v = (TextView) UserInterface.GetView("messageText");
+
+                v.setVisibility(VISIBLE);
+                if(won){
+                    v.setText("Congratulations");
+                }else{
+                    v.setText("I'm so sorry...");
+                }
+            }
+        });
     }
 }

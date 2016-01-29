@@ -6,6 +6,8 @@ import com.jtrofe.cheesebots.game.physics.Vec;
  * Created by MAIN on 1/24/16
  */
 public abstract class GameLevel{
+    public String InitialMessage = "";
+
     public int MaxBots = Integer.MAX_VALUE; // Don't set this to have infinite bots
     public int MaxBotsOnScreen;
 

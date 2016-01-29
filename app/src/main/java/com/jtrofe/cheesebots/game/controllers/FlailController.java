@@ -54,7 +54,6 @@ public class FlailController extends Controller{
 
             // If the user is dragging across the screen, move the
             //   flail to the touch point
-            //if(mEngine.Dragging){
             if(flail.TouchPointId != -1){
                 // Hooke's law:
                 //  F = kX
@@ -66,7 +65,6 @@ public class FlailController extends Controller{
                 if(p != null) {
                     Vec T = mEngine.GetTouchPointById(flail.TouchPointId).Point;
                     Vec X = T.Subtract(f.GetPosition());
-                    //Vec X = mEngine.DragPoint.Subtract(f.GetPosition());
 
                     Vec F = X.ScalarMultiply(k);
 
@@ -240,22 +238,9 @@ public class FlailController extends Controller{
         if(!overlapping){
             return new float[]{0.0f};
         }else{
-            //TODO replace 0 with calculated overlap
-            float penetration_depth = penetration_depth = Math.min(bot_max, flail_max) - Math.max(bot_min, flail_min);
+            float penetration_depth = Math.min(bot_max, flail_max) - Math.max(bot_min, flail_min);
 
             return new float[]{1.0f, penetration_depth, axis.x, axis.y};
         }
-
-
-        /*Vec start = axis.ScalarMultiply(bot_min).Add(offset);
-        Vec end = axis.ScalarMultiply(bot_max).Add(offset);
-
-        Paint p = new Paint();
-        p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(3);
-        p.setColor(Color.YELLOW);
-
-        mEngine.debugCanvas.drawLine(start.x, start.y, end.x, end.y, p);*/
-
     }
 }

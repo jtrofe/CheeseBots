@@ -75,7 +75,7 @@ public class Flail extends GameObject{
 
 
         if(HandlePoint != null){
-            canvas.drawLine(mPosition.x, mPosition.y, HandlePoint.x, HandlePoint.y, mChainPaint);
+            //canvas.drawLine(mPosition.x, mPosition.y, HandlePoint.x, HandlePoint.y, mChainPaint);
         }
         canvas.drawCircle(mPosition.x, mPosition.y, mRadius, p);
 

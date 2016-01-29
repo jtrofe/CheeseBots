@@ -8,10 +8,12 @@ import com.jtrofe.cheesebots.game.physics.Vec;
 public class Level0 extends GameLevel{
 
     public Level0(){
-        this.MaxBotsOnScreen = 20;
+        this.InitialMessage = "Defend your cheese for 35 seconds";
+
+        this.MaxBotsOnScreen = 10;
 
         this.HasTimeLimit = true;
-        this.TimeLimit = 30;
+        this.TimeLimit = 35;
 
         this.CheeseCount = 1;
 

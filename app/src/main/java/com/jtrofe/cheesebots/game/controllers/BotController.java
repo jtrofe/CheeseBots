@@ -93,7 +93,10 @@ public class BotController extends Controller{
         }
 
         mEngine.RemoveBody(b);
-        AddBot();
+
+        // Add another bot if the limit hasn't been reached
+        if(mEngine.GetBotsDestroyed() < mEngine.MaxBots - mEngine.MaxBotsOnScreen + 1)
+            AddBot();
 
         mEngine.mJitterControl.StartJitter(20);
     }
