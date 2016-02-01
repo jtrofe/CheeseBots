@@ -3,15 +3,19 @@ package com.jtrofe.cheesebots.game.gameobjects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
+import com.jtrofe.cheesebots.GameActivity;
+import com.jtrofe.cheesebots.GameApplication;
+import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 /**
  * Created by MAIN on 1/23/16
  */
 public class Bot extends GameObject{
-
     /**
      * Game properties
      */
@@ -49,6 +53,16 @@ public class Bot extends GameObject{
     public float GetBoundRadius(){
         return mBoundRadius;
     }
+
+    /**
+     * Visual properties
+     */
+    final public static int STATE_WALKING = 0;
+    final public static int STATE_EATING = 1;
+    final public static int STATE_TURNING_RIGHT = 2;
+    final public static int STATE_TURNING_LEFT = 3;
+
+    public int State = STATE_WALKING;
 
     public Bot(Vec position, Bitmap image, float mass, float eatingSpeed){
         super(position, image, mass);
@@ -153,15 +167,57 @@ public class Bot extends GameObject{
         ApplyTorque(MAX_TURN_TORQUE * amount_oriented);
     }
 
+    private Rect getFrame(){
+        int f = (int) CurrentFrame;
+
+        return new Rect(f * 100, 0, f * 100 + 100, 60);
+    }
+
     @Override
     public void Draw(Canvas canvas){
-        super.Draw(canvas);
+        Rect src = new Rect(0, 0, 100, 60);
+        switch (State){
+            case Bot.STATE_EATING:
+                if(CurrentFrame < 3 || CurrentFrame >= 5) CurrentFrame = 3;
+                src = getFrame();
+                CurrentFrame += 0.2;
 
-        Paint p = new Paint();
-        p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(5);
-        p.setColor(Color.WHITE);
+                break;
+            case Bot.STATE_WALKING:
+                if(CurrentFrame >= 3) CurrentFrame = 0;
 
-        mUnitY.ScalarMultiply(mHalfHeight).Draw(canvas, mPosition, p);
+                src = getFrame();
+                CurrentFrame += 0.1;
+
+                break;
+            default:
+
+        }
+
+        Rect dst = new Rect((int) mPosition.x - mHalfWidth, (int) mPosition.y - mHalfHeight,
+                    (int) mPosition.x + mHalfWidth, (int) mPosition.y + mHalfHeight);
+
+
+        int saveCount = canvas.save();
+
+        canvas.rotate((float) Math.toDegrees(mAngle), mPosition.x, mPosition.y);
+        canvas.drawBitmap(GameActivity.SpriteSheets.get(0), src, dst, null);
+
+        canvas.restoreToCount(saveCount);
+
+    }
+
+    public Vec[] GetBounds(){
+        Vec[] vertices = GetVertices();
+
+        float minX = GameApplication.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        float minY = GameApplication.min(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+        float maxX = GameApplication.max(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        float maxY = GameApplication.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+
+        return new Vec[]{
+                new Vec(minX, minY),
+                new Vec(maxX, maxY)
+        };
     }
 }

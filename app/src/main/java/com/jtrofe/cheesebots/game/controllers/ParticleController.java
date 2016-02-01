@@ -16,7 +16,7 @@ public class ParticleController extends Controller {
     }
 
     @Override
-    public void Update(){
+    public void Update(float timeStep){
         List<GameObject> particleList = mEngine.GetType(GameObject.TYPE_PARTICLE);
 
         for(GameObject particleObject:particleList){

@@ -50,6 +50,14 @@ public class Vec{
     /**
      * Math functions
      */
+    public Vec Right(){
+        return new Vec(-y, x);
+    }
+
+    public Vec Left(){
+        return new Vec(y, -x);
+    }
+
     public Vec Add(Vec v2){
         return new Vec(x + v2.x, y + v2.y);
     }

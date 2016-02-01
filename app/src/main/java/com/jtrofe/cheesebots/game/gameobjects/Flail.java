@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
+import com.jtrofe.cheesebots.GameActivity;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 
@@ -63,6 +65,10 @@ public class Flail extends GameObject{
         this.mChainPaint.setColor(Color.WHITE);
     }
 
+    private Rect getFlail(){
+        return new Rect(0, 0, 100, 100);
+    }
+
     /**
      * If the user is dragging the flail, draw a chain
      * connecting the head and handle
@@ -70,15 +76,16 @@ public class Flail extends GameObject{
      */
     @Override
     public void Draw(Canvas canvas){
-        Paint p = new Paint();
-        p.setColor(Color.argb(200, 255, 255, 0));
+        Rect src = getFlail();
 
+        Rect dst = new Rect((int) (mPosition.x - mRadius), (int) (mPosition.y - mRadius),
+                (int) (mPosition.x + mRadius), (int) (mPosition.y + mRadius));
 
-        if(HandlePoint != null){
-            //canvas.drawLine(mPosition.x, mPosition.y, HandlePoint.x, HandlePoint.y, mChainPaint);
-        }
-        canvas.drawCircle(mPosition.x, mPosition.y, mRadius, p);
+        int saveCount = canvas.save();
 
-        //canvas.drawBitmap(mImage, mPosition.x - mHalfWidth, mPosition.y - mHalfHeight, null);
+        canvas.rotate((float) Math.toDegrees(mAngle), mPosition.x, mPosition.y);
+        canvas.drawBitmap(GameActivity.SpriteSheets.get(1), src, dst, null);
+
+        canvas.restoreToCount(saveCount);
     }
 }

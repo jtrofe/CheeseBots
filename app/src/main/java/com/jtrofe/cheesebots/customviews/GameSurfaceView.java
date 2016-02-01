@@ -13,8 +13,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
 
+import com.jtrofe.cheesebots.GameActivity;
 import com.jtrofe.cheesebots.GameApplication;
-import com.jtrofe.cheesebots.MainActivity;
 import com.jtrofe.cheesebots.R;
 import com.jtrofe.cheesebots.game.Levels.GameLevel;
 import com.jtrofe.cheesebots.game.Levels.Level0;
@@ -41,6 +41,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
 
     private boolean mIsLandscape;
 
+    private long mPauseTime = -1;
+
+
+
     public boolean IsLandscape(){
         return mIsLandscape;
     }
@@ -50,21 +54,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
     private int screenWidth;
     private int screenHeight;
 
-    public int GetWidth(){
-        return screenWidth;
-    }
-    public int GetHeight(){
-        return screenHeight;
-    }
-
     private Engine mEngine;
 
     public UI UserInterface;
 
-    public GameSurfaceView(Context context, UI userInterface){
+    private GameLevel mGameLevel;
+
+    public GameSurfaceView(Context context, UI userInterface, GameLevel gameLevel){
         super(context);
 
         this.UserInterface = userInterface;
+        this.mGameLevel = gameLevel;
 
         holder = getHolder();
         holder.addCallback(surfaceCallback);
@@ -81,7 +81,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
     }
 
     private void updateUI(){
-        MainActivity.RunOnUI(new Runnable() {
+        GameActivity.RunOnUI(new Runnable() {
             @Override
             public void run() {
                 TextView v = (TextView) UserInterface.GetView("destroyedCounter");
@@ -202,6 +202,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         isRunning = true;
         gameThread = new Thread(this);
         gameThread.start();
+
+        if(mPauseTime != -1 && mEngine.HasTimeLimit) {
+            long pauseLength = System.currentTimeMillis() - mPauseTime;
+
+            mEngine.StartTime += pauseLength;
+        }
+
     }
 
     /**
@@ -209,6 +216,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
      */
     public void Pause(){
         isRunning = false;
+        mPauseTime = System.currentTimeMillis();
         boolean retry = true;
         while(retry){
             try{
@@ -297,10 +305,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         mEngine.Initialized = true;
         mEngine.LevelComplete = false;
 
-        final GameLevel level = new Level0();
-
-        if(!level.InitialMessage.isEmpty()){
-            MainActivity.RunOnUI(new Runnable() {
+        if(!mGameLevel.InitialMessage.isEmpty()){
+            GameActivity.RunOnUI(new Runnable() {
                 @Override
                 public void run() {
                     final TextView v = (TextView) UserInterface.GetView("messageText");
@@ -325,19 +331,19 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
                         }
                     });
 
-                    v.setText(level.InitialMessage);
+                    v.setText(mGameLevel.InitialMessage);
                     v.startAnimation(out);
                 }
             });
         }
 
 
-        mEngine.MaxBots = level.MaxBots;
-        mEngine.MaxBotsOnScreen = level.MaxBotsOnScreen;
+        mEngine.MaxBots = mGameLevel.MaxBots;
+        mEngine.MaxBotsOnScreen = mGameLevel.MaxBotsOnScreen;
 
-        mEngine.HasTimeLimit = level.HasTimeLimit;
-        mEngine.TimeLimit = level.TimeLimit;
-        if(level.HasTimeLimit){
+        mEngine.HasTimeLimit = mGameLevel.HasTimeLimit;
+        mEngine.TimeLimit = mGameLevel.TimeLimit;
+        if(mGameLevel.HasTimeLimit){
             mEngine.StartTime = System.currentTimeMillis();
             mEngine.CurrentTime = mEngine.StartTime;
         }
@@ -348,7 +354,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         ic = Bitmap.createBitmap(100, 60, Bitmap.Config.ARGB_8888);
         ic.eraseColor(Color.argb(200, 255, 0, 180));
 
-        for(int i=0;i<level.MaxBotsOnScreen;i++){
+        for(int i=0;i<mGameLevel.MaxBotsOnScreen;i++){
             Bot obj = new Bot(Vec.Random(screenWidth, screenHeight), ic, 50, 0.02f);
             mEngine.AddBody(obj);
         }
@@ -357,21 +363,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         int cheeseMargin = getResources().getInteger(R.integer.cheese_margin);
 
         Random rnd = new Random();
-        for(int i=0;i<level.CheeseCount;i++){
+        for(int i=0;i<mGameLevel.CheeseCount;i++){
             float radius;
             Vec pos;
-            if(level.HasRandomCheeseSizes){
+            if(mGameLevel.HasRandomCheeseSizes){
                 radius = rnd.nextFloat() * 40 + 40;
             }else{
-                radius = level.CheeseSizes[i] * screenHeight;
+                radius = mGameLevel.CheeseSizes[i] * screenHeight;
             }
-            if(level.HasRandomCheeseLocations){
+            if(mGameLevel.HasRandomCheeseLocations){
                 pos = Vec.Random(screenWidth - cheeseMargin * 2, screenHeight - cheeseMargin * 2);
 
                 pos.x += cheeseMargin;
                 pos.y += cheeseMargin;
             }else{
-                Vec percents = level.CheesePositions[i];
+                Vec percents = mGameLevel.CheesePositions[i];
                 pos = new Vec(screenWidth * percents.x, screenHeight * percents.y);
             }
 
@@ -389,15 +395,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
     }
 
     public void OnLevelEnd(final boolean won){
-        MainActivity.RunOnUI(new Runnable() {
+        GameActivity.OnGameEnd(won);
+
+        GameActivity.RunOnUI(new Runnable() {
             @Override
             public void run() {
                 TextView v = (TextView) UserInterface.GetView("messageText");
 
                 v.setVisibility(VISIBLE);
-                if(won){
+                if (won) {
                     v.setText("Congratulations");
-                }else{
+                } else {
                     v.setText("I'm so sorry...");
                 }
             }

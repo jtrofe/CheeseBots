@@ -1,108 +1,52 @@
 package com.jtrofe.cheesebots;
 
 import android.app.Activity;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
-import com.jtrofe.cheesebots.customviews.GameSurfaceView;
-import com.jtrofe.cheesebots.game.UI;
+import com.jtrofe.cheesebots.game.Levels.GameLevel;
+import com.jtrofe.cheesebots.game.Levels.Level0;
 
 
 public class MainActivity extends Activity{
 
-    private static MainActivity app;
-
-    public static float min(float... n){
-        float val = Float.MAX_VALUE;
-
-        for(float v:n){
-            if(v < val) val = v;
-        }
-
-        return val;
-    }
-
-    public static float max(float... n){
-        float val = -Float.MAX_VALUE;
-
-        for(float v:n){
-            if(v > val) val = v;
-        }
-
-        return val;
-    }
-
-    protected GameSurfaceView gameView;
-
-
-    /**
-     * Hide the navigation buttons so the
-     * game can be truly fullscreen
-     */
-    private void removeNavigation(){
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-        if(Build.VERSION.SDK_INT >= 19){
-            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
-        decorView.setSystemUiVisibility(uiOptions);
-    }
+    EditText botsOnScreen;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        app = this;
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
 
         setContentView(R.layout.activity_main);
 
-        TextView scoreView = (TextView) findViewById(R.id.destroyedCounter);
-        TextView timerView = (TextView) findViewById(R.id.timerView);
-        TextView messageView = (TextView) findViewById(R.id.messageText);
+        Button button = (Button) findViewById(R.id.button_play);
 
-        UI userInterface = new UI();
-        userInterface.AddView(scoreView);
-        userInterface.AddView(timerView);
-        userInterface.AddView(messageView);
+        botsOnScreen = (EditText) findViewById(R.id.text_bots_on_screen);
 
-        gameView = new GameSurfaceView(this, userInterface);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame();
+            }
+        });
 
 
-        FrameLayout frame = (FrameLayout) findViewById(R.id.gameFrame);
-        frame.addView(gameView);
     }
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-    }
+    private void startGame(){
+        GameLevel level = new Level0();
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        gameView.Resume();
+        try {
+            level.MaxBotsOnScreen = Integer.parseInt(botsOnScreen.getText().toString());
+        }catch(Exception e){
+            level.MaxBotsOnScreen = 10;
+        }
 
-        // Hide the system UI
-        removeNavigation();
-    }
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("level", level.ToJSON());
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        gameView.Pause();
-    }
-
-    public static void RunOnUI(Runnable r){
-        app.runOnUiThread(r);
+        startActivity(intent);
     }
 }

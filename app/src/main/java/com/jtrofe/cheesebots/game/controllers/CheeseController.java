@@ -16,7 +16,7 @@ public class CheeseController extends Controller{
     }
 
     @Override
-    public void Update(){
+    public void Update(float timeStep){
         List<GameObject> cheese = mEngine.GetType(GameObject.TYPE_CHEESE);
 
         for(GameObject cheese_object:cheese){
@@ -24,7 +24,7 @@ public class CheeseController extends Controller{
             if(c.GetAmountLeft() == 0){
                 mEngine.RemoveBody(c);
 
-                mEngine.mJitterControl.StartJitter(30, 30);
+                mEngine.mJitterControl.StartJitter(30, 60);
             }
         }
 

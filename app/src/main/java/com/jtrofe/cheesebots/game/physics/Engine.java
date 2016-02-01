@@ -35,6 +35,7 @@ public class Engine{
     private GameSurfaceView mGameSurfaceView;
 
 
+
     public void SetSurfaceView(GameSurfaceView gameSurfaceView){
         this.mGameSurfaceView = gameSurfaceView;
     }
@@ -151,9 +152,9 @@ public class Engine{
         }
     }
 
-    private void computeForces(){
+    private void computeForces(float timeStep){
         for(Controller c:mControllers){
-            c.Update();
+            c.Update(timeStep);
         }
 
         mJitterControl.Update();
@@ -183,11 +184,11 @@ public class Engine{
      */
     public void Step(float timeStep){
 
-        if(!Initialized || LevelComplete) return;
+        if(!Initialized) return;
 
         resetForces();
 
-        computeForces();
+        computeForces(timeStep);
 
         updatePositions(timeStep);
 
@@ -202,7 +203,7 @@ public class Engine{
             CurrentTime = System.currentTimeMillis() - StartTime;
         }
 
-        if(mBodies.size() > 0)
+        if(mBodies.size() > 0 && !LevelComplete)
             LevelComplete = checkGameEndConditions();
     }
 
@@ -252,10 +253,13 @@ public class Engine{
             b.Draw(canvas);
         }
 
-        // TODO debug stuff before release
+        // TODO remove debug stuff before release
         /*if(debugBitmap != null)
-            canvas.drawBitmap(debugBitmap, mOffset.x, mOffset.y, null);
-        debugBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(),
+            canvas.drawBitmap(debugBitmap, 0, 0, null);
+
+        int w = Math.max(canvas.getWidth(), canvas.getHeight());
+        int h = Math.min(canvas.getWidth(), canvas.getHeight());
+        debugBitmap = Bitmap.createBitmap(w, h,
                 Bitmap.Config.ARGB_8888);
         debugCanvas = new Canvas(debugBitmap);*/
 

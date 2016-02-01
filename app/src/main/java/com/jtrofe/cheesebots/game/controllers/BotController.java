@@ -24,7 +24,7 @@ public class BotController extends Controller{
     }
 
     @Override
-    public void Update(){
+    public void Update(float timeStep){
         List<GameObject> botList = mEngine.GetType(GameObject.TYPE_BOT);
         List<GameObject> cheeseList = mEngine.GetType(GameObject.TYPE_CHEESE);
         List<GameObject> flailList = mEngine.GetType(GameObject.TYPE_FLAIL);
@@ -40,6 +40,7 @@ public class BotController extends Controller{
             center_of_mass = center_of_mass.ScalarDivide(botList.size());
 
             for(GameObject b:botList){
+                ((Bot) b).State = Bot.STATE_WALKING;
                 // Move towards center of mass
                 b.MoveTowardsPoint(center_of_mass, 0.1f, 50f);
 
@@ -126,7 +127,7 @@ public class BotController extends Controller{
         Bitmap ic = Bitmap.createBitmap(100, 60, Bitmap.Config.ARGB_8888);
         ic.eraseColor(Color.argb(200, 255, 0, 180));
 
-        Bot b = new Bot(Vec.Random(x, y), ic, 30, 0.02f);
+        Bot b = new Bot(new Vec(x, y), ic, 30, 0.02f);
 
         mEngine.AddBody(b);
     }
@@ -199,6 +200,16 @@ public class BotController extends Controller{
         float EATING_DISTANCE = 20;
         if(c.goalLength < EATING_DISTANCE){
             c.cheese.Eat(b.GetEatingSpeed());
+
+            if(b.State != Bot.STATE_EATING) {
+                b.CurrentFrame = 4;
+                b.State = Bot.STATE_EATING;
+            }
+        }else{
+            if(b.State != Bot.STATE_WALKING) {
+                b.CurrentFrame = 0;
+                b.State = Bot.STATE_WALKING;
+            }
         }
 
         Vec force_vector = c.cheeseDirection.ScalarMultiply(c.goalLength * 0.3f);

@@ -26,7 +26,6 @@ public abstract class GameObject{
     public static float PARTICLE_MASS = 4;
 
 
-    protected Bitmap mImage;
 
     public int GetType(){
         return mType;
@@ -43,6 +42,13 @@ public abstract class GameObject{
     protected float mInvMoment;
     protected int mHalfWidth;
     protected int mHalfHeight;
+
+    public int GetHalfWidth(){
+        return mHalfWidth;
+    }
+    public int GetHalfHeight(){
+        return mHalfHeight;
+    }
 
     public float GetMass(){
         return mMass;
@@ -67,9 +73,23 @@ public abstract class GameObject{
         return mPosition;
     }
 
+    public void SetPosition(Vec p){
+        mPosition = p.Clone();
+    }
+
     public Vec GetLinearVelocity(){
         return mLinearVelocity.Clone();
     }
+
+    public void SetLinearVelocity(Vec v){
+        mLinearVelocity = v.Clone();
+    }
+
+    /**
+     * Visual variables
+     */
+    protected Bitmap mImage;
+    public float CurrentFrame = 0;
 
     public GameObject(Vec position, Bitmap image, float mass){
         this.mPosition = position;
@@ -188,11 +208,11 @@ public abstract class GameObject{
      * @param canvas GameSurfaceView's canvas
      */
     public void Draw(Canvas canvas){
-        Matrix matrix = new Matrix();
-        matrix.reset();
-        matrix.postRotate((float) Math.toDegrees(mAngle), mHalfWidth, mHalfHeight);
-        matrix.postTranslate(mPosition.x - mHalfWidth, mPosition.y - mHalfHeight);
+        int saveCount = canvas.save();
 
-        canvas.drawBitmap(mImage, matrix, null);
+        canvas.rotate((float) Math.toDegrees(mAngle), mPosition.x, mPosition.y);
+        canvas.drawBitmap(mImage, mPosition.x - mHalfWidth, mPosition.y - mHalfHeight, null);
+
+        canvas.restoreToCount(saveCount);
     }
 }
