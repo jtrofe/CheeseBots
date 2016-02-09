@@ -87,6 +87,7 @@ public class Vec{
     }
 
     public Vec Normalize(){
+        if(x == 0 && y == 0) return new Vec(0, 0);
         float length = this.Length();
 
         return new Vec(x / length, y / length);

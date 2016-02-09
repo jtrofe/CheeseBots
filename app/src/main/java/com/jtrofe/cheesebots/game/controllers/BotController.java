@@ -2,6 +2,7 @@ package com.jtrofe.cheesebots.game.controllers;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
@@ -29,7 +30,14 @@ public class BotController extends Controller{
         List<GameObject> cheeseList = mEngine.GetType(GameObject.TYPE_CHEESE);
         List<GameObject> flailList = mEngine.GetType(GameObject.TYPE_FLAIL);
 
-
+        if(mEngine.LevelComplete && cheeseList.size() != 0){
+            for (GameObject botObject : botList) {
+                Bot b = (Bot) botObject;
+                b.ReduceHealth(Float.MAX_VALUE);
+                checkHealth(b);
+            }
+            return;
+        }
         if(cheeseList.size() == 0){
             Vec center_of_mass = new Vec();
 
@@ -46,7 +54,6 @@ public class BotController extends Controller{
 
                 // Move bot away from nearby bots
                 avoidBots((Bot) b, botList);
-
 
                 avoidBots((Bot) b, flailList);
 
@@ -86,17 +93,21 @@ public class BotController extends Controller{
 
         //TODO add explosion or something
 
-        mEngine.AddBotDestroyed();
+        mEngine.AddBotDestroyed(b.ScrapMetal);
 
-        for(int i=0;i<20;i++){
-            Particle particle = new Particle(b.GetPosition(), Color.YELLOW, 40);
-            mEngine.AddBody(particle);
+        if(mEngine.GetType(GameObject.TYPE_PARTICLE).size() < 100) {
+            for (int i = 0; i < 20; i++) {
+                Particle particle = new Particle(b.GetPosition(), Color.YELLOW, 40);
+                mEngine.AddBody(particle);
+            }
         }
+
+
 
         mEngine.RemoveBody(b);
 
         // Add another bot if the limit hasn't been reached
-        if(mEngine.GetBotsDestroyed() < mEngine.MaxBots - mEngine.MaxBotsOnScreen + 1)
+        if(mEngine.GetBotsDestroyed() < mEngine.MaxBots - mEngine.MaxBotsOnScreen + 1 && !mEngine.LevelComplete)
             AddBot();
 
         mEngine.mJitterControl.StartJitter(20);
@@ -125,7 +136,7 @@ public class BotController extends Controller{
         }
 
         Bitmap ic = Bitmap.createBitmap(100, 60, Bitmap.Config.ARGB_8888);
-        ic.eraseColor(Color.argb(200, 255, 0, 180));
+
 
         Bot b = new Bot(new Vec(x, y), ic, 30, 0.02f);
 

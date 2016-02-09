@@ -17,6 +17,7 @@ public abstract class GameObject{
     public static int TYPE_BOT = 1;
     public static int TYPE_CHEESE = 2;
     public static int TYPE_FLAIL = 3;
+    public static int TYPE_ROPE_NODE = 4;
 
 
     /**
@@ -27,14 +28,14 @@ public abstract class GameObject{
 
 
 
-    public int GetType(){
-        return mType;
-    }
 
     /**
      * Physical properties
      */
     protected int mType = TYPE_PARTICLE;
+    public int GetType(){
+        return mType;
+    }
 
     protected float mMass;
     protected float mInvMass;
@@ -52,6 +53,9 @@ public abstract class GameObject{
 
     public float GetMass(){
         return mMass;
+    }
+    public float GetInvMass(){
+        return mInvMass;
     }
 
     /**
@@ -123,6 +127,27 @@ public abstract class GameObject{
 
 
     /**
+     * Take a vector in the object's frame of reference
+     * and convert it to a point in the world
+     * @param vector Local vector
+     * @return Corresponding point in the world
+     */
+    public Vec LocalVectorToWorldVector(Vec vector){
+        float dx1 = (float) Math.sin(mAngle + GameObject.QUARTER_CIRCLE);
+        float dy1 = (float) -Math.cos(mAngle + GameObject.QUARTER_CIRCLE);
+        Vec unitX = new Vec(dx1, dy1);
+
+        float dx2 = (float) Math.sin(mAngle);
+        float dy2 = (float) -Math.cos(mAngle);
+        Vec unitY = new Vec(dx2, dy2);
+
+        Vec vx = unitX.ScalarMultiply(vector.x);
+        Vec vy = unitY.ScalarMultiply(vector.y);
+
+        return mPosition.Add(vx).Add(vy);
+    }
+
+    /**
      * Reset force and torque at the
      * beginning of each simulation step
      */
@@ -149,7 +174,7 @@ public abstract class GameObject{
     public void ApplyImpulse(Vec impulse, Vec point){
         Vec f = impulse.ScalarMultiply(mInvMass);
 
-        mLinearVelocity.Add(f);
+        mLinearVelocity = mLinearVelocity.Add(f);
 
         Vec r = point.Subtract(mPosition);
         mAngularVelocity += mInvMoment * (r.x * impulse.y -

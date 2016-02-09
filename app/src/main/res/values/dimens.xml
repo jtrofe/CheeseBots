@@ -5,4 +5,14 @@
 
     <!-- Dimensions for the game -->
     <integer name="cheese_margin">100</integer>
+
+
+    <!-- Flail values -->
+    <item name="flail_size_small" format="float" type="raw">50</item>
+    <item name="flail_size_medium" format="float" type="raw">70</item>
+    <item name="flail_size_large" format="float" type="raw">90</item>
+
+    <item name="flail_mass_light" format="float" type="raw" >20</item>
+    <item name="flail_mass_medium" format="float" type="raw" >40</item>
+    <item name="flail_mass_heavy" format="float" type="raw" >60</item>
 </resources>

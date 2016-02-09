@@ -5,4 +5,23 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="user_default_json">
+        {
+            \'scrap\' : 0,
+
+            \'flail1\' : {},
+            \'flail2\' : {}
+        }
+    </string>
+    <string name="flail_default_json">
+        {
+            \'frame\' : 0,
+            \'size\' : \'small\',
+            \'mass\' : \'light\',
+            \'plow\' : false,
+            \'hasRope\' : true,
+            \'damage\' : 0,
+            \'speed\' : 0
+        }
+    </string>
 </resources>

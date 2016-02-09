@@ -31,6 +31,8 @@ public class GameActivity extends Activity{
 
     public static List<Bitmap> SpriteSheets;
 
+    public boolean UseRope;
+
 
     /**
      * Hide the navigation buttons so the
@@ -80,6 +82,9 @@ public class GameActivity extends Activity{
 
         Intent intent = getIntent();
         GameLevel level = new Level0();
+
+        //TODO remove this
+        UseRope = intent.getBooleanExtra("useRope", false);
 
 
         String json = intent.getExtras().getString("level", "");

@@ -27,6 +27,7 @@ public class FlailController extends Controller{
 
     @Override
     public void Update(float timeStep){
+        if(mEngine.LevelComplete) return;
         List<GameObject> flailList = mEngine.GetType(GameObject.TYPE_FLAIL);
         List<GameObject> botList = mEngine.GetType(GameObject.TYPE_BOT);
 
@@ -63,15 +64,32 @@ public class FlailController extends Controller{
 
                 Engine.TouchPoint p = mEngine.GetTouchPointById(flail.TouchPointId);
 
-                if(p != null) {
+                if(((Flail) f).HandleNode != null && p != null){
+
+
                     Vec T = mEngine.GetTouchPointById(flail.TouchPointId).Point;
-                    Vec X = T.Subtract(f.GetPosition());
+
+                    GameObject n = ((Flail) f).HandleNode;
+                    n.SetPosition(T);
+                    n.ClearForce();
+
+                    Paint pa = new Paint();
+                    pa.setColor(Color.YELLOW);
+                    n.GetPosition().Circle(mEngine.debugCanvas, pa);
+
+                }else if(p != null) {
+                    float r = ((Flail) f).GetRadius();
+                    Vec attachPoint = f.LocalVectorToWorldVector(new Vec(-r, r));
+
+                    Vec T = mEngine.GetTouchPointById(flail.TouchPointId).Point;
+                    Vec X = T.Subtract(attachPoint);
 
                     Vec F = X.ScalarMultiply(k);
 
                     F = F.Clamp(300); // Max force that will be applied
 
-                    f.ApplyForce(F, f.GetPosition());
+                    //f.ApplyForce(F, f.GetPosition());
+                    f.ApplyForce(F, attachPoint);
                     flail.HandlePoint = p.Point.Clone();
                 }else{
                     flail.HandlePoint = null;

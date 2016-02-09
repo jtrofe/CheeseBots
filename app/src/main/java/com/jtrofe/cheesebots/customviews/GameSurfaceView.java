@@ -16,12 +16,14 @@ import android.widget.TextView;
 import com.jtrofe.cheesebots.GameActivity;
 import com.jtrofe.cheesebots.GameApplication;
 import com.jtrofe.cheesebots.R;
+import com.jtrofe.cheesebots.Storage;
 import com.jtrofe.cheesebots.game.Levels.GameLevel;
 import com.jtrofe.cheesebots.game.Levels.Level0;
 import com.jtrofe.cheesebots.game.UI;
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
 import com.jtrofe.cheesebots.game.gameobjects.Cheese;
 import com.jtrofe.cheesebots.game.gameobjects.Flail;
+import com.jtrofe.cheesebots.game.gameobjects.GameObject;
 import com.jtrofe.cheesebots.game.physics.Engine;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
@@ -48,8 +50,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
     public boolean IsLandscape(){
         return mIsLandscape;
     }
-
-    public Matrix PortraitMatrix;
 
     private int screenWidth;
     private int screenHeight;
@@ -228,18 +228,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         }
     }
 
-    protected void render(Canvas canvas){
-        canvas.drawColor(Color.BLACK);
-
-        mEngine.Draw(canvas);
-    }
-
-    protected void step(){
+    /**
+     * Run a step of the physics engine if it's initialized
+     * and the game isn't over
+     */
+    private void stepEngine(){
         float TIME_STEP = 0.8f;
 
-        mEngine.Step(TIME_STEP);
+        if(mEngine.Initialized){
+            mEngine.Step(TIME_STEP);
+        }
     }
 
+    /**
+     * Game loop. Handle frame rate and game updating
+     */
     @Override
     public void run(){
         while(isRunning){
@@ -247,18 +250,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
 
             long started = System.currentTimeMillis();
 
-            // Update
-            step();
+            // Step the engine, draw the objects, and update the UI
+            update();
 
-            // Draw
-            Canvas canvas = holder.lockCanvas();
-            if(canvas != null){
-                render(canvas);
-                holder.unlockCanvasAndPost(canvas);
-            }
-
-            updateUI();
-
+            // Frames per second stuff
             float deltaTime = (System.currentTimeMillis() - started);
             int sleepTime = (int) (FRAME_PERIOD - deltaTime);
             if (sleepTime > 0) {
@@ -270,10 +265,31 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
                 }
             }
             while (sleepTime < 0) {
-                step();
+                stepEngine();
                 sleepTime += FRAME_PERIOD;
             }
         }
+    }
+
+    /**
+     * Game frame update. Updates physics, canvas, and UI
+     */
+    private void update(){
+        // Run physics simulation
+        stepEngine();
+
+        // Draw objects
+        Canvas canvas = holder.lockCanvas();
+        if(canvas != null){
+            canvas.drawColor(Color.BLACK);
+
+            mEngine.Draw(canvas);
+
+            holder.unlockCanvasAndPost(canvas);
+        }
+
+        // Update user interface
+        updateUI();
     }
 
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
@@ -288,9 +304,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             mIsLandscape = (width > height);
 
             mEngine.SetWorldBounds(screenWidth, screenHeight);
-
-            PortraitMatrix = new Matrix();
-            PortraitMatrix.setRotate(90, screenHeight/2, screenHeight/2);
 
             if(!mEngine.Initialized){
                 InitializeLevel();
@@ -385,13 +398,19 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             mEngine.AddBody(cheese);
         }
 
-        Flail flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 20, 0.5f, 50);
-        //flail.PlowThrough = true;
-        mEngine.AddBody(flail);
+        loadFlail();
+
 
         /*flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 60, 0.3f, 40);
         flail.PlowThrough = true;
         mEngine.AddBody(flail);*/
+    }
+
+    private void loadFlail(){
+        Storage.LoadFlail(mEngine);
+        //Flail flail = new Flail(Vec.Random(screenWidth, screenHeight), null, 20, 0.5f, 50);
+        //flail.PlowThrough = true;
+        //mEngine.AddBody(flail);
     }
 
     public void OnLevelEnd(final boolean won){
@@ -411,4 +430,5 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
             }
         });
     }
+
 }

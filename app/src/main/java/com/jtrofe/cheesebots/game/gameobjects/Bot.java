@@ -22,6 +22,8 @@ public class Bot extends GameObject{
     private float mHealthPoints = 100;
     private float mEatingSpeed = 0.1f;
 
+    public int ScrapMetal = 10;
+
     public float GetEatingSpeed(){
         return mEatingSpeed;
     }
@@ -141,6 +143,7 @@ public class Bot extends GameObject{
      * @param vector Local vector
      * @return Corresponding point in the world
      */
+    @Override
     public Vec LocalVectorToWorldVector(Vec vector){
         Vec vx = mUnitX.ScalarMultiply(vector.x);
         Vec vy = mUnitY.ScalarMultiply(vector.y);

@@ -13,6 +13,7 @@ import com.jtrofe.cheesebots.game.gameobjects.GameObject;
 import com.jtrofe.cheesebots.game.controllers.CheeseController;
 import com.jtrofe.cheesebots.game.controllers.Controller;
 import com.jtrofe.cheesebots.game.controllers.FlailController;
+import com.jtrofe.cheesebots.game.physics.constraints.Constraint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,10 @@ public class Engine{
     private List<GameObject> mBodiesToAdd;
     private List<GameObject> mBodiesToRemove;
 
+    private List<Constraint> mConstraints;
+    private List<Constraint> mConstraintsToAdd;
+    private List<Constraint> mConstraintsToRemove;
+
     private List<TouchPoint> mTouchPointsToRemove;
 
     private GameSurfaceView mGameSurfaceView;
@@ -43,6 +48,12 @@ public class Engine{
     /**
      * Level Variables
      */
+    private int mScrapGained;
+
+    public int GetScrapGained(){
+        return mScrapGained;
+    }
+
     public int MaxBots;
     public int MaxBotsOnScreen;
     public boolean HasTimeLimit;
@@ -52,7 +63,8 @@ public class Engine{
 
     private int mBotsDestroyed;
 
-    public void AddBotDestroyed(){
+    public void AddBotDestroyed(int scrap){
+        mScrapGained += scrap;
         if(mBotsDestroyed < Integer.MAX_VALUE)
             mBotsDestroyed ++;
     }
@@ -94,12 +106,19 @@ public class Engine{
         this.mWorldHeight = worldHeight;
         this.mGameSurfaceView = gameSurfaceView;
 
+        this.mScrapGained = 0;
+
         mBodies = new ArrayList<>();
         mBodiesToAdd = new ArrayList<>();
         mBodiesToRemove = new ArrayList<>();
-        mControllers = new ArrayList<>();
+
+        mConstraints = new ArrayList<>();
+        mConstraintsToAdd = new ArrayList<>();
+        mConstraintsToRemove = new ArrayList<>();
+
 
         // Add controllers
+        mControllers = new ArrayList<>();
         mControllers.add(new BotController(this));
         mControllers.add(new CheeseController(this));
         mControllers.add(new FlailController(this));
@@ -137,6 +156,26 @@ public class Engine{
         mTouchPointsToRemove = new ArrayList<>();
     }
 
+    public void AddConstraint(Constraint c){
+        mConstraintsToAdd.add(c);
+    }
+
+    public void RemoveConstraint(Constraint c){
+        mConstraintsToRemove.add(c);
+    }
+
+    private void addWaitingConstraints(){
+        mConstraints.addAll(mConstraintsToAdd);
+
+        mConstraintsToAdd = new ArrayList<>();
+    }
+
+    private void removeWaitingConstraints(){
+        mConstraints.removeAll(mConstraintsToRemove);
+
+        mConstraintsToRemove = new ArrayList<>();
+    }
+
     public void SetWorldBounds(int worldWidth, int worldHeight){
         mWorldWidth = worldWidth;
         mWorldHeight = worldHeight;
@@ -156,8 +195,12 @@ public class Engine{
         for(Controller c:mControllers){
             c.Update(timeStep);
         }
+    }
 
-        mJitterControl.Update();
+    private void solveConstraints(float timeStep){
+        for(Constraint c:mConstraints){
+            c.Solve(timeStep);
+        }
     }
 
     private void updatePositions(float timeStep){
@@ -184,19 +227,25 @@ public class Engine{
      */
     public void Step(float timeStep){
 
-        if(!Initialized) return;
-
         resetForces();
 
         computeForces(timeStep);
 
+        solveConstraints(timeStep);
+
         updatePositions(timeStep);
+
+
+        mJitterControl.Update();
 
         // Clean up by adding bodies waiting to be
         //    added and removing ones waiting to be
         //    removed
         addWaitingBodies();
         removeWaitingBodies();
+
+        addWaitingConstraints();
+        removeWaitingConstraints();
 
         // Update the timer if there is one
         if(HasTimeLimit){
@@ -254,14 +303,20 @@ public class Engine{
         }
 
         // TODO remove debug stuff before release
-        /*if(debugBitmap != null)
-            canvas.drawBitmap(debugBitmap, 0, 0, null);
+        boolean DRAW_DEBUG = false;
 
-        int w = Math.max(canvas.getWidth(), canvas.getHeight());
-        int h = Math.min(canvas.getWidth(), canvas.getHeight());
-        debugBitmap = Bitmap.createBitmap(w, h,
-                Bitmap.Config.ARGB_8888);
-        debugCanvas = new Canvas(debugBitmap);*/
+        if(DRAW_DEBUG){
+            if (debugBitmap != null) {
+                canvas.drawBitmap(debugBitmap, 0, 0, null);
+                debugBitmap.eraseColor(Color.TRANSPARENT);
+            }else{
+                int w = Math.max(canvas.getWidth(), canvas.getHeight());
+                int h = Math.min(canvas.getWidth(), canvas.getHeight());
+                debugBitmap = Bitmap.createBitmap(w, h,
+                        Bitmap.Config.ARGB_8888);
+                debugCanvas = new Canvas(debugBitmap);
+            }
+        }
 
         // Restore the orientation of the canvas
         canvas.restoreToCount(canvasSave);

@@ -17,4 +17,10 @@
         android:text="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/check_use_rope"
+        android:text="Use rope"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 </LinearLayout>
