@@ -2,16 +2,18 @@ package com.jtrofe.cheesebots
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
+import android.widget.*
 
+import com.jtrofe.cheesebots.R
 import com.jtrofe.cheesebots.game.Levels.GameLevel
 import com.jtrofe.cheesebots.game.Levels.Level0
 import com.jtrofe.cheesebots.physics.PhysicsView
 import com.jtrofe.cheesebots.physics.Vec
+import java.util.ArrayList
 
 
 public class MainActivity : Activity() {
@@ -22,7 +24,20 @@ public class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         v = PhysicsView(this)
+
         setContentView(v)
+
+        val resources = getResources()
+
+        val spriteSheets = ArrayList<Bitmap>()
+
+        var sheet = BitmapFactory.decodeResource(resources, R.raw.robot_frames)
+        spriteSheets.add(Bitmap.createScaledBitmap(sheet, 500, 120, false))
+
+        sheet = BitmapFactory.decodeResource(resources, R.raw.flail_frames)
+        spriteSheets.add(Bitmap.createScaledBitmap(sheet, 300, 100, false))
+
+        v?.SetSpriteSheet(spriteSheets)
 
     }
 

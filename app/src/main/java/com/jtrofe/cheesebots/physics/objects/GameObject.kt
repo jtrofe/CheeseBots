@@ -9,7 +9,7 @@ import com.jtrofe.cheesebots.physics.Vec
  * Created by MAIN on 2/8/16.
  */
 public abstract class GameObject(protected var mPosition:Vec,
-                                 protected val mass:Double = GameObject.PARTICLE_MASS){
+                                 protected val mMass:Double = GameObject.PARTICLE_MASS){
 
     companion object{
         public val QUARTER_CIRCLE:Double = Math.PI/2
@@ -24,41 +24,52 @@ public abstract class GameObject(protected var mPosition:Vec,
         public val PARTICLE_MASS:Double = 4.0
     }
 
-    public var type:Int = GameObject.TYPE_PARTICLE
+    public var Type:Int = GameObject.TYPE_PARTICLE
 
     //
     //  Physical properties
     //
-    protected var invMass:Double = 1 / mass
-    protected var moment:Double = 0.0
-    protected var invMoment:Double = 0.0
-    protected var friction:Double = 0.9
+    protected var mInvMass:Double = 1 / mMass
+    protected var mMoment:Double = 0.0
+    protected var mInvMoment:Double = 0.0
+    protected var mFriction:Double = 0.9
 
-    protected var linearVelocity:Vec = Vec()
-    protected var force:Vec = Vec()
+    protected var mLinearVelocity:Vec = Vec()
+    protected var mForce:Vec = Vec()
 
-    protected var angle:Double = 0.0
-    protected var angularVelocity:Double = 0.0
-    protected var torque:Double = 0.0
+    protected var mAngle:Double = 0.0
+    protected var mAngularVelocity:Double = 0.0
+    protected var mTorque:Double = 0.0
 
-    protected var unitX:Vec = Vec(1.0, 0.0)
-    protected var unitY:Vec = Vec(0.0, -1.0)
+    protected var mUnitX:Vec = Vec(1.0, 0.0)
+    protected var mUnitY:Vec = Vec(0.0, -1.0)
 
-    protected var halfWidth:Int = 0
-    protected var halfHeight:Int = 0
+    protected var mHalfWidth:Int = 0
+    protected var mHalfHeight:Int = 0
 
     public fun GetPosition():Vec{
-        return mPosition
+        return mPosition.copy()
     }
 
+    public fun GetUnitX():Vec{
+        return mUnitX.copy()
+    }
 
+    public fun GetUnitY():Vec{
+        return mUnitY.copy()
+    }
+
+    /**
+     * Default moment of inertia calculation
+     * is for a small disk
+     */
     open fun calculateMoment(){
-        moment = (mass * PARTICLE_RADIUS * PARTICLE_RADIUS) / 2;
+        mMoment = (mMass * PARTICLE_RADIUS * PARTICLE_RADIUS) / 2;
 
-        if(moment.equals(0.0)){
-            invMoment = 0.0
+        if(mMoment.equals(0.0)){
+            mInvMoment = 0.0
         }else{
-            invMoment = 1.0 / moment
+            mInvMoment = 1.0 / mMoment
         }
     }
 
@@ -67,7 +78,7 @@ public abstract class GameObject(protected var mPosition:Vec,
      * @param appliedTorque Amount of torque to add
      */
     public fun ApplyTorque(appliedTorque:Double){
-        torque += appliedTorque
+        mTorque += appliedTorque
     }
 
     /**
@@ -77,10 +88,10 @@ public abstract class GameObject(protected var mPosition:Vec,
      * @param appliedPoint The world point where the force will be applied
      */
     public fun ApplyImpulse(appliedImpulse:Vec, appliedPoint:Vec){
-        linearVelocity = linearVelocity + (appliedImpulse * invMass)
+        mLinearVelocity = mLinearVelocity + (appliedImpulse * mInvMass)
 
         val r = appliedPoint - mPosition
-        angularVelocity += (r.x * appliedImpulse.y - r.y * appliedImpulse.x) * invMoment
+        mAngularVelocity += (r.x * appliedImpulse.y - r.y * appliedImpulse.x) * mInvMoment
     }
 
     /**
@@ -89,34 +100,44 @@ public abstract class GameObject(protected var mPosition:Vec,
      * @param appliedPoint The world point where the force will be applied
      */
     public fun ApplyForce(appliedForce:Vec, appliedPoint:Vec){
-        force = force + appliedForce
+        mForce = mForce + appliedForce
 
         val r = appliedPoint - mPosition
-        torque += r.x * appliedForce.y - r.y * appliedForce.x
+        mTorque += r.x * appliedForce.y - r.y * appliedForce.x
     }
 
+    /**
+     * Apply a force to the center of the body's mass
+     * @param appliedForce The force vector to apply
+     */
     public fun ApplyForceToCenter(appliedForce:Vec){
-        force = force + appliedForce
+        mForce = mForce + appliedForce
     }
 
     public fun ClearForce(){
-        force = Vec()
-        torque = 0.0
+        mForce = Vec()
+        mTorque = 0.0
     }
 
+    /**
+     * Integrate the position/angle and velocity based on
+     * currently applied forces.
+     * Update unit vectors after angle is calculated
+     * @param timeStep How much time to simulate
+     */
     public fun Update(timeStep:Double){
-        val linearAcceleration:Vec = force * invMass
+        val linearAcceleration:Vec = mForce * mInvMass
 
-        linearVelocity = linearVelocity + (linearAcceleration * timeStep)
-        mPosition = mPosition + (linearVelocity * timeStep)
+        mLinearVelocity = mLinearVelocity + (linearAcceleration * timeStep)
+        mPosition = mPosition + (mLinearVelocity * timeStep)
 
-        val angularAcceleration = torque * invMoment
+        val angularAcceleration = mTorque * mInvMoment
 
-        angularVelocity += angularAcceleration * timeStep
-        angle += angularVelocity * timeStep
+        mAngularVelocity += angularAcceleration * timeStep
+        mAngle += mAngularVelocity * timeStep
 
-        linearVelocity = linearVelocity * friction
-        angularVelocity *= friction
+        mLinearVelocity = mLinearVelocity * mFriction
+        mAngularVelocity *= mFriction
 
         updateUnitVectors()
     }
@@ -126,13 +147,13 @@ public abstract class GameObject(protected var mPosition:Vec,
      * based on the current angle
      */
     protected fun updateUnitVectors(){
-        val dx1:Double = Math.sin(angle + GameObject.QUARTER_CIRCLE)
-        val dy1:Double = -Math.cos(angle + GameObject.QUARTER_CIRCLE)
-        unitX = Vec(dx1, dy1)
+        val dx1:Double = Math.sin(mAngle + GameObject.QUARTER_CIRCLE)
+        val dy1:Double = -Math.cos(mAngle + GameObject.QUARTER_CIRCLE)
+        mUnitX = Vec(dx1, dy1)
 
-        val dx2 = Math.sin(angle)
-        val dy2 = -Math.cos(angle)
-        unitY = Vec(dx2, dy2)
+        val dx2 = Math.sin(mAngle)
+        val dy2 = -Math.cos(mAngle)
+        mUnitY = Vec(dx2, dy2)
     }
 
     /**
@@ -142,8 +163,8 @@ public abstract class GameObject(protected var mPosition:Vec,
      * @return Corresponding point in the world
      */
     public fun LocalVectorToWorldVector(v:Vec):Vec{
-        val vx = unitX * v.x
-        val vy = unitY * v.y
+        val vx = mUnitX * v.x
+        val vy = mUnitY * v.y
 
         return mPosition + vx + vy
     }
@@ -162,6 +183,11 @@ public abstract class GameObject(protected var mPosition:Vec,
         ApplyForce(force, mPosition)
     }
 
+    /**
+     * Default draw function draws a small
+     * circle around the object's position
+     * @param canvas PhysicsView's canvas
+     */
     open public fun Draw(canvas:Canvas){
         val p = Paint()
         p.setColor(Color.WHITE)

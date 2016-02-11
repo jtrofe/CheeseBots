@@ -26,12 +26,12 @@ import android.view.animation.Animation
 import android.widget.TextView
 import com.jtrofe.cheesebots
 import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.game.Game
 
-import com.jtrofe.cheesebots.physics.objects.GameObject
 import com.jtrofe.cheesebots.physics.Engine
 import com.jtrofe.cheesebots.physics.Vec
-import com.jtrofe.cheesebots.physics.objects.Bot
-import com.jtrofe.cheesebots.physics.objects.Particle
+import com.jtrofe.cheesebots.physics.objects.*
+import java.util.ArrayList
 
 import java.util.Random
 
@@ -56,7 +56,12 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
     private var mScreenSize:Vec = Vec(100.0, 100.0)
 
 
-    private var mEngine: Engine? = null
+    //private var mEngine: Engine? = null
+    private var mGame: Game? = null
+
+    public fun SetSpriteSheet(spriteSheets:ArrayList<Bitmap>){
+        mGame?.SpriteSheets = spriteSheets
+    }
 
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceCreated(holder: SurfaceHolder) {}
@@ -68,10 +73,16 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
 
             mIsLandscape = (width > height)
 
-            mEngine?.WorldSize = mScreenSize.copy()
+            //mEngine?.WorldSize = mScreenSize.copy()
 
-            if (!mEngine!!.Initialized) {
-                InitializeLevel()
+            //if (!mEngine!!.Initialized) {
+            //    InitializeLevel()
+            //}
+
+
+            mGame?.SetWorldSize(width, height)
+            if(!mGame!!.IsInitialized()){
+                mGame?.Initialize()
             }
         }
 
@@ -82,13 +93,20 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         mHolder = getHolder()
         mHolder?.addCallback(surfaceCallback)
 
-        if (GameApplication.GameEngine == null) {
+        if(GameApplication.CurrentGame == null){
+            mGame = Game(this)
+            GameApplication.CurrentGame = mGame
+        }else{
+            mGame = GameApplication.CurrentGame
+            mGame?.SetPhysicsView(this)
+        }
+        /*if (GameApplication.GameEngine == null) {
             mEngine = Engine(Vec(1000, 1500), this)
             GameApplication.Engine = mEngine
         }else{
             mEngine = GameApplication.Engine
             mEngine?.Surface = this
-        }
+        }*/
     }
 
 
@@ -116,17 +134,20 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
 
         when (action){
             MotionEvent.ACTION_DOWN -> {
-                mEngine?.TouchPoint = translateCoordinates(touchPoint)
+                mGame?.TouchPoint = translateCoordinates(touchPoint)
+                //mEngine?.TouchPoint = translateCoordinates(touchPoint)
 
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                mEngine?.TouchPoint = Vec(-1, -1)
+                mGame?.TouchPoint = Vec(-1, -1)
+                //mEngine?.TouchPoint = Vec(-1, -1)
 
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
-                mEngine?.TouchPoint = translateCoordinates(touchPoint)
+                mGame?.TouchPoint = translateCoordinates(touchPoint)
+                //mEngine?.TouchPoint = translateCoordinates(touchPoint)
 
                 return true
             }
@@ -175,9 +196,11 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
     private fun stepEngine() {
         val TIME_STEP = 0.8
 
-        if (mEngine!!.Initialized) {
-            mEngine?.Step(TIME_STEP)
-        }
+        mGame?.Update(TIME_STEP)
+
+        //if (mEngine!!.Initialized) {
+        //    mEngine?.Step(TIME_STEP)
+        //}
     }
 
     /**
@@ -223,7 +246,8 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         if (canvas != null) {
             canvas.drawColor(Color.BLACK)
 
-            mEngine!!.Draw(canvas)
+            mGame?.Draw(canvas)
+            //mEngine!!.Draw(canvas)
 
             mHolder?.unlockCanvasAndPost(canvas)
         }
@@ -235,20 +259,27 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
 
 
     private fun InitializeLevel() {
-        mEngine!!.Initialized = true
+       /* mEngine!!.Initialized = true
         mEngine!!.LevelComplete = false
 
         val o1:Particle = Particle(Vec(100, 100), Vec(10, 10))
 
         for(i in 0..10){
-            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 20.0, 100, 60, 10.0)
+            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 20.0, 100, 60, 0.1)
 
             mEngine?.AddBody(o)
         }
         //val o2 = Bot(Vec(200, 100), 20.0, 100, 60, 10.0)
 
+        val c:Cheese = Cheese(Vec(200, 900), 50.0)
+
+        mEngine?.AddBody(c)
+
+        val f:Flail = Flail(Vec(200, 200), 50.0, 20.0, 0.5)
+        mEngine?.AddBody(f)
+
         mEngine?.AddBody(o1)
-        //mEngine?.AddBody(o2)
+        //mEngine?.AddBody(o2)*/
     }
 
 

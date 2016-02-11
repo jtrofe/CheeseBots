@@ -8,6 +8,23 @@ import java.util.Random
  */
 public data class Vec(var x:Double = 0.0, var y:Double = 0.0){
 
+    var xf:Float = x.toFloat()
+        private set
+        get() = x.toFloat()
+
+    var yf:Float = y.toFloat()
+        private set
+        get() = y.toFloat()
+
+    var xi:Int = x.toInt()
+        private set
+        get() = x.toInt()
+
+    var yi:Int = y.toInt()
+        private set
+        get() = y.toInt()
+
+
     companion object{
         public fun Random(max:Vec):Vec{
             val r:Random = Random()

@@ -63,6 +63,7 @@ public class GameActivity extends Activity{
 
         SpriteSheets = new ArrayList<>();
 
+
         // Load sprite sheets and resize them based on screen dimensions
         Bitmap sheet = BitmapFactory.decodeResource(getResources(), R.drawable.robot_frames);
         SpriteSheets.add(Bitmap.createScaledBitmap(sheet, 500, 120, false));

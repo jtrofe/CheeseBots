@@ -2,6 +2,7 @@ package com.jtrofe.cheesebots;
 
 import android.app.Application;
 
+import com.jtrofe.cheesebots.game.Game;
 import com.jtrofe.cheesebots.game.physics.Engine;
 
 /**
@@ -13,6 +14,8 @@ public class GameApplication extends Application {
     public static Engine GameEngine = null;
 
     public static com.jtrofe.cheesebots.physics.Engine Engine = null;
+
+    public static Game CurrentGame = null;
 
     public static boolean UseRope = false;
 

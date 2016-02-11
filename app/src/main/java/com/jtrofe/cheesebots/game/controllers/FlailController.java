@@ -161,10 +161,10 @@ public class FlailController extends Controller{
     private List<Manifold> broadPhase(Flail flail, List<GameObject> botList){
         List<Manifold> possible_collisions = new ArrayList<>();
 
-        Paint p = new Paint();
+        /*Paint p = new Paint();
         p.setColor(Color.BLUE);
         p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(4);
+        p.setStrokeWidth(4);*/
 
         for(GameObject bot_object:botList){
             float bot_radius = ((Bot) bot_object).GetBoundRadius();

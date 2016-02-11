@@ -11,27 +11,37 @@ import java.util.ArrayList
  */
 public class Bot(position: Vec, mass:Double,
                  val w:Int, val h:Int,
-                 val eatingSpeed:Double):GameObject(position, mass){
+                 private val mEatingSpeed:Double):GameObject(position, mass){
 
     companion object{
         public val STATE_WALKING:Int = 0
         public val STATE_EATING:Int = 1
     }
 
+    public var CurrentFrame:Double = 0.0
+
     public var State:Int = STATE_WALKING
-    private var boundRadius:Double = 0.0
+    private var mBoundRadius:Double = 0.0
+
+    public fun GetBoundRadius():Double{
+        return mBoundRadius
+    }
+
+    public fun GetEatingSpeed():Double{
+        return mEatingSpeed
+    }
 
     init{
-        type = GameObject.TYPE_BOT
+        Type = GameObject.TYPE_BOT
 
-        halfWidth = w / 2
-        halfHeight = h / 2
+        mHalfWidth = w / 2
+        mHalfHeight = h / 2
 
-        boundRadius = Math.sqrt((halfWidth * halfWidth + halfHeight * halfHeight).toDouble())
+        mBoundRadius = Math.sqrt((mHalfWidth * mHalfWidth + mHalfHeight * mHalfHeight).toDouble())
 
         this.calculateMoment()
 
-        angle = Math.PI / 4
+        mAngle = Math.PI / 4
 
         this.updateUnitVectors()
     }
@@ -41,21 +51,21 @@ public class Bot(position: Vec, mass:Double,
      * inertia for a rectangle
      */
     override fun calculateMoment() {
-        val w = halfWidth * 2
-        val h = halfHeight * 2
+        val w = mHalfWidth * 2
+        val h = mHalfHeight * 2
 
-        moment = (mass * (w * w + h * h)) / 12
+        mMoment = (mMass * (w * w + h * h)) / 12
 
-        if (moment.equals(0)){
-            invMoment = 0.0
+        if (mMoment.equals(0)){
+            mInvMoment = 0.0
         }else{
-            invMoment = 1 / moment
+            mInvMoment = 1 / mMoment
         }
     }
 
     public fun GetVertices(): ArrayList<Vec>{
-        val vx = unitX * halfWidth.toDouble()
-        val vy = unitY * halfHeight.toDouble()
+        val vx = mUnitX * mHalfWidth.toDouble()
+        val vy = mUnitY * mHalfHeight.toDouble()
         val p = mPosition
 
         val l = ArrayList<Vec>()
@@ -88,37 +98,59 @@ public class Bot(position: Vec, mass:Double,
      * @param v Vector to align with
      */
     public fun SteerToAlign(v:Vec){
-        val dp_y = v.Dot(unitY)
+        val dp_y = v.Dot(mUnitY)
         val amount_oriented = 2 - ((dp_y * dp_y) + 1)
 
-        val dp_x = v.Dot(unitX)
+        val dp_x = v.Dot(mUnitX)
 
         val turn_direction = if(dp_x < 0) -1 else 1
 
-        val MAX_TURN_TORQUE = 0.6 * turn_direction * moment
+        val MAX_TURN_TORQUE = 0.6 * turn_direction * mMoment
 
         ApplyTorque(MAX_TURN_TORQUE * amount_oriented)
     }
 
     private fun getRect():Rect{
-        val r = Rect(mPosition.x.toInt() - halfWidth,
-                    mPosition.y.toInt() - halfHeight,
-                    mPosition.x.toInt() + halfWidth,
-                    mPosition.y.toInt() + halfHeight)
+        val r = Rect(mPosition.x.toInt() - mHalfWidth,
+                    mPosition.y.toInt() - mHalfHeight,
+                    mPosition.x.toInt() + mHalfWidth,
+                    mPosition.y.toInt() + mHalfHeight)
 
         return r
     }
 
+    private fun getFrame():Rect{
+        val f = CurrentFrame.toInt()
+
+        return Rect(f * 100, 0, f * 100 + 100, 60)
+    }
+
     override fun Draw(canvas:Canvas){
+        var src = Rect(0, 0, mHalfWidth * 2, mHalfHeight * 2)
+        when(State){
+            STATE_WALKING -> {
+                if(CurrentFrame >= 3) CurrentFrame = 0.0
+
+                src = getFrame()
+                CurrentFrame += 0.1
+            }
+            STATE_EATING -> {
+                if(CurrentFrame < 3 || CurrentFrame >= 5) CurrentFrame = 3.0
+
+                src = getFrame()
+                CurrentFrame += 0.1
+            }
+        }
+
+        val dst = Rect(mPosition.xi - mHalfWidth, mPosition.yi - mHalfHeight,
+                    mPosition.xi + mHalfWidth, mPosition.yi + mHalfHeight)
 
         val saveCount = canvas.save()
 
-        canvas.rotate(Math.toDegrees(angle).toFloat(), mPosition.x.toFloat(), mPosition.y.toFloat())
+        canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
 
-        val p = Paint()
-        p.setColor(Color.argb(80, 255, 255, 0))
+        canvas.drawBitmap(GameApplication.CurrentGame.SpriteSheets[0], src, dst, null)
 
-        canvas.drawRect(getRect(), p)
 
         canvas.restoreToCount(saveCount)
     }

@@ -1,19 +1,25 @@
 package com.jtrofe.cheesebots.physics
 
 import android.graphics.Canvas
+import com.jtrofe.cheesebots.game.Game
 import com.jtrofe.cheesebots.physics.controllers.BotController
+import com.jtrofe.cheesebots.physics.controllers.CheeseController
 import com.jtrofe.cheesebots.physics.controllers.Controller
+import com.jtrofe.cheesebots.physics.controllers.FlailController
 import com.jtrofe.cheesebots.physics.objects.GameObject
 import java.util.ArrayList
 
 /**
  * Created by MAIN on 2/8/16.
  */
-public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), var Surface:PhysicsView){
+public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
 
+    public fun GetGame():Game{
+        return mGame
+    }
     private var mControllers = ArrayList<Controller>()
-    var Initialized:Boolean = false
-    var LevelComplete:Boolean = false
+    //var Initialized:Boolean = false
+    //var LevelComplete:Boolean = false
 
     var Bodies = ArrayList<GameObject>()
     var BodiesToAdd = ArrayList<GameObject>()
@@ -23,6 +29,8 @@ public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), var Surface:PhysicsVi
 
     init{
         mControllers.add(BotController(this))
+        mControllers.add(CheeseController(this))
+        mControllers.add(FlailController(this))
     }
 
 
@@ -81,7 +89,7 @@ public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), var Surface:PhysicsVi
         //  If the surface is in landscape mode then rotate
         //  the canvas before drawing objects. Then restore
         //  its rotation after
-        if(false){ //TODO replace with game surface IsLandscape
+        if(!mGame.IsLandscape()){
             canvas.rotate(90.0f, canvas.getWidth() / 2.0f, canvas.getWidth() / 2.0f)
         }
 

@@ -245,6 +245,4 @@ public class BotController extends Controller{
             this.goalLength = goalLength;
         }
     }
-
-
 }
