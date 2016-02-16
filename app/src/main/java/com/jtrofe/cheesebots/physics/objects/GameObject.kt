@@ -47,8 +47,15 @@ public abstract class GameObject(protected var mPosition:Vec,
     protected var mHalfWidth:Int = 0
     protected var mHalfHeight:Int = 0
 
+    public fun GetMass():Double{
+        return mMass
+    }
     public fun GetPosition():Vec{
         return mPosition.copy()
+    }
+
+    public fun GetLinearVelocity():Vec{
+        return mLinearVelocity.copy()
     }
 
     public fun GetUnitX():Vec{

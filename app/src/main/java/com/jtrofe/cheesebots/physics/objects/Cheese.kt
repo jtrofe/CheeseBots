@@ -28,9 +28,7 @@ public class Cheese(position:Vec, val mStartRadius:Double, val mStartAmount:Doub
 
     public fun Eat(amount:Double){
         mAmountLeft -= amount
-
         if(mAmountLeft < 0) mAmountLeft = 0.0
-
 
         mRadius = (mAmountLeft / mStartAmount) * mStartRadius;
     }

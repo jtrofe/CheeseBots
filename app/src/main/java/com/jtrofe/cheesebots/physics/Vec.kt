@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots.physics
 
 import android.graphics.PointF
+import java.util.ArrayList
 import java.util.Random
 
 /**
@@ -31,6 +32,42 @@ public data class Vec(var x:Double = 0.0, var y:Double = 0.0){
 
             return Vec(max.x * r.nextDouble(), max.y * r.nextDouble())
         }
+
+        /**
+         * Find the point in a list which is closest to a goal point
+         * @param pointList A list of points
+         * @param goal The goal point
+         * @return Closest point
+         */
+        public fun GetClosestToPoint(pointList:List<Vec>, goal:Vec):Vec{
+            var closest_distance = Double.MAX_VALUE
+            var closest_point = pointList[0]
+
+            pointList.forEach{
+                val d = (it - goal).LengthSquared()
+
+                if(d < closest_distance){
+                    closest_distance = d
+                    closest_point = it.copy()
+                }
+            }
+
+            return closest_point
+        }
+
+        public fun GetVectorsFromPoint(pointList:List<Vec>, start:Vec):List<Vec>{
+            return pointList.map{ it -> it - start}
+        }
+
+        /*public static Vec[] GetVectorsFromPoint(Vec[] pointList, Vec start){
+        Vec[] returnList = new Vec[pointList.length];
+
+        for(int i=0;i<pointList.length;i++){
+            returnList[i] = pointList[i].Subtract(start);
+        }
+
+        return returnList;
+    }*/
     }
 
     constructor(point:PointF): this(point.x.toDouble(), point.y.toDouble()){}
@@ -87,7 +124,7 @@ public data class Vec(var x:Double = 0.0, var y:Double = 0.0){
     }
 
     public fun Normalize():Vec{
-        if(x.equals(0) && y.equals(0)) return Vec()
+        if(x.equals(0.0) && y.equals(0.0)) return Vec()
 
         val length = Length()
         return this / length

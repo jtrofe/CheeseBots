@@ -1,11 +1,15 @@
 package com.jtrofe.cheesebots.physics.controllers
 
+import android.graphics.Color
+import com.jtrofe.cheesebots.GameApplication
 import com.jtrofe.cheesebots.physics.Engine
 import com.jtrofe.cheesebots.physics.Vec
 import com.jtrofe.cheesebots.physics.objects.Bot
 import com.jtrofe.cheesebots.physics.objects.Cheese
 import com.jtrofe.cheesebots.physics.objects.GameObject
+import com.jtrofe.cheesebots.physics.objects.Particle
 import java.util.ArrayList
+import java.util.Random
 
 /**
  * Created by MAIN on 2/9/16.
@@ -30,7 +34,11 @@ public class BotController(engine:Engine):Controller(engine){
             botList.forEach {
                 it.State = Bot.STATE_WALKING
 
-                it.MoveTowardsPoint(center_of_mass, 0.1, 50.0)
+                val from_center = it.GetPosition() - center_of_mass
+
+                it.SteerToAlign(from_center.Normalize())
+
+                it.MoveTowardsPoint(center_of_mass, -0.1, 50.0)
 
                 avoidObjects(it, botList)
             }
@@ -50,8 +58,34 @@ public class BotController(engine:Engine):Controller(engine){
 
                 // Avoid other bots
                 avoidObjects(it, botList)
+
+                checkHealth(it)
             }
         }
+    }
+
+    private fun checkHealth(b:Bot){
+        if(b.IsAlive()) return
+
+        mEngine.RemoveBody(b)
+
+        val rnd = Random()
+
+        if(mEngine.Bodies.filter{it.Type == GameObject.TYPE_PARTICLE}.size() < 100){
+            for(i in 0..20){
+                var v = Vec.Random(Vec(40, 40))
+                v = v - Vec(20, 20)
+
+                val c = if(rnd.nextBoolean()){ Color.YELLOW }else{ Color.RED }
+                val p = Particle(b.GetPosition(), v, c, 40)
+
+                mEngine.AddBody(p)
+            }
+        }
+
+        GameApplication.CurrentGame.OnBotDestroyed()
+
+        //TODO jitter
     }
 
     private fun avoidObjects(b:Bot, objects:List<GameObject>){

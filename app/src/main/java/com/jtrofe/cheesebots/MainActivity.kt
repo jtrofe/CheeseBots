@@ -31,8 +31,8 @@ public class MainActivity : Activity() {
 
         val spriteSheets = ArrayList<Bitmap>()
 
-        var sheet = BitmapFactory.decodeResource(resources, R.raw.robot_frames)
-        spriteSheets.add(Bitmap.createScaledBitmap(sheet, 500, 120, false))
+        var sheet = BitmapFactory.decodeResource(resources, R.raw.bot_frames)
+        spriteSheets.add(Bitmap.createScaledBitmap(sheet, 600, 180, false))
 
         sheet = BitmapFactory.decodeResource(resources, R.raw.flail_frames)
         spriteSheets.add(Bitmap.createScaledBitmap(sheet, 300, 100, false))

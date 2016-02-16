@@ -2,17 +2,14 @@ package com.jtrofe.cheesebots.physics
 
 import android.graphics.Canvas
 import com.jtrofe.cheesebots.game.Game
-import com.jtrofe.cheesebots.physics.controllers.BotController
-import com.jtrofe.cheesebots.physics.controllers.CheeseController
-import com.jtrofe.cheesebots.physics.controllers.Controller
-import com.jtrofe.cheesebots.physics.controllers.FlailController
+import com.jtrofe.cheesebots.physics.controllers.*
 import com.jtrofe.cheesebots.physics.objects.GameObject
 import java.util.ArrayList
 
 /**
  * Created by MAIN on 2/8/16.
  */
-public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
+public class Engine(public var WorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
 
     public fun GetGame():Game{
         return mGame
@@ -25,12 +22,11 @@ public class Engine(var WorldSize:Vec = Vec(100.0, 100.0), private var mGame: Ga
     var BodiesToAdd = ArrayList<GameObject>()
     var BodiesToRemove = ArrayList<GameObject>()
 
-    var TouchPoint:Vec = Vec(-1, -1)
-
     init{
         mControllers.add(BotController(this))
         mControllers.add(CheeseController(this))
         mControllers.add(FlailController(this))
+        mControllers.add(ParticleController(this))
     }
 
 

@@ -11,7 +11,7 @@ import java.util.ArrayList
  */
 public class Bot(position: Vec, mass:Double,
                  val w:Int, val h:Int,
-                 private val mEatingSpeed:Double):GameObject(position, mass){
+                 private val mEatingSpeed:Double, private val mTotalHealth:Double=100.0):GameObject(position, mass){
 
     companion object{
         public val STATE_WALKING:Int = 0
@@ -23,6 +23,8 @@ public class Bot(position: Vec, mass:Double,
     public var State:Int = STATE_WALKING
     private var mBoundRadius:Double = 0.0
 
+    private var mHealthPoints = mTotalHealth
+
     public fun GetBoundRadius():Double{
         return mBoundRadius
     }
@@ -30,6 +32,17 @@ public class Bot(position: Vec, mass:Double,
     public fun GetEatingSpeed():Double{
         return mEatingSpeed
     }
+
+    public fun ApplyDamage(damage:Double){
+        mHealthPoints -= damage;
+    }
+
+    public fun IsAlive():Boolean{
+        return mHealthPoints > 0
+    }
+
+    private val walkFrames = intArray(1, 2, 3, 2);
+    private val eatFrames = intArray(0, 4, 5, 4);
 
     init{
         Type = GameObject.TYPE_BOT
@@ -56,7 +69,7 @@ public class Bot(position: Vec, mass:Double,
 
         mMoment = (mMass * (w * w + h * h)) / 12
 
-        if (mMoment.equals(0)){
+        if (mMoment.equals(0.0)){
             mInvMoment = 0.0
         }else{
             mInvMoment = 1 / mMoment
@@ -120,27 +133,38 @@ public class Bot(position: Vec, mass:Double,
     }
 
     private fun getFrame():Rect{
-        val f = CurrentFrame.toInt()
+        var frames:IntArray = walkFrames.clone();
 
-        return Rect(f * 100, 0, f * 100 + 100, 60)
+        if(State == STATE_EATING) frames = eatFrames.clone();
+
+        if(CurrentFrame >= frames.size()) CurrentFrame = 0.0;
+
+
+        val f = CurrentFrame.toInt();
+
+        val x = frames[f];
+
+        val healthPercent = mHealthPoints / mTotalHealth
+
+        var y:Int
+
+        if(healthPercent > 0.66){
+            y = 0
+        }else if(healthPercent > 0.33){
+            y = 1
+        }else{
+            y = 2
+        }
+
+
+
+
+        return Rect(x * 100, y * 60, x * 100 + 100, (y * 60) + 60)
     }
 
     override fun Draw(canvas:Canvas){
-        var src = Rect(0, 0, mHalfWidth * 2, mHalfHeight * 2)
-        when(State){
-            STATE_WALKING -> {
-                if(CurrentFrame >= 3) CurrentFrame = 0.0
-
-                src = getFrame()
-                CurrentFrame += 0.1
-            }
-            STATE_EATING -> {
-                if(CurrentFrame < 3 || CurrentFrame >= 5) CurrentFrame = 3.0
-
-                src = getFrame()
-                CurrentFrame += 0.1
-            }
-        }
+        val src = getFrame();
+        CurrentFrame += 0.2
 
         val dst = Rect(mPosition.xi - mHalfWidth, mPosition.yi - mHalfHeight,
                     mPosition.xi + mHalfWidth, mPosition.yi + mHalfHeight)

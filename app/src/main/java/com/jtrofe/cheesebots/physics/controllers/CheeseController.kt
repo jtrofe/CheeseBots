@@ -13,7 +13,7 @@ public class CheeseController(engine:Engine):Controller(engine){
     override fun Update(timeStep:Double){
         val cheeseList = mEngine.Bodies.filter{ it.Type == GameObject.TYPE_CHEESE } as List<Cheese>
 
-        cheeseList.filter{ it.GetAmountLeft().equals(0) }.forEach{
+        cheeseList.filter{ it.GetAmountLeft().equals(0.0) }.forEach{
             mEngine.RemoveBody(it)
 
             //TODO JITTER

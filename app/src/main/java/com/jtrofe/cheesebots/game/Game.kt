@@ -10,6 +10,7 @@ import com.jtrofe.cheesebots.physics.objects.Cheese
 import com.jtrofe.cheesebots.physics.objects.Flail
 import com.jtrofe.cheesebots.physics.objects.Particle
 import java.util.ArrayList
+import java.util.Random
 
 /**
  * Created by MAIN on 2/10/16.
@@ -23,6 +24,9 @@ open public class Game(private var mPhysicsView: PhysicsView){
 
     private var mInitialized:Boolean = false
     private var mLevelComplete:Boolean = false
+
+    private var mScreenWidth:Int = 0
+    private var mScreenHeight:Int = 0
 
     public fun IsInitialized():Boolean{
         return mInitialized
@@ -42,11 +46,11 @@ open public class Game(private var mPhysicsView: PhysicsView){
     }
 
     public fun SetWorldSize(width:Int, height:Int){
-        val screenWidth = Math.max(width, height)
-        val screenHeight = Math.min(width, height)
+        mScreenWidth = Math.max(width, height)
+        mScreenHeight = Math.min(width, height)
 
         mLandscape = (width > height)
-        mEngine?.WorldSize = Vec(screenWidth, screenHeight)
+        mEngine?.WorldSize = Vec(mScreenWidth, mScreenHeight)
     }
 
     public var SpriteSheets:List<Bitmap> = ArrayList()
@@ -72,22 +76,38 @@ open public class Game(private var mPhysicsView: PhysicsView){
         mInitialized = true
         mLevelComplete = false
 
-        val o1: Particle = Particle(Vec(100, 100), Vec(10, 10))
-
         for(i in 0..10){
-            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 20.0, 100, 60, 0.1)
+            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 50.0, 100, 60, 0.1)
 
             mEngine?.AddBody(o)
         }
-        //val o2 = Bot(Vec(200, 100), 20.0, 100, 60, 10.0)
 
-        val c: Cheese = Cheese(Vec(200, 900), 50.0)
+        val c: Cheese = Cheese(Vec(400, 900), 50.0)
 
         mEngine?.AddBody(c)
 
-        val f: Flail = Flail(Vec(200, 200), 50.0, 20.0, 0.5)
+        val f: Flail = Flail(Vec(200, 200), 20.0, 50.0, 0.5)
         mEngine?.AddBody(f)
+    }
 
-        mEngine?.AddBody(o1)
+    open public fun OnBotDestroyed(){
+        val rnd = Random()
+
+        val x:Double
+        val y:Double
+
+        if(rnd.nextBoolean()){
+            x = rnd.nextDouble() * (mScreenWidth + 200) - 100.0
+
+            y = if(rnd.nextBoolean()){ mScreenHeight + 100.0 }else{ -100.0 }
+        }else{
+            y = rnd.nextDouble() * (mScreenHeight + 200) - 100.0
+
+            x = if(rnd.nextBoolean()){ mScreenWidth + 100.0 }else{ -100.0 }
+        }
+
+        val b = Bot(Vec(x, y), 50.0, 100, 60, 0.1)
+
+        mEngine?.AddBody(b)
     }
 }

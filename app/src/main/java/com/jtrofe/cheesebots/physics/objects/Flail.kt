@@ -3,6 +3,8 @@ package com.jtrofe.cheesebots.physics.objects
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
+import com.jtrofe.cheesebots.GameApplication
 import com.jtrofe.cheesebots.physics.Vec
 
 /**
@@ -33,17 +35,40 @@ public class Flail(position:Vec, mass:Double,
     override fun calculateMoment() {
         mMoment = (mMass * mRadius * mRadius) / 2
 
-        if(mMoment.equals(0)){
+        if(mMoment.equals(0.0)){
             mInvMoment = 0.0
         }else{
-            mMoment = 1 / mMoment
+            mInvMoment = 1 / mMoment
         }
     }
 
-    override fun Draw(canvas:Canvas){
-        val p = Paint()
-        p.setColor(Color.RED)
+    private fun getFlailSrc():Rect{
+        return Rect(0, 0, 100, 100)
+    }
 
-        canvas.drawCircle(mPosition.xf, mPosition.yf, mRadius.toFloat(), p)
+    override fun Draw(canvas:Canvas){
+
+        if(!HandlePoint.x.equals(-1.0) || !HandlePoint.y.equals(-1.0)){
+            val attachPoint = LocalVectorToWorldVector(Vec(-mRadius, mRadius))
+
+            val HANDLE_WIDTH = 4f
+            val p = Paint()
+            p.setColor(Color.WHITE)
+            p.setStyle(Paint.Style.STROKE)
+            p.setStrokeWidth(HANDLE_WIDTH)
+
+            canvas.drawLine(HandlePoint.xf, HandlePoint.yf, attachPoint.xf, attachPoint.yf, p)
+        }
+
+        val src = getFlailSrc()
+        val dst = Rect(mPosition.xi - mRadius.toInt(), mPosition.yi - mRadius.toInt(),
+                       mPosition.xi + mRadius.toInt(), mPosition.yi + mRadius.toInt())
+
+        val saveCount = canvas.save()
+
+        canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
+        canvas.drawBitmap(GameApplication.CurrentGame.SpriteSheets[1], src, dst, null)
+
+        canvas.restoreToCount(saveCount)
     }
 }

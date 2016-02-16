@@ -73,13 +73,6 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
 
             mIsLandscape = (width > height)
 
-            //mEngine?.WorldSize = mScreenSize.copy()
-
-            //if (!mEngine!!.Initialized) {
-            //    InitializeLevel()
-            //}
-
-
             mGame?.SetWorldSize(width, height)
             if(!mGame!!.IsInitialized()){
                 mGame?.Initialize()
