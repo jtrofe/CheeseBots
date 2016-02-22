@@ -3,8 +3,7 @@ package com.jtrofe.cheesebots.game.controllers;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.jtrofe.cheesebots.GameApplication;
-import com.jtrofe.cheesebots.MainActivity;
+import com.jtrofe.cheesebots.GameApp;
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
 import com.jtrofe.cheesebots.game.gameobjects.Flail;
 import com.jtrofe.cheesebots.game.gameobjects.GameObject;
@@ -122,10 +121,10 @@ public class FlailController extends Controller{
         Vec p6 = new_pos.Add(new Vec(0, r));
         Vec p7 = new_pos.Add(new Vec(0, -r));
 
-        float minX = GameApplication.min(p0.x, p1.x, p2.x, p3.x, p4.x, p5.x, p6.x, p7.x);
-        float minY = GameApplication.min(p0.y, p1.y, p2.y, p3.y, p4.y, p5.y, p6.y, p7.y);
-        float maxX = GameApplication.max(p0.x, p1.x, p2.x, p3.x, p4.x, p5.x, p6.x, p7.x);
-        float maxY = GameApplication.max(p0.y, p1.y, p2.y, p3.y, p4.y, p5.y, p6.y, p7.y);
+        float minX = GameApp.min(p0.x, p1.x, p2.x, p3.x, p4.x, p5.x, p6.x, p7.x);
+        float minY = GameApp.min(p0.y, p1.y, p2.y, p3.y, p4.y, p5.y, p6.y, p7.y);
+        float maxX = GameApp.max(p0.x, p1.x, p2.x, p3.x, p4.x, p5.x, p6.x, p7.x);
+        float maxY = GameApp.max(p0.y, p1.y, p2.y, p3.y, p4.y, p5.y, p6.y, p7.y);
 
         float flail_width = maxX - minX;
         float flail_height = maxY - minY;
@@ -240,7 +239,7 @@ public class FlailController extends Controller{
             if(t3 < 0) t3 = Float.MAX_VALUE;
 
             if(t0 <= 1 || t1 <= 1 || t2 <= 1 || t3 <= 1){
-                float t = GameApplication.min(t0, t1, t2, t3);
+                float t = GameApp.min(t0, t1, t2, t3);
 
                 if(t < Float.MAX_VALUE){
                     Vec v = flail_vec.ScalarMultiply(t);
@@ -391,8 +390,8 @@ public class FlailController extends Controller{
         float p2 = vectors_to_corners[2].Dot(axis);
         float p3 = vectors_to_corners[3].Dot(axis);
 
-        float bot_min = GameApplication.min(p0, p1, p2, p3);
-        float bot_max = GameApplication.max(p0, p1, p2, p3);
+        float bot_min = GameApp.min(p0, p1, p2, p3);
+        float bot_max = GameApp.max(p0, p1, p2, p3);
 
         boolean overlapping = Math.max(flail_min, bot_min) <= Math.min(flail_max,bot_max);
 

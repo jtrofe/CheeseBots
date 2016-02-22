@@ -1,7 +1,7 @@
 package com.jtrofe.cheesebots.physics.controllers
 
 import android.graphics.Color
-import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.GameApp
 import com.jtrofe.cheesebots.physics.Engine
 import com.jtrofe.cheesebots.physics.Vec
 import com.jtrofe.cheesebots.physics.objects.Bot
@@ -12,7 +12,7 @@ import java.util.ArrayList
 import java.util.Random
 
 /**
- * Created by MAIN on 2/9/16.
+ * Direct bots towards cheese and make them eat it
  */
 public class BotController(engine:Engine):Controller(engine){
 
@@ -21,7 +21,6 @@ public class BotController(engine:Engine):Controller(engine){
         val botList:List<Bot> = mEngine.Bodies.filter{ it.Type == GameObject.TYPE_BOT } as List<Bot>
 
         if(botList.isEmpty()) return
-
 
         val cheeseList = mEngine.Bodies.filter{ it.Type == GameObject.TYPE_CHEESE } as List<Cheese>
 
@@ -36,11 +35,15 @@ public class BotController(engine:Engine):Controller(engine){
 
                 val from_center = it.GetPosition() - center_of_mass
 
-                it.SteerToAlign(from_center.Normalize())
+                //TODO remove the minus sign
+                it.SteerToAlign(-from_center.Normalize())
 
-                it.MoveTowardsPoint(center_of_mass, -0.1, 50.0)
+                //TODO make 0.1 into -0.1 so they flee the center
+                it.MoveTowardsPoint(center_of_mass, 0.1, it.GetMass())
 
                 avoidObjects(it, botList)
+
+                checkHealth(it)
             }
         }else{
             botList.forEach{
@@ -71,7 +74,7 @@ public class BotController(engine:Engine):Controller(engine){
 
         val rnd = Random()
 
-        if(mEngine.Bodies.filter{it.Type == GameObject.TYPE_PARTICLE}.size() < 100){
+        if(mEngine.Bodies.filter{ it.Type == GameObject.TYPE_PARTICLE }.size() < 100){
             for(i in 0..20){
                 var v = Vec.Random(Vec(40, 40))
                 v = v - Vec(20, 20)
@@ -83,9 +86,9 @@ public class BotController(engine:Engine):Controller(engine){
             }
         }
 
-        GameApplication.CurrentGame.OnBotDestroyed()
+        GameApp.CurrentGame.OnBotDestroyed()
 
-        //TODO jitter
+        mEngine.JitterController.StartJitter(20)
     }
 
     private fun avoidObjects(b:Bot, objects:List<GameObject>){

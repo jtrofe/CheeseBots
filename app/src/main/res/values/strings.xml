@@ -9,17 +9,20 @@
         {
             \'scrap\' : 0,
 
-            \'flail1\' : {},
-            \'flail2\' : {}
+            \'flails\' : [],
+            \'selectedFlail\' : 0
         }
     </string>
+    <string name="flail_default_mass">heavy</string>
+    <string name="flail_default_radius">small</string>
+    <string name="flail_default_k">medium</string>
+
     <string name="flail_default_json">
         {
             \'frame\' : 0,
-            \'size\' : \'small\',
+            \'radius\' : \'small\',
             \'mass\' : \'light\',
             \'plow\' : false,
-            \'hasRope\' : true,
             \'damage\' : 0,
             \'speed\' : 0
         }

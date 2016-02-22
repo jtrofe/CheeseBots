@@ -8,11 +8,16 @@
 
 
     <!-- Flail values -->
-    <item name="flail_size_small" format="float" type="raw">50</item>
-    <item name="flail_size_medium" format="float" type="raw">70</item>
-    <item name="flail_size_large" format="float" type="raw">90</item>
+    <item name="flail_radius_small" format="float" type="raw">50</item>
+    <item name="flail_radius_medium" format="float" type="raw">70</item>
+    <item name="flail_radius_large" format="float" type="raw">90</item>
 
     <item name="flail_mass_light" format="float" type="raw" >20</item>
     <item name="flail_mass_medium" format="float" type="raw" >40</item>
     <item name="flail_mass_heavy" format="float" type="raw" >60</item>
+
+    <item name="flail_k_low" format="float" type="raw" >0.5</item>
+    <item name="flail_k_medium" format="float" type="raw" >0.8</item>
+    <item name="flail_k_high" format="float" type="raw" >1.2</item>
+
 </resources>

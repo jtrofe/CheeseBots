@@ -118,8 +118,8 @@ public class GameActivity extends Activity{
 
     @Override
     public void onBackPressed(){
-        if(GameApplication.GameEngine.LevelComplete){
-            GameApplication.GameEngine = null;
+        if(GameApp.GameEngine.LevelComplete){
+            GameApp.GameEngine = null;
             finish();
         }
     }

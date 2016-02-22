@@ -2,6 +2,7 @@ package com.jtrofe.cheesebots.game
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import com.jtrofe.cheesebots.SpriteHandler
 import com.jtrofe.cheesebots.physics.Engine
 import com.jtrofe.cheesebots.physics.PhysicsView
 import com.jtrofe.cheesebots.physics.Vec
@@ -56,9 +57,11 @@ open public class Game(private var mPhysicsView: PhysicsView){
     public var SpriteSheets:List<Bitmap> = ArrayList()
 
 
+    // Probabilities that each type of bot will be added once one is destroyed
+    private var mBotWeights = doubleArray(100.0, 0.0)
+
     init{
         mEngine = Engine(Vec(1500, 500), this)
-
     }
 
     open public fun Update(timeStep:Double){
@@ -77,16 +80,23 @@ open public class Game(private var mPhysicsView: PhysicsView){
         mLevelComplete = false
 
         for(i in 0..10){
-            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 50.0, 100, 60, 0.1)
+            val o = Bot(Vec.Random(Vec(1000.0, 500.0)), 50.0, 100, 60, 0.1, SpriteHandler.SHEET_SMALL_BOT)
 
             mEngine?.AddBody(o)
         }
 
-        val c: Cheese = Cheese(Vec(400, 900), 50.0)
+        val cheesePos = mEngine!!.WorldSize * 0.5
+
+        val r = mEngine!!.WorldSize.y * 0.1
+
+        val c: Cheese = Cheese(cheesePos, r, 400.0)
 
         mEngine?.AddBody(c)
 
-        val f: Flail = Flail(Vec(200, 200), 20.0, 50.0, 0.5)
+        //val f: Flail = Flail(20.0, 50.0, 0.5)
+
+        val f = Storage.GetSelectedFlail()
+
         mEngine?.AddBody(f)
     }
 
@@ -106,7 +116,31 @@ open public class Game(private var mPhysicsView: PhysicsView){
             x = if(rnd.nextBoolean()){ mScreenWidth + 100.0 }else{ -100.0 }
         }
 
-        val b = Bot(Vec(x, y), 50.0, 100, 60, 0.1)
+
+        val totalWeight = mBotWeights.reduce{ x, y -> x + y }
+
+        var randIndex:Int = -1
+        var rand = rnd.nextDouble() * totalWeight
+
+        for(i in 0..(mBotWeights.size()-1)){
+            rand -= mBotWeights[i]
+
+            if(rand <= 0){
+                randIndex = i
+                break
+            }
+        }
+
+        var b:Bot
+        when(randIndex){
+            0 -> b = Bot(Vec(x, y), 50.0, 100, 60, 0.1, SpriteHandler.SHEET_SMALL_BOT)
+            1 -> b = Bot(Vec(x, y), 80.0, 85, 100, 0.1, SpriteHandler.SHEET_LARGE_BOT, 300.0)
+            else -> b = Bot(Vec(x, y), 80.0, 85, 100, 0.1, SpriteHandler.SHEET_LARGE_BOT, 300.0)
+        }
+
+
+        mBotWeights[1] += 0.05
+
 
         mEngine?.AddBody(b)
     }

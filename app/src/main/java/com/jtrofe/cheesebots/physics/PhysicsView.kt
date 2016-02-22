@@ -25,7 +25,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.TextView
 import com.jtrofe.cheesebots
-import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.GameApp
 import com.jtrofe.cheesebots.game.Game
 
 import com.jtrofe.cheesebots.physics.Engine
@@ -86,11 +86,11 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         mHolder = getHolder()
         mHolder?.addCallback(surfaceCallback)
 
-        if(GameApplication.CurrentGame == null){
+        if(GameApp.CurrentGame == null){
             mGame = Game(this)
-            GameApplication.CurrentGame = mGame
+            GameApp.CurrentGame = mGame
         }else{
-            mGame = GameApplication.CurrentGame
+            mGame = GameApp.CurrentGame
             mGame?.SetPhysicsView(this)
         }
         /*if (GameApplication.GameEngine == null) {

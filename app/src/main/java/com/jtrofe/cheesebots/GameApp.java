@@ -8,8 +8,8 @@ import com.jtrofe.cheesebots.game.physics.Engine;
 /**
  * Created by MAIN on 1/26/16
  */
-public class GameApplication extends Application {
-    public static GameApplication App;
+public class GameApp extends Application {
+    public static GameApp App;
 
     public static Engine GameEngine = null;
 

@@ -1,7 +1,8 @@
 package com.jtrofe.cheesebots.physics.objects
 
 import android.graphics.*
-import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.GameApp
+import com.jtrofe.cheesebots.SpriteHandler
 import com.jtrofe.cheesebots.physics.AABB
 import com.jtrofe.cheesebots.physics.Vec
 import java.util.ArrayList
@@ -11,7 +12,9 @@ import java.util.ArrayList
  */
 public class Bot(position: Vec, mass:Double,
                  val w:Int, val h:Int,
-                 private val mEatingSpeed:Double, private val mTotalHealth:Double=100.0):GameObject(position, mass){
+                 private val mEatingSpeed:Double,
+                 private val mSpriteSheetIndex:Int,
+                 private val mTotalHealth:Double=100.0):GameObject(position, mass){
 
     companion object{
         public val STATE_WALKING:Int = 0
@@ -41,14 +44,11 @@ public class Bot(position: Vec, mass:Double,
         return mHealthPoints > 0
     }
 
-    private val walkFrames = intArray(1, 2, 3, 2);
-    private val eatFrames = intArray(0, 4, 5, 4);
-
     init{
         Type = GameObject.TYPE_BOT
 
-        mHalfWidth = w / 2
-        mHalfHeight = h / 2
+        mHalfWidth = w.toDouble ()/ 2
+        mHalfHeight = h.toDouble ()/ 2
 
         mBoundRadius = Math.sqrt((mHalfWidth * mHalfWidth + mHalfHeight * mHalfHeight).toDouble())
 
@@ -97,10 +97,10 @@ public class Bot(position: Vec, mass:Double,
     public fun GetBounds(): AABB{
         val vertices = GetVertices()
 
-        val minX = GameApplication.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
-        val minY = GameApplication.min(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
-        val maxX = GameApplication.max(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
-        val maxY = GameApplication.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+        val minX = GameApp.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        val minY = GameApp.min(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+        val maxX = GameApp.max(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        val maxY = GameApp.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
 
         return AABB(Vec(minX, minY), Vec(maxX, maxY))
     }
@@ -124,18 +124,18 @@ public class Bot(position: Vec, mass:Double,
     }
 
     private fun getRect():Rect{
-        val r = Rect(mPosition.x.toInt() - mHalfWidth,
-                    mPosition.y.toInt() - mHalfHeight,
-                    mPosition.x.toInt() + mHalfWidth,
-                    mPosition.y.toInt() + mHalfHeight)
+        val r = Rect((mPosition.x - mHalfWidth).toInt(),
+                    (mPosition.y.toInt() - mHalfHeight).toInt(),
+                    (mPosition.x.toInt() + mHalfWidth).toInt(),
+                    (mPosition.y.toInt() + mHalfHeight).toInt())
 
         return r
     }
 
     private fun getFrame():Rect{
-        var frames:IntArray = walkFrames.clone();
+        var frames:IntArray = SpriteHandler.WALK_FRAMES[mSpriteSheetIndex].clone()
 
-        if(State == STATE_EATING) frames = eatFrames.clone();
+        if(State == STATE_EATING) frames = SpriteHandler.EAT_FRAMES[mSpriteSheetIndex].clone()
 
         if(CurrentFrame >= frames.size()) CurrentFrame = 0.0;
 
@@ -156,24 +156,24 @@ public class Bot(position: Vec, mass:Double,
             y = 2
         }
 
+        val w = (mHalfWidth * 2).toInt()
+        val h = (mHalfHeight * 2).toInt()
 
-
-
-        return Rect(x * 100, y * 60, x * 100 + 100, (y * 60) + 60)
+        return Rect(x * w, y * h, (x * w) + w, (y * h) + h)
     }
 
     override fun Draw(canvas:Canvas){
         val src = getFrame();
         CurrentFrame += 0.2
 
-        val dst = Rect(mPosition.xi - mHalfWidth, mPosition.yi - mHalfHeight,
-                    mPosition.xi + mHalfWidth, mPosition.yi + mHalfHeight)
+        val dst = Rect((mPosition.x - mHalfWidth).toInt(), (mPosition.y - mHalfHeight).toInt(),
+                (mPosition.x + mHalfWidth).toInt(), (mPosition.y + mHalfHeight).toInt())
 
         val saveCount = canvas.save()
 
         canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
 
-        canvas.drawBitmap(GameApplication.CurrentGame.SpriteSheets[0], src, dst, null)
+        canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[mSpriteSheetIndex], src, dst, null)
 
 
         canvas.restoreToCount(saveCount)

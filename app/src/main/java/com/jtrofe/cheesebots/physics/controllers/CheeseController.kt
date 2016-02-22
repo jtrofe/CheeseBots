@@ -5,7 +5,7 @@ import com.jtrofe.cheesebots.physics.objects.Cheese
 import com.jtrofe.cheesebots.physics.objects.GameObject
 
 /**
- * Created by MAIN on 2/9/16.
+ * Removes cheeses if they have been completely eaten
  */
 public class CheeseController(engine:Engine):Controller(engine){
 
@@ -16,7 +16,7 @@ public class CheeseController(engine:Engine):Controller(engine){
         cheeseList.filter{ it.GetAmountLeft().equals(0.0) }.forEach{
             mEngine.RemoveBody(it)
 
-            //TODO JITTER
+            mEngine.JitterController.StartJitter(30, 60.0)
         }
     }
 }

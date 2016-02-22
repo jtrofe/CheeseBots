@@ -49,7 +49,7 @@ public class MainActivityJava : Activity() {
 
         val c = findViewById(R.id.check_use_rope) as CheckBox
 
-        GameApplication.UseRope = c.isChecked()
+        GameApp.UseRope = c.isChecked()
 
         intent.putExtra("useRope", c.isChecked())
 

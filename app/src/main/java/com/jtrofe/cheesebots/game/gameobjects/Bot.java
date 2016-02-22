@@ -2,14 +2,10 @@ package com.jtrofe.cheesebots.game.gameobjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.jtrofe.cheesebots.GameActivity;
-import com.jtrofe.cheesebots.GameApplication;
-import com.jtrofe.cheesebots.MainActivity;
+import com.jtrofe.cheesebots.GameApp;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
 /**
@@ -213,10 +209,10 @@ public class Bot extends GameObject{
     public Vec[] GetBounds(){
         Vec[] vertices = GetVertices();
 
-        float minX = GameApplication.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
-        float minY = GameApplication.min(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
-        float maxX = GameApplication.max(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
-        float maxY = GameApplication.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+        float minX = GameApp.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        float minY = GameApp.min(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
+        float maxX = GameApp.max(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
+        float maxY = GameApp.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
 
         return new Vec[]{
                 new Vec(minX, minY),

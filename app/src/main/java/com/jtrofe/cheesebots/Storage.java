@@ -35,10 +35,10 @@ public class Storage{
     private static final String FLAIL_MASS_LARGE = "flail_large_mass";
 
     public static void LoadFlail(Engine engine){
-        SharedPreferences sharedPreferences = GameApplication.App.getSharedPreferences(
+        SharedPreferences sharedPreferences = GameApp.App.getSharedPreferences(
                 PREFERENCES_NAME, Context.MODE_PRIVATE);
 
-        Resources resources = GameApplication.App.getResources();
+        Resources resources = GameApp.App.getResources();
 
         String userJSON = sharedPreferences.getString("user",
                 resources.getString(R.string.user_default_json));
@@ -74,8 +74,8 @@ public class Storage{
      * user: {
      *     scrap: int
      *
-     *     flail 1: {flail}
-     *     flail 2: {flail} or null
+     *     flails [ flail, flail, flail... ]
+     *     selectedFlail: int
      * }
      */
     /**
@@ -91,8 +91,8 @@ public class Storage{
      */
     private static Flail loadFlail(JSONObject json,
                                    SharedPreferences sharedPreferences, Engine engine) throws JSONException{
-        Resources resources = GameApplication.App.getResources();
-        String packageName = GameApplication.App.getPackageName();
+        Resources resources = GameApp.App.getResources();
+        String packageName = GameApp.App.getPackageName();
         String size = json.getString("size");
         String weight = json.getString("mass");
         boolean plow = json.getBoolean("plow");
@@ -115,7 +115,7 @@ public class Storage{
         flail.PlowThrough = plow;
 
         // TODO make this be based on hasRope instead of Application's UseRope
-        if(GameApplication.UseRope){//hasRope){
+        if(GameApp.UseRope){//hasRope){
             flail.CreateRope(engine);
         }
 
@@ -123,8 +123,8 @@ public class Storage{
     }
 
     private static Flail loadFlailNumber(int n, SharedPreferences sharedPreferences){
-        Resources resources = GameApplication.App.getResources();
-        String packageName = GameApplication.App.getPackageName();
+        Resources resources = GameApp.App.getResources();
+        String packageName = GameApp.App.getPackageName();
 
         String flail_size = sharedPreferences.getString("flail_" + n + "_size", FLAIL_SIZE_LARGE);
         String flail_k = sharedPreferences.getString("flail_" + n + "_k", FLAIL_K_LARGE);

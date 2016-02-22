@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -14,16 +13,13 @@ import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.jtrofe.cheesebots.GameActivity;
-import com.jtrofe.cheesebots.GameApplication;
+import com.jtrofe.cheesebots.GameApp;
 import com.jtrofe.cheesebots.R;
 import com.jtrofe.cheesebots.Storage;
 import com.jtrofe.cheesebots.game.Levels.GameLevel;
-import com.jtrofe.cheesebots.game.Levels.Level0;
 import com.jtrofe.cheesebots.game.UI;
 import com.jtrofe.cheesebots.game.gameobjects.Bot;
 import com.jtrofe.cheesebots.game.gameobjects.Cheese;
-import com.jtrofe.cheesebots.game.gameobjects.Flail;
-import com.jtrofe.cheesebots.game.gameobjects.GameObject;
 import com.jtrofe.cheesebots.game.physics.Engine;
 import com.jtrofe.cheesebots.game.physics.Vec;
 
@@ -69,11 +65,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable{
         holder = getHolder();
         holder.addCallback(surfaceCallback);
 
-        if(GameApplication.GameEngine == null) {
+        if(GameApp.GameEngine == null) {
             mEngine = new Engine(1000, 1500, this);
-            GameApplication.GameEngine = mEngine;
+            GameApp.GameEngine = mEngine;
         }else{
-            mEngine = GameApplication.GameEngine;
+            mEngine = GameApp.GameEngine;
             mEngine.SetSurfaceView(this);
         }
 

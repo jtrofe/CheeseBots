@@ -4,14 +4,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.GameApp
+import com.jtrofe.cheesebots.SpriteHandler
 import com.jtrofe.cheesebots.physics.Vec
 
 /**
  * Created by MAIN on 2/9/16.
  */
-public class Flail(position:Vec, mass:Double,
-                   val mRadius:Double, val mK:Double):GameObject(position, mass){
+public class Flail(mass:Double,
+                   val mRadius:Double,
+                   val mK:Double
+                  ):GameObject(Vec(), mass){
 
     public fun GetRadius():Double{
         return mRadius
@@ -67,7 +70,7 @@ public class Flail(position:Vec, mass:Double,
         val saveCount = canvas.save()
 
         canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
-        canvas.drawBitmap(GameApplication.CurrentGame.SpriteSheets[1], src, dst, null)
+        canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_FLAIL], src, dst, null)
 
         canvas.restoreToCount(saveCount)
     }

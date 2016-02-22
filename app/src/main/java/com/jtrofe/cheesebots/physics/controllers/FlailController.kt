@@ -1,7 +1,7 @@
 package com.jtrofe.cheesebots.physics.controllers
 
 import android.graphics.Color
-import com.jtrofe.cheesebots.GameApplication
+import com.jtrofe.cheesebots.GameApp
 import com.jtrofe.cheesebots.physics.Engine
 import com.jtrofe.cheesebots.physics.Vec
 import com.jtrofe.cheesebots.physics.objects.Bot
@@ -33,7 +33,7 @@ public class FlailController(engine:Engine):Controller(engine){
 
             val X = handle_point - attach_point
 
-            val MAX_FORCE = 300.0
+            val MAX_FORCE = flail.GetMass() * 20.0
 
             val force = (X * flail.GetK()).Clamp(MAX_FORCE)
 
@@ -112,8 +112,10 @@ public class FlailController(engine:Engine):Controller(engine){
             val point_of_collision = flail_position + (axis * flail.GetRadius())
             axis = axis * -result.overlap
 
-            val RESOLVE_FORCE = 40.0
+            val RESOLVE_FORCE = it.bot.GetMass()
             // TODO If flail is not a plow, apply a force to it
+
+
             flail.ApplyForce(axis * RESOLVE_FORCE, point_of_collision)
             it.bot.ApplyForce(axis * -RESOLVE_FORCE, point_of_collision)
 
@@ -166,8 +168,8 @@ public class FlailController(engine:Engine):Controller(engine){
         val p2 = vectors_to_corners[2].Dot(axis)
         val p3 = vectors_to_corners[3].Dot(axis)
 
-        val bot_min = GameApplication.min(p0, p1, p2, p3)
-        val bot_max = GameApplication.max(p0, p1, p2, p3)
+        val bot_min = GameApp.min(p0, p1, p2, p3)
+        val bot_max = GameApp.max(p0, p1, p2, p3)
 
         val overlapping = Math.max(flail_min, bot_min) <= Math.min(flail_max, bot_max)
 
