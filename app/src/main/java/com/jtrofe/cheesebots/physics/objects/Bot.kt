@@ -44,6 +44,14 @@ public class Bot(position: Vec, mass:Double,
         return mHealthPoints > 0
     }
 
+    private var mImageWidth:Double = 0.0
+    private var mImageHeight:Double = 0.0
+
+    public fun SetImageSize(v:Vec){
+        mImageWidth = v.x
+        mImageHeight = v.y
+    }
+
     init{
         Type = GameObject.TYPE_BOT
 
@@ -57,6 +65,11 @@ public class Bot(position: Vec, mass:Double,
         mAngle = Math.PI / 4
 
         this.updateUnitVectors()
+
+
+        mImageWidth = w.toDouble()
+        mImageHeight = h.toDouble()
+
     }
 
     /**
@@ -144,6 +157,7 @@ public class Bot(position: Vec, mass:Double,
 
         val x = frames[f];
 
+
         val healthPercent = mHealthPoints / mTotalHealth
 
         var y:Int
@@ -156,8 +170,8 @@ public class Bot(position: Vec, mass:Double,
             y = 2
         }
 
-        val w = (mHalfWidth * 2).toInt()
-        val h = (mHalfHeight * 2).toInt()
+        val w = mImageWidth.toInt()
+        val h = mImageHeight.toInt()
 
         return Rect(x * w, y * h, (x * w) + w, (y * h) + h)
     }
@@ -166,13 +180,17 @@ public class Bot(position: Vec, mass:Double,
         val src = getFrame();
         CurrentFrame += 0.2
 
-        val dst = Rect((mPosition.x - mHalfWidth).toInt(), (mPosition.y - mHalfHeight).toInt(),
-                (mPosition.x + mHalfWidth).toInt(), (mPosition.y + mHalfHeight).toInt())
+        val w = mImageWidth / 2
+        val h = mImageHeight / 2
+
+        val dst = Rect((mPosition.x - w).toInt(), (mPosition.y - h).toInt(),
+                (mPosition.x + w).toInt(), (mPosition.y + h).toInt())
 
         val saveCount = canvas.save()
 
         canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
 
+        if(GameApp.CurrentGame == null) return
         canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[mSpriteSheetIndex], src, dst, null)
 
 

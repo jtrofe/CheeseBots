@@ -24,6 +24,7 @@ public class Storage(){
 
             val userJSON = preferences.getString("user", resources.getString(R.string.user_default_json))
 
+
             var flail: Flail
 
             var FLAIL_MASS: Double
@@ -45,7 +46,6 @@ public class Storage(){
                 FLAIL_K = flailObject.getDouble("k")
 
             } catch(e: Exception) {
-                e.printStackTrace()
 
                 val default_mass = resources.getString(R.string.flail_default_mass)
                 val default_radius = resources.getString(R.string.flail_default_radius)
@@ -67,6 +67,8 @@ public class Storage(){
                 FLAIL_K = out.getFloat().toDouble()
             }
             flail = Flail(FLAIL_MASS, FLAIL_RADIUS, FLAIL_K)
+
+            //flail.IsPlow = true
 
             return flail
         }

@@ -17,7 +17,6 @@ public class FlailController(engine:Engine):Controller(engine){
 
     suppress("UNCHECKED_CAST")
     override fun Update(timeStep:Double){
-        if(mEngine.GetGame().IsLevelComplete()) return
 
         val flailList = mEngine.Bodies.filter { it.Type == GameObject.TYPE_FLAIL } as List<Flail>
         if(flailList.isEmpty()) return
@@ -113,10 +112,10 @@ public class FlailController(engine:Engine):Controller(engine){
             axis = axis * -result.overlap
 
             val RESOLVE_FORCE = it.bot.GetMass()
-            // TODO If flail is not a plow, apply a force to it
 
+            if(!flail.IsPlow)
+                flail.ApplyForce(axis * RESOLVE_FORCE, point_of_collision)
 
-            flail.ApplyForce(axis * RESOLVE_FORCE, point_of_collision)
             it.bot.ApplyForce(axis * -RESOLVE_FORCE, point_of_collision)
 
             // Damage the bot
@@ -129,7 +128,7 @@ public class FlailController(engine:Engine):Controller(engine){
             val dp = axis.Normalize().Dot(Vec(1, 0))
             flail.ApplyTorque(dp * speed * 0.5)
 
-            if(damage > 0.5){
+            if(damage > 0.5 && speed > 10){
                 it.bot.ApplyDamage(damage)
             }
 

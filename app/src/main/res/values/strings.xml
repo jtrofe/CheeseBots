@@ -5,26 +5,29 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Menu strings -->
+    <string name="button_play">Play</string>
+    <string name="button_inventory">Inventory (Inactive)</string>
+    <string name="button_highscores">Highscores (Inactive)</string>
+
+    <!-- JSON values -->
     <string name="user_default_json">
         {
             \'scrap\' : 0,
 
-            \'flails\' : [],
+            \'flails\' : [
+                    {
+                        \'frame\' : 0,
+                        \'radius\' : \'small\',
+                        \'mass\' : \'light\',
+                        \'plow\' : false,
+                        \'damage\' : 0,
+                    }
+                ],
             \'selectedFlail\' : 0
         }
     </string>
     <string name="flail_default_mass">heavy</string>
     <string name="flail_default_radius">small</string>
     <string name="flail_default_k">medium</string>
-
-    <string name="flail_default_json">
-        {
-            \'frame\' : 0,
-            \'radius\' : \'small\',
-            \'mass\' : \'light\',
-            \'plow\' : false,
-            \'damage\' : 0,
-            \'speed\' : 0
-        }
-    </string>
 </resources>

@@ -26,6 +26,9 @@ public class Flail(mass:Double,
 
     public var HandlePoint:Vec = Vec(-1, -1)
 
+    public var IsPlow:Boolean = false
+
+
     init{
         Type = GameObject.TYPE_FLAIL
 
@@ -68,6 +71,8 @@ public class Flail(mass:Double,
                        mPosition.xi + mRadius.toInt(), mPosition.yi + mRadius.toInt())
 
         val saveCount = canvas.save()
+
+        if(GameApp.CurrentGame == null) return
 
         canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
         canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_FLAIL], src, dst, null)

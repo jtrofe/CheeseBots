@@ -5,22 +5,19 @@
 
     <Button
         android:id="@+id/button_play"
-        android:text="Play"
+        android:text="@string/button_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/text_bots_on_screen"
-        android:hint="Number of bots on screen"
-        android:maxLength="2"
-        android:inputType="number"
-        android:text="10"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button_inventory"
+        android:text="@string/button_inventory"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <CheckBox
-        android:id="@+id/check_use_rope"
-        android:text="Use rope"
+    <Button
+        android:id="@+id/button_highscores"
+        android:text="@string/button_highscores"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

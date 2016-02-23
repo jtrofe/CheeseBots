@@ -153,7 +153,7 @@ public class BotController(engine:Engine):Controller(engine){
 
         val force_vector = c.cheeseDirection * (c.goalLength * 0.3)
 
-        val MAX_FORCE_MAGNITUDE = 50.0
+        val MAX_FORCE_MAGNITUDE = b.GetMass()
 
         b.ApplyForceToCenter(force_vector.Clamp(MAX_FORCE_MAGNITUDE))
     }

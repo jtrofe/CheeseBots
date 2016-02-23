@@ -93,13 +93,6 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
             mGame = GameApp.CurrentGame
             mGame?.SetPhysicsView(this)
         }
-        /*if (GameApplication.GameEngine == null) {
-            mEngine = Engine(Vec(1000, 1500), this)
-            GameApplication.Engine = mEngine
-        }else{
-            mEngine = GameApplication.Engine
-            mEngine?.Surface = this
-        }*/
     }
 
 

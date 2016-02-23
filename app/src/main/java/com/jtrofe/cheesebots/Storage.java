@@ -1,5 +1,6 @@
 package com.jtrofe.cheesebots;
 
+/*
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -14,14 +15,14 @@ import org.json.JSONObject;
 
 /**
  * Created by MAIN on 2/1/16
- */
+ *
 public class Storage{
 
     private static final String PREFERENCES_NAME = "CheeseBots";
 
     /**
      * Flail option resource names
-     */
+     *
     private static final String FLAIL_SIZE_SMALL = "flail_small_radius";
     private static final String FLAIL_SIZE_MEDIUM = "flail_medium_radius";
     private static final String FLAIL_SIZE_LARGE = "flail_large_radius";
@@ -48,7 +49,7 @@ public class Storage{
 
             JSONObject flail1 = json.getJSONObject("flail1");
 
-            if(flail1.toString().equals("{}")){
+            /*if(flail1.toString().equals("{}")){
                 flail1 = new JSONObject(resources.getString(R.string.flail_default_json));
             }
 
@@ -77,7 +78,7 @@ public class Storage{
      *     flails [ flail, flail, flail... ]
      *     selectedFlail: int
      * }
-     */
+
     /**
      * How flail data is stored:
      * flail: {
@@ -88,7 +89,7 @@ public class Storage{
      *     plow: true/false
      *     hasRope: true/false
      * }
-     */
+     *
     private static Flail loadFlail(JSONObject json,
                                    SharedPreferences sharedPreferences, Engine engine) throws JSONException{
         Resources resources = GameApp.App.getResources();
@@ -154,3 +155,4 @@ public class Storage{
         return flail;
     }
 }
+*/
