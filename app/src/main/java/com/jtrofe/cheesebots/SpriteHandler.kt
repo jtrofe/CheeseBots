@@ -15,6 +15,7 @@ public class SpriteHandler(){
         public val SHEET_LARGE_BOT:Int = 1
         public val SHEET_GIANT_BOT:Int = 2
         public val SHEET_FLAIL:Int = 3
+        public val SHEET_CHEESE:Int = 4
 
 
         public val WALK_FRAMES:ArrayList<IntArray> = arrayListOf(
@@ -46,6 +47,9 @@ public class SpriteHandler(){
 
             sheet = BitmapFactory.decodeResource(resources, R.raw.flail_frames)
             sheetList.add(Bitmap.createScaledBitmap(sheet, 300, 100, false))
+
+            sheet = BitmapFactory.decodeResource(resources, R.raw.cheese_frames)
+            sheetList.add(Bitmap.createScaledBitmap(sheet, 300, 300, false))
 
             return sheetList
         }
