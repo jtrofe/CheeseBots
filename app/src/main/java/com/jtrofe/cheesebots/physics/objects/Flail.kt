@@ -74,9 +74,17 @@ public class Flail(mass:Double,
 
         if(GameApp.CurrentGame == null) return
 
-        canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
-        canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_FLAIL], src, dst, null)
+        if(GameApp.CurrentGame.SpritesLoaded) {
 
+            canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
+            canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_FLAIL], src, dst, null)
+        }else{
+            val p = Paint()
+            p.setColor(Color.WHITE)
+            p.setStyle(Paint.Style.STROKE)
+
+            canvas.drawCircle(mPosition.xf, mPosition.yf, mRadius.toFloat(), p)
+        }
         canvas.restoreToCount(saveCount)
     }
 }

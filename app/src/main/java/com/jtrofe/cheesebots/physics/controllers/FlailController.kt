@@ -111,15 +111,18 @@ public class FlailController(engine:Engine):Controller(engine){
             val point_of_collision = flail_position + (axis * flail.GetRadius())
             axis = axis * -result.overlap
 
-            val RESOLVE_FORCE = it.bot.GetMass()
+            val RESOLVE_FORCE = flail.GetMass()
+
+            val FLAIL_FORCE = RESOLVE_FORCE * (it.bot.GetMass() / (flail.GetMass() + it.bot.GetMass()))
+            val BOT_FORCE = RESOLVE_FORCE * (flail.GetMass() / (flail.GetMass() + it.bot.GetMass()))
 
             if(!flail.IsPlow)
-                flail.ApplyForce(axis * RESOLVE_FORCE, point_of_collision)
+                flail.ApplyImpulse(axis * FLAIL_FORCE, point_of_collision)
 
-            it.bot.ApplyForce(axis * -RESOLVE_FORCE, point_of_collision)
+            it.bot.ApplyImpulse(axis * -BOT_FORCE, point_of_collision)
 
             // Damage the bot
-            val DAMAGE_MULTIPLIER = 1.0 / 30.0
+            val DAMAGE_MULTIPLIER = 1.0 / 100.0
 
             val speed = flail.GetLinearVelocity().Length()
             val momentum = flail.GetMass() * speed
@@ -134,15 +137,15 @@ public class FlailController(engine:Engine):Controller(engine){
 
             if(speed > 10){
                 var v = Vec.Random(Vec(40, 40)) - Vec(20, 20)
-                var p = Particle(point_of_collision, v, Color.YELLOW, 50)
+                var p = Particle(point_of_collision, v, it.bot.MainColor, 50)
                 mEngine.AddBody(p)
 
                 v = Vec.Random(Vec(40, 40)) - Vec(20, 20)
-                p = Particle(point_of_collision, v, Color.YELLOW, 50)
+                p = Particle(point_of_collision, v, it.bot.MainColor, 50)
                 mEngine.AddBody(p)
 
                 v = Vec.Random(Vec(40, 40)) - Vec(20, 20)
-                p = Particle(point_of_collision, v, Color.RED, 50)
+                p = Particle(point_of_collision, v, it.bot.SecondaryColor, 50)
                 mEngine.AddBody(p)
             }
         }

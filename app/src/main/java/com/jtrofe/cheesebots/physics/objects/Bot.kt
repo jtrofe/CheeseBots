@@ -21,6 +21,11 @@ public class Bot(position: Vec, mass:Double,
         public val STATE_EATING:Int = 1
     }
 
+    public var MainColor:Int = Color.RED
+    public var SecondaryColor:Int = Color.YELLOW
+
+
+
     public var CurrentFrame:Double = 0.0
 
     public var State:Int = STATE_WALKING
@@ -177,6 +182,7 @@ public class Bot(position: Vec, mass:Double,
     }
 
     override fun Draw(canvas:Canvas){
+
         val src = getFrame();
         CurrentFrame += 0.2
 
@@ -191,7 +197,20 @@ public class Bot(position: Vec, mass:Double,
         canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
 
         if(GameApp.CurrentGame == null) return
-        canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[mSpriteSheetIndex], src, dst, null)
+
+        if(GameApp.CurrentGame.SpritesLoaded) {
+            canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[mSpriteSheetIndex], src, dst, null)
+        }else{
+            val p = Paint()
+            p.setColor(MainColor)
+            p.setStyle(Paint.Style.STROKE)
+
+            val wf = w.toFloat()
+            val hf = h.toFloat()
+
+            canvas.drawRect(mPosition.xf - wf, mPosition.yf - hf, mPosition.xf + wf, mPosition.yf + hf, p)
+
+        }
 
 
         canvas.restoreToCount(saveCount)

@@ -75,11 +75,13 @@ public class BotController(engine:Engine):Controller(engine){
         val rnd = Random()
 
         if(mEngine.Bodies.filter{ it.Type == GameObject.TYPE_PARTICLE }.size() < 100){
-            for(i in 0..20){
+
+            val particles = (b.GetMass() / 3).toInt()
+            for(i in 0..particles){
                 var v = Vec.Random(Vec(40, 40))
                 v = v - Vec(20, 20)
 
-                val c = if(rnd.nextBoolean()){ Color.YELLOW }else{ Color.RED }
+                val c = if(rnd.nextBoolean()){ b.SecondaryColor }else{ b.MainColor }
                 val p = Particle(b.GetPosition(), v, c, 40)
 
                 mEngine.AddBody(p)
@@ -115,7 +117,7 @@ public class BotController(engine:Engine):Controller(engine){
         var cheese_direction = Vec(1, 0)
         var goal_length = 10.0
 
-        val BACK_OFF_DISTANCE = b.GetBoundRadius() * 0.75
+        val BACK_OFF_DISTANCE = b.GetHalfHeight()
 
         cheeseList.forEach{
             val vector_to_center = it.GetPosition() - b.GetPosition()
@@ -137,9 +139,11 @@ public class BotController(engine:Engine):Controller(engine){
     }
 
     private fun attackCheese(b:Bot, c:closestCheese){
-        val EATING_DISTANCE = b.GetBoundRadius() / 2
 
-        if(c.goalLength < EATING_DISTANCE){
+        val cheese_vector = c.cheese.GetPosition() - b.GetPosition()
+
+
+        if(cheese_vector.Length() < c.cheese.GetRadius() + b.GetHalfHeight() + 10){
             c.cheese.Eat(b.GetEatingSpeed())
 
             if(b.State != Bot.STATE_EATING){

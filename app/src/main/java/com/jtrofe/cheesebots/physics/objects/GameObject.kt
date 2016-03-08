@@ -47,6 +47,10 @@ public abstract class GameObject(protected var mPosition:Vec,
     protected var mHalfWidth:Double = 0.0
     protected var mHalfHeight:Double = 0.0
 
+    public fun GetHalfHeight():Double{
+        return mHalfHeight
+    }
+
     public fun GetMass():Double{
         return mMass
     }

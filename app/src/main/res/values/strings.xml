@@ -13,18 +13,21 @@
     <!-- JSON values -->
     <string name="user_default_json">
         {
-            \'scrap\' : 0,
+            \"name\" : \"Kilroy\",
 
-            \'flails\' : [
+            \"scrap\" : 0,
+
+            \"flails\" : [
                     {
-                        \'frame\' : 0,
-                        \'radius\' : \'small\',
-                        \'mass\' : \'light\',
-                        \'plow\' : false,
-                        \'damage\' : 0,
+                        \"graphic\" : 0,
+                        \"radius\" : \"small\",
+                        \"mass\" : \"light\",
+                        \"k\" : \"medium\",
+                        \"plow\" : false,
+                        \"damage\" : 0
                     }
                 ],
-            \'selectedFlail\' : 0
+            \"selectedFlail\" : 0
         }
     </string>
     <string name="flail_default_mass">heavy</string>

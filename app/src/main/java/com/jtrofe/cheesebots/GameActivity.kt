@@ -16,6 +16,7 @@ import com.jtrofe.cheesebots.R
 import com.jtrofe.cheesebots.physics.PhysicsView
 import com.jtrofe.cheesebots.physics.Vec
 import java.util.ArrayList
+import kotlin.concurrent.thread
 
 
 public class GameActivity : Activity() {
@@ -58,9 +59,11 @@ public class GameActivity : Activity() {
 
         v = pView
 
-        val spriteSheets = SpriteHandler.GetSpriteSheets(this)
+        thread(true, block={
+            val spriteSheets = SpriteHandler.GetSpriteSheets(this)
 
-        v?.SetSpriteSheet(spriteSheets)
+            v?.SetSpriteSheet(spriteSheets)
+        })
 
         GameApp.CurrentGame.GameContext = this
 
@@ -69,7 +72,6 @@ public class GameActivity : Activity() {
         mMessageView = findViewById(R.id.messageText) as TextView
         mMessageView?.setText("")
 
-        System.out.println(GameApp.CurrentGame.IsComplete())
         if(GameApp.CurrentGame.IsComplete()){
             GameApp.CurrentGame.OnComplete()
         }

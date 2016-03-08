@@ -61,6 +61,7 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
 
     public fun SetSpriteSheet(spriteSheets:ArrayList<Bitmap>){
         mGame?.SpriteSheets = spriteSheets
+        mGame?.SpritesLoaded = true
     }
 
     private val surfaceCallback = object : SurfaceHolder.Callback {
@@ -118,22 +119,24 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         val touchPoint = Vec(event.getX(), event.getY())
         val action = event.getAction()
 
+
         when (action){
             MotionEvent.ACTION_DOWN -> {
                 mGame?.TouchPoint = translateCoordinates(touchPoint)
-                //mEngine?.TouchPoint = translateCoordinates(touchPoint)
+
+                mGame?.GetEngine()?.TouchPoint = translateCoordinates(touchPoint)
 
                 return true
             }
             MotionEvent.ACTION_UP -> {
                 mGame?.TouchPoint = Vec(-1, -1)
-                //mEngine?.TouchPoint = Vec(-1, -1)
 
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 mGame?.TouchPoint = translateCoordinates(touchPoint)
-                //mEngine?.TouchPoint = translateCoordinates(touchPoint)
+
+                mGame?.GetEngine()?.TouchPoint = translateCoordinates(touchPoint)
 
                 return true
             }

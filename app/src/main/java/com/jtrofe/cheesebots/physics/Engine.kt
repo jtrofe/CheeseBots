@@ -3,6 +3,7 @@ package com.jtrofe.cheesebots.physics
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import com.jtrofe.cheesebots.game.Game
 import com.jtrofe.cheesebots.physics.controllers.*
 import com.jtrofe.cheesebots.physics.objects.GameObject
@@ -12,13 +13,29 @@ import java.util.Random
 /**
  * Created by MAIN on 2/8/16.
  */
-public class Engine(public var WorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
+public class Engine(private var mWorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
+
+    public fun GetWorldSize():Vec{
+        return mWorldSize
+    }
+
+    public fun SetWorldSize(worldSize:Vec){
+        mWorldSize = worldSize
+
+        TouchPoint = Vec(worldSize.x * 0.3, worldSize.y * 0.5)
+    }
+
+    private var mArrowCount = 1000.0
+    public var TouchPoint:Vec = Vec()
+
+    public fun ResetTouchPoint(){
+        TouchPoint = Vec(mWorldSize.x * 0.3, mWorldSize.y * 0.5)
+    }
 
     public fun GetGame():Game{
         return mGame
     }
     private var mControllers = ArrayList<Controller>()
-
 
     // For jitter effects
     public val JitterController:JitterControl = JitterControl(this)
@@ -28,12 +45,13 @@ public class Engine(public var WorldSize:Vec = Vec(100.0, 100.0), private var mG
         mOffset = offset
     }
 
-    //var Initialized:Boolean = false
-    //var LevelComplete:Boolean = false
+    var CheeseAdded:Boolean = false
 
     var Bodies = ArrayList<GameObject>()
     var BodiesToAdd = ArrayList<GameObject>()
     var BodiesToRemove = ArrayList<GameObject>()
+
+
 
     init{
         mControllers.add(BotController(this))
@@ -55,6 +73,12 @@ public class Engine(public var WorldSize:Vec = Vec(100.0, 100.0), private var mG
         Bodies.addAll(BodiesToAdd)
 
         BodiesToAdd = ArrayList<GameObject>()
+
+        if(!CheeseAdded){
+            if(Bodies.filter{ it.Type == GameObject.TYPE_CHEESE }.size() != 0){
+                CheeseAdded = true
+            }
+        }
     }
 
     private fun removeWaiting(){
@@ -109,11 +133,65 @@ public class Engine(public var WorldSize:Vec = Vec(100.0, 100.0), private var mG
         val p = Paint()
         p.setStyle(Paint.Style.STROKE)
         p.setColor(Color.WHITE)
-        canvas.drawRect(50f, 50f, (WorldSize.x - 50).toFloat(), (WorldSize.y - 50).toFloat(), p)
+        canvas.drawRect(50f, 50f, (mWorldSize.x - 50).toFloat(), (mWorldSize.y - 50).toFloat(), p)
 
         Bodies.forEach { it.Draw(canvas) }
 
+        // Draw the TouchPoint
+        drawTouchPoint(canvas)
+
+
         canvas.restoreToCount(canvasCount)
+    }
+
+    private fun drawTouchPoint(canvas:Canvas){
+        if(mArrowCount <= 0) return
+
+        mArrowCount --
+
+        val alpha = (mArrowCount / 1000) * 255
+
+        val tp = TouchPoint
+
+        val paint = Paint()
+        paint.setStyle(Paint.Style.STROKE)
+        paint.setColor(Color.WHITE)
+        paint.setAlpha(alpha.toInt())
+
+        val MAX_LENGTH = 80f
+
+        val MIN_LENGTH = MAX_LENGTH * 0.7f
+        val MAX_WIDTH = 30f
+        val MIN_WIDTH = 15f
+        val p = Path()
+
+        p.moveTo(tp.xf - MAX_LENGTH, tp.yf)
+        p.lineTo(tp.xf - MIN_LENGTH, tp.yf + MAX_WIDTH)
+        p.lineTo(tp.xf - MIN_LENGTH, tp.yf + MIN_WIDTH)
+        p.lineTo(tp.xf - MIN_WIDTH, tp.yf + MIN_WIDTH)
+        p.lineTo(tp.xf - MIN_WIDTH, tp.yf + MIN_LENGTH)
+        p.lineTo(tp.xf - MAX_WIDTH, tp.yf + MIN_LENGTH)
+        p.lineTo(tp.xf, tp.yf + MAX_LENGTH)
+        p.lineTo(tp.xf + MAX_WIDTH, tp.yf + MIN_LENGTH)
+        p.lineTo(tp.xf + MIN_WIDTH, tp.yf + MIN_LENGTH)
+        p.lineTo(tp.xf + MIN_WIDTH, tp.yf + MIN_WIDTH)
+        p.lineTo(tp.xf + MIN_LENGTH, tp.yf + MIN_WIDTH)
+        p.lineTo(tp.xf + MIN_LENGTH, tp.yf + MAX_WIDTH)
+        p.lineTo(tp.xf + MAX_LENGTH, tp.yf)
+        p.lineTo(tp.xf + MIN_LENGTH, tp.yf - MAX_WIDTH)
+        p.lineTo(tp.xf + MIN_LENGTH, tp.yf - MIN_WIDTH)
+        p.lineTo(tp.xf + MIN_WIDTH, tp.yf - MIN_WIDTH)
+        p.lineTo(tp.xf + MIN_WIDTH, tp.yf - MIN_LENGTH)
+        p.lineTo(tp.xf + MAX_WIDTH, tp.yf - MIN_LENGTH)
+        p.lineTo(tp.xf, tp.yf - MAX_LENGTH)
+        p.lineTo(tp.xf - MAX_WIDTH, tp.yf - MIN_LENGTH)
+        p.lineTo(tp.xf - MIN_WIDTH, tp.yf - MIN_LENGTH)
+        p.lineTo(tp.xf - MIN_WIDTH, tp.yf - MIN_WIDTH)
+        p.lineTo(tp.xf - MIN_LENGTH, tp.yf - MIN_WIDTH)
+        p.lineTo(tp.xf - MIN_LENGTH, tp.yf - MAX_WIDTH)
+        p.lineTo(tp.xf - MAX_LENGTH, tp.yf)
+
+        canvas.drawPath(p, paint)
     }
 
     public inner class JitterControl(private val mEngine: Engine) {
