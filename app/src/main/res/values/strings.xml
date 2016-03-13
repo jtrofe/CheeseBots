@@ -2,35 +2,26 @@
 <resources>
 
     <string name="app_name">CheeseBots</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <!-- Menu strings -->
     <string name="button_play">Play</string>
-    <string name="button_inventory">Inventory (Inactive)</string>
+    <string name="button_inventory">Inventory</string>
     <string name="button_highscores">Highscores (Inactive)</string>
 
     <!-- JSON values -->
-    <string name="user_default_json">
-        {
-            \"name\" : \"Kilroy\",
-
-            \"scrap\" : 0,
-
-            \"flails\" : [
-                    {
-                        \"graphic\" : 0,
-                        \"radius\" : \"small\",
-                        \"mass\" : \"light\",
-                        \"k\" : \"medium\",
-                        \"plow\" : false,
-                        \"damage\" : 0
-                    }
-                ],
-            \"selectedFlail\" : 0
-        }
-    </string>
-    <string name="flail_default_mass">heavy</string>
+    <string name="flail_default_mass">large</string>
     <string name="flail_default_radius">small</string>
     <string name="flail_default_k">medium</string>
+
+
+    <!-- Inventory -->
+    <string name="inventory_label_scrap">Scrap:</string>
+    <string name="inventory_button_upgrade">Upgrade</string>
+    <string name="inventory_button_buy">Buy new</string>
+
+    <string name="flail_bowling">Bowling ball</string>
+    <string name="flail_info_mass">Weight</string>
+    <string name="flail_info_radius">Size</string>
+    <string name="flail_info_k">Spring strength</string>
 </resources>

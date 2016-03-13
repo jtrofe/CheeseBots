@@ -26,10 +26,10 @@ import android.view.animation.Animation
 import android.widget.TextView
 import com.jtrofe.cheesebots
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.game.Game
+import com.jtrofe.cheesebots.game.GameKotlin
 
-import com.jtrofe.cheesebots.physics.Engine
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.physics.EngineKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
 import com.jtrofe.cheesebots.physics.objects.*
 import java.util.ArrayList
 
@@ -38,8 +38,8 @@ import java.util.Random
 /**
 
  */
-public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
-
+public class PhysicsViewKotlin{//(context: Context) : SurfaceView(context), Runnable {
+/*
     private var mHolder: SurfaceHolder? = null
     private var mIsRunning = false
     private var mGameThread: Thread? = null
@@ -53,11 +53,11 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         return mIsLandscape
     }
 
-    private var mScreenSize:Vec = Vec(100.0, 100.0)
+    private var mScreenSize: VecKotlin = VecKotlin(100.0, 100.0)
 
 
     //private var mEngine: Engine? = null
-    private var mGame: Game? = null
+    private var mGame: GameKotlin? = null
 
     public fun SetSpriteSheet(spriteSheets:ArrayList<Bitmap>){
         mGame?.SpriteSheets = spriteSheets
@@ -70,7 +70,7 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             val screenWidth = Math.max(width, height)
             val screenHeight = Math.min(width, height)
-            mScreenSize = Vec(screenWidth, screenHeight)
+            mScreenSize = VecKotlin(screenWidth, screenHeight)
 
             mIsLandscape = (width > height)
 
@@ -88,7 +88,7 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         mHolder?.addCallback(surfaceCallback)
 
         if(GameApp.CurrentGame == null){
-            mGame = Game(this)
+            mGame = GameKotlin(this)
             GameApp.CurrentGame = mGame
         }else{
             mGame = GameApp.CurrentGame
@@ -102,7 +102,7 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
      * on the phone screen will have to be rotated to
      * be accurate
      */
-    private fun translateCoordinates(point:Vec): Vec {
+    private fun translateCoordinates(point: VecKotlin): VecKotlin {
         if (IsLandscape()) {
             return point.copy()
         }
@@ -112,11 +112,11 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         val nx = (mScreenSize.y / 2) + dy
         val ny = (mScreenSize.y / 2) - dx
 
-        return Vec(nx, ny)
+        return VecKotlin(nx, ny)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val touchPoint = Vec(event.getX(), event.getY())
+        val touchPoint = VecKotlin(event.getX(), event.getY())
         val action = event.getAction()
 
 
@@ -129,7 +129,7 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                mGame?.TouchPoint = Vec(-1, -1)
+                mGame?.TouchPoint = VecKotlin(-1, -1)
 
                 return true
             }
@@ -278,5 +278,5 @@ public class PhysicsView(context: Context) : SurfaceView(context), Runnable {
         private val MAX_FPS = 40 //desired fps
         private val FRAME_PERIOD = 1000 / MAX_FPS
     }
-
+*/
 }

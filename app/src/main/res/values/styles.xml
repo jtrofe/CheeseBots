@@ -5,4 +5,15 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="InventoryCheckBox">
+        <item name="android:layout_width">14dp</item>
+        <item name="android:layout_height">14dp</item>
+        <item name="android:background">@drawable/inventory_value_unchecked</item>
+    </style>
+    <style name="InventoryInfoLabel">
+        <item name="android:layout_toEndOf">@id/flailImage</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

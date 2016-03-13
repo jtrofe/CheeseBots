@@ -19,6 +19,7 @@ public class Storage{
 
         String userJSON = preferences.getString("user", USER_NOT_SET);
 
+
         return new User(userJSON);
     }
 

@@ -2,19 +2,19 @@ package com.jtrofe.cheesebots.physics.objects
 
 import android.graphics.*
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.SpriteHandler
+import com.jtrofe.cheesebots.SpriteHandlerKotlin
 import com.jtrofe.cheesebots.physics.AABB
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.physics.VecKotlin
 import java.util.ArrayList
 
 /**
  * Created by MAIN on 2/9/16.
  */
-public class Bot(position: Vec, mass:Double,
-                 val w:Int, val h:Int,
+public class BotKotlin{//(position: VecKotlin, mass:Double,
+    /*             val w:Int, val h:Int,
                  private val mEatingSpeed:Double,
                  private val mSpriteSheetIndex:Int,
-                 private val mTotalHealth:Double=100.0):GameObject(position, mass){
+                 private val mTotalHealth:Double=100.0): GameObjectKotlin(position, mass){
 
     companion object{
         public val STATE_WALKING:Int = 0
@@ -52,13 +52,13 @@ public class Bot(position: Vec, mass:Double,
     private var mImageWidth:Double = 0.0
     private var mImageHeight:Double = 0.0
 
-    public fun SetImageSize(v:Vec){
+    public fun SetImageSize(v: VecKotlin){
         mImageWidth = v.x
         mImageHeight = v.y
     }
 
     init{
-        Type = GameObject.TYPE_BOT
+        Type = GameObjectKotlin.TYPE_BOT
 
         mHalfWidth = w.toDouble ()/ 2
         mHalfHeight = h.toDouble ()/ 2
@@ -94,12 +94,12 @@ public class Bot(position: Vec, mass:Double,
         }
     }
 
-    public fun GetVertices(): ArrayList<Vec>{
+    public fun GetVertices(): ArrayList<VecKotlin>{
         val vx = mUnitX * mHalfWidth.toDouble()
         val vy = mUnitY * mHalfHeight.toDouble()
         val p = mPosition
 
-        val l = ArrayList<Vec>()
+        val l = ArrayList<VecKotlin>()
 
         l.add(p + vx + vy)
         l.add(p + vx - vy)
@@ -112,7 +112,7 @@ public class Bot(position: Vec, mass:Double,
     /**
      * Get the smallest AABB that contains the bot
      */
-    public fun GetBounds(): AABB{
+    /*public fun GetBounds(): AABB{
         val vertices = GetVertices()
 
         val minX = GameApp.min(vertices[0].x, vertices[1].x, vertices[2].x, vertices[3].x);
@@ -121,14 +121,14 @@ public class Bot(position: Vec, mass:Double,
         val maxY = GameApp.max(vertices[0].y, vertices[1].y, vertices[2].y, vertices[3].y);
 
         return AABB(Vec(minX, minY), Vec(maxX, maxY))
-    }
+    }*/
 
     /**
      * Apply torque to the bot to align the
      * unit vector y with some other unit vector
      * @param v Vector to align with
      */
-    public fun SteerToAlign(v:Vec){
+    public fun SteerToAlign(v: VecKotlin){
         val dp_y = v.Dot(mUnitY)
         val amount_oriented = 2 - ((dp_y * dp_y) + 1)
 
@@ -151,9 +151,9 @@ public class Bot(position: Vec, mass:Double,
     }
 
     private fun getFrame():Rect{
-        var frames:IntArray = SpriteHandler.WALK_FRAMES[mSpriteSheetIndex].clone()
+        var frames:IntArray = SpriteHandlerKotlin.WALK_FRAMES[mSpriteSheetIndex].clone()
 
-        if(State == STATE_EATING) frames = SpriteHandler.EAT_FRAMES[mSpriteSheetIndex].clone()
+        if(State == STATE_EATING) frames = SpriteHandlerKotlin.EAT_FRAMES[mSpriteSheetIndex].clone()
 
         if(CurrentFrame >= frames.size()) CurrentFrame = 0.0;
 
@@ -214,5 +214,5 @@ public class Bot(position: Vec, mass:Double,
 
 
         canvas.restoreToCount(saveCount)
-    }
+    }*/
 }

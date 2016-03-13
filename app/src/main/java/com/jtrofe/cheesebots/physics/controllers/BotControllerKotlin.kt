@@ -2,27 +2,27 @@ package com.jtrofe.cheesebots.physics.controllers
 
 import android.graphics.Color
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.physics.Engine
-import com.jtrofe.cheesebots.physics.Vec
-import com.jtrofe.cheesebots.physics.objects.Bot
-import com.jtrofe.cheesebots.physics.objects.Cheese
-import com.jtrofe.cheesebots.physics.objects.GameObject
-import com.jtrofe.cheesebots.physics.objects.Particle
+import com.jtrofe.cheesebots.physics.EngineKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
+import com.jtrofe.cheesebots.physics.objects.BotKotlin
+import com.jtrofe.cheesebots.physics.objects.CheeseKotlin
+import com.jtrofe.cheesebots.physics.objects.GameObjectKotlin
+import com.jtrofe.cheesebots.physics.objects.ParticleKotlin
 import java.util.ArrayList
 import java.util.Random
 
 /**
  * Direct bots towards cheese and make them eat it
  */
-public class BotController(engine:Engine):Controller(engine){
-
+public class BotControllerKotlin{//(engine: EngineKotlin): ControllerKotlin(engine){
+/*
     suppress("UNCHECKED_CAST")
     override fun Update(timeStep:Double){
-        val botList:List<Bot> = mEngine.Bodies.filter{ it.Type == GameObject.TYPE_BOT } as List<Bot>
+        val botList:List<BotKotlin> = mEngine.Bodies.filter{ it.Type == GameObjectKotlin.TYPE_BOT } as List<BotKotlin>
 
         if(botList.isEmpty()) return
 
-        val cheeseList = mEngine.Bodies.filter{ it.Type == GameObject.TYPE_CHEESE } as List<Cheese>
+        val cheeseList = mEngine.Bodies.filter{ it.Type == GameObjectKotlin.TYPE_CHEESE } as List<CheeseKotlin>
 
         if(cheeseList.isEmpty()){
             val position_sum = botList.map{ it -> it.GetPosition()}
@@ -31,7 +31,7 @@ public class BotController(engine:Engine):Controller(engine){
             val center_of_mass = position_sum / botList.size()
 
             botList.forEach {
-                it.State = Bot.STATE_WALKING
+                it.State = BotKotlin.STATE_WALKING
 
                 val from_center = it.GetPosition() - center_of_mass
 
@@ -67,22 +67,22 @@ public class BotController(engine:Engine):Controller(engine){
         }
     }
 
-    private fun checkHealth(b:Bot){
+    private fun checkHealth(b: BotKotlin){
         if(b.IsAlive()) return
 
         mEngine.RemoveBody(b)
 
         val rnd = Random()
 
-        if(mEngine.Bodies.filter{ it.Type == GameObject.TYPE_PARTICLE }.size() < 100){
+        if(mEngine.Bodies.filter{ it.Type == GameObjectKotlin.TYPE_PARTICLE }.size() < 100){
 
             val particles = (b.GetMass() / 3).toInt()
             for(i in 0..particles){
-                var v = Vec.Random(Vec(40, 40))
-                v = v - Vec(20, 20)
+                var v = VecKotlin.Random(VecKotlin(40, 40))
+                v = v - VecKotlin(20, 20)
 
                 val c = if(rnd.nextBoolean()){ b.SecondaryColor }else{ b.MainColor }
-                val p = Particle(b.GetPosition(), v, c, 40)
+                val p = ParticleKotlin(b.GetPosition(), v, c, 40)
 
                 mEngine.AddBody(p)
             }
@@ -93,8 +93,8 @@ public class BotController(engine:Engine):Controller(engine){
         mEngine.JitterController.StartJitter(20)
     }
 
-    private fun avoidObjects(b:Bot, objects:List<GameObject>){
-        var push_vec = Vec()
+    private fun avoidObjects(b: BotKotlin, objects:List<GameObjectKotlin>){
+        var push_vec = VecKotlin()
 
         // Only get objects that are within 100 of the bot
         objects.forEach {
@@ -111,10 +111,10 @@ public class BotController(engine:Engine):Controller(engine){
     }
 
 
-    private fun getNearestCheese(b:Bot, cheeseList:List<Cheese>):closestCheese{
+    private fun getNearestCheese(b: BotKotlin, cheeseList:List<CheeseKotlin>):closestCheese{
         var closest_distance = Double.MAX_VALUE
         var closest_cheese = cheeseList[0]
-        var cheese_direction = Vec(1, 0)
+        var cheese_direction = VecKotlin(1, 0)
         var goal_length = 10.0
 
         val BACK_OFF_DISTANCE = b.GetHalfHeight()
@@ -138,7 +138,7 @@ public class BotController(engine:Engine):Controller(engine){
         return closestCheese(closest_cheese, cheese_direction, goal_length)
     }
 
-    private fun attackCheese(b:Bot, c:closestCheese){
+    private fun attackCheese(b: BotKotlin, c:closestCheese){
 
         val cheese_vector = c.cheese.GetPosition() - b.GetPosition()
 
@@ -146,12 +146,12 @@ public class BotController(engine:Engine):Controller(engine){
         if(cheese_vector.Length() < c.cheese.GetRadius() + b.GetHalfHeight() + 10){
             c.cheese.Eat(b.GetEatingSpeed())
 
-            if(b.State != Bot.STATE_EATING){
-                b.State = Bot.STATE_EATING
+            if(b.State != BotKotlin.STATE_EATING){
+                b.State = BotKotlin.STATE_EATING
             }
         }else{
-            if(b.State != Bot.STATE_WALKING){
-                b.State = Bot.STATE_WALKING
+            if(b.State != BotKotlin.STATE_WALKING){
+                b.State = BotKotlin.STATE_WALKING
             }
         }
 
@@ -162,5 +162,5 @@ public class BotController(engine:Engine):Controller(engine){
         b.ApplyForceToCenter(force_vector.Clamp(MAX_FORCE_MAGNITUDE))
     }
 
-    data class closestCheese(val cheese: Cheese, val cheeseDirection:Vec, val goalLength:Double)
+    data class closestCheese(val cheese: CheeseKotlin, val cheeseDirection: VecKotlin, val goalLength:Double)*/
 }

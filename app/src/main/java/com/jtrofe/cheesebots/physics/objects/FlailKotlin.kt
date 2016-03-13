@@ -5,16 +5,16 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.SpriteHandler
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.SpriteHandlerKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
 
 /**
  * Created by MAIN on 2/9/16.
  */
-public class Flail(mass:Double,
-                   val mRadius:Double,
+public class FlailKotlin{//(mass:Double,
+     /*              val mRadius:Double,
                    val mK:Double
-                  ):GameObject(Vec(), mass){
+                  ): GameObjectKotlin(VecKotlin(), mass){
 
     public fun GetRadius():Double{
         return mRadius
@@ -24,13 +24,13 @@ public class Flail(mass:Double,
         return mK
     }
 
-    public var HandlePoint:Vec = Vec(-1, -1)
+    public var HandlePoint: VecKotlin = VecKotlin(-1, -1)
 
     public var IsPlow:Boolean = false
 
 
     init{
-        Type = GameObject.TYPE_FLAIL
+        Type = GameObjectKotlin.TYPE_FLAIL
 
         this.calculateMoment()
     }
@@ -55,7 +55,7 @@ public class Flail(mass:Double,
     override fun Draw(canvas:Canvas){
 
         if(!HandlePoint.x.equals(-1.0) || !HandlePoint.y.equals(-1.0)){
-            val attachPoint = LocalVectorToWorldVector(Vec(-mRadius, mRadius))
+            val attachPoint = LocalVectorToWorldVector(VecKotlin(-mRadius, mRadius))
 
             val HANDLE_WIDTH = 4f
             val p = Paint()
@@ -77,7 +77,7 @@ public class Flail(mass:Double,
         if(GameApp.CurrentGame.SpritesLoaded) {
 
             canvas.rotate(Math.toDegrees(mAngle).toFloat(), mPosition.xf, mPosition.yf)
-            canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_FLAIL], src, dst, null)
+            canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets[SpriteHandlerKotlin.SHEET_FLAIL], src, dst, null)
         }else{
             val p = Paint()
             p.setColor(Color.WHITE)
@@ -86,5 +86,5 @@ public class Flail(mass:Double,
             canvas.drawCircle(mPosition.xf, mPosition.yf, mRadius.toFloat(), p)
         }
         canvas.restoreToCount(saveCount)
-    }
+    }*/
 }

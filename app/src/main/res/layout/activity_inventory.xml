@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/inventory_layout_scrap"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/inventory_label_scrap"
+            android:text="@string/inventory_label_scrap"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/inventory_text_value_scrap"
+            android:layout_toStartOf="@+id/inventory_icon_scrap"
+            android:layout_centerVertical="true"
+            android:text="100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/inventory_icon_scrap"
+            android:src="@drawable/icon_scrap"
+            android:layout_marginStart="4dp"
+            android:layout_alignParentEnd="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+    </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rView"
+        android:layout_below="@+id/inventory_layout_scrap"
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <Button
+        android:id="@+id/inventory_button_upgrade"
+        android:text="@string/inventory_button_upgrade"
+        android:layout_below="@+id/rView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/inventory_button_buy"
+        android:text="@string/inventory_button_buy"
+        android:layout_below="@+id/inventory_button_upgrade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

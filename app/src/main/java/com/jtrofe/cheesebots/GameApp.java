@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.jtrofe.cheesebots.game.Game;
 import com.jtrofe.cheesebots.game.UserData.Storage;
@@ -24,6 +25,8 @@ public class GameApp extends Application {
         App = this;
 
         CurrentUser = Storage.LoadUser();
+
+        Log.d("User", CurrentUser.ToJSON());
     }
 
     public static double min(double... n){

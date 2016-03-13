@@ -2,16 +2,16 @@ package com.jtrofe.cheesebots.physics.objects
 
 import android.graphics.*
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.SpriteHandler
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.SpriteHandlerKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
 
 /**
  * Created by MAIN on 2/9/16.
  */
-public class Cheese(position:Vec,
-                    val mStartRadius:Double,
+public class CheeseKotlin{//(position: VecKotlin,
+    /*                val mStartRadius:Double,
                     val mStartAmount:Double = 100.0,
-                    val mCheeseType:Int = 0):GameObject(position){
+                    val mCheeseType:Int = 0): GameObjectKotlin(position){
 
     private var mAmountLeft:Double = mStartAmount
 
@@ -26,7 +26,7 @@ public class Cheese(position:Vec,
     }
 
     init{
-        Type = GameObject.TYPE_CHEESE
+        Type = GameObjectKotlin.TYPE_CHEESE
     }
 
     public fun Eat(amount:Double){
@@ -42,7 +42,7 @@ public class Cheese(position:Vec,
         if(GameApp.CurrentGame.SpritesLoaded) {
 
             // Get the bitmap for the cheese
-            var original = GameApp.CurrentGame.SpriteSheets[SpriteHandler.SHEET_CHEESE]
+            var original = GameApp.CurrentGame.SpriteSheets[SpriteHandlerKotlin.SHEET_CHEESE]
 
             // Create a mask bitmap
             //TODO replace getWidth and getHeight to cheese-specific values
@@ -83,5 +83,5 @@ public class Cheese(position:Vec,
 
             canvas.drawCircle(mPosition.xf, mPosition.yf, r, p)
         }
-    }
+    }*/
 }

@@ -13,15 +13,15 @@ import android.view.WindowManager
 import android.widget.*
 
 import com.jtrofe.cheesebots.R
-import com.jtrofe.cheesebots.physics.PhysicsView
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.physics.PhysicsViewKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
 import java.util.ArrayList
 import kotlin.concurrent.thread
 
 
-public class GameActivity : Activity() {
+public class GameActivityKotlin{//} : Activity() {
 
-    var v:PhysicsView? = null
+    /*var v: PhysicsViewKotlin? = null
 
     // UI junk
     private var mScoreView:TextView? = null
@@ -50,7 +50,7 @@ public class GameActivity : Activity() {
 
         setContentView(R.layout.activity_game)
 
-        val pView = PhysicsView(this)
+        val pView = PhysicsViewKotlin(this)
 
         val frame = findViewById(R.id.gameFrame) as FrameLayout
 
@@ -60,9 +60,10 @@ public class GameActivity : Activity() {
         v = pView
 
         thread(true, block={
-            val spriteSheets = SpriteHandler.GetSpriteSheets(this)
+            //val spriteSheets = SpriteHandler.GetSpriteSheets(this)
+            val spriteSheets = SpriteHandler.GetSpriteSheets()
 
-            v?.SetSpriteSheet(spriteSheets)
+            v?.SetSpriteSheet(spriteSheets.toArrayList())
         })
 
         GameApp.CurrentGame.GameContext = this
@@ -106,5 +107,5 @@ public class GameActivity : Activity() {
 
     public fun SetCompleteMessage(msg:String){
         runOnUiThread { mMessageView?.setText(msg) }
-    }
+    }*/
 }

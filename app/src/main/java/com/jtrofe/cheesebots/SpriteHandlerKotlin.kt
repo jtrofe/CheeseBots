@@ -5,14 +5,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
-import com.jtrofe.cheesebots.physics.Vec
-import com.jtrofe.cheesebots.physics.objects.Bot
+import com.jtrofe.cheesebots.physics.VecKotlin
+import com.jtrofe.cheesebots.physics.objects.BotKotlin
 import java.util.ArrayList
 
 /**
  * Created by MAIN on 2/17/16.
  */
-public class SpriteHandler(){
+public class SpriteHandlerKotlin(){
 
     companion object{
         public val SHEET_SMALL_BOT:Int = 0

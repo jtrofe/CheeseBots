@@ -25,6 +25,20 @@ public class User{
 
     private int mSelectedFlail = 0;
 
+    public int GetSelectedFlailIndex(){
+        return mSelectedFlail;
+    }
+
+    public int GetScrap(){
+        return mScrap;
+    }
+
+    public void SetSelectedFlailIndex(int index){
+        if(index < 0) index = 0;
+        if(index > mFlails.size() - 1) index = mFlails.size() - 1;
+        mSelectedFlail = index;
+    }
+
     public User(String json){
         try{
             JSONObject jsonObject = new JSONObject(json);
@@ -75,6 +89,10 @@ public class User{
         }
 
         mSelectedFlail = object.getInt("selectedFlail");
+    }
+
+    public List<UserFlail> GetAllFlails(){
+        return mFlails;
     }
 
     public Flail GetSelectedFlail(){

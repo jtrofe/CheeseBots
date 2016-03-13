@@ -8,26 +8,27 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 
-import com.jtrofe.cheesebots.physics.Vec
 
 
 public class MainActivity : Activity() {
-
-    var botsOnScreen: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        val button = findViewById(R.id.button_play) as Button
+        val playButton = findViewById(R.id.button_play) as Button
+        val inventoryButton = findViewById(R.id.button_inventory) as Button
 
-        button.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                startGame()
-            }
-        })
+        playButton.setOnClickListener { startGame() }
+        inventoryButton.setOnClickListener { openInventory() }
 
+    }
+
+    private fun openInventory(){
+        val intent = Intent(this, javaClass<InventoryActivity>())
+
+        startActivity(intent)
     }
 
     private fun startGame() {

@@ -16,24 +16,36 @@ import org.json.JSONObject;
 public class UserFlail{
 
     private int mGraphic = 0;
-    private String mRadius;
-    private String mMass;
-    private String mK;
+
+    private int mRadiusLevel;
+    private int mMassLevel;
+    private int mKLevel;
+
     private Boolean mPlow;
+
+    public int GetGraphic(){
+        return mGraphic;
+    }
+
+    public int GetMassLevel(){ return mMassLevel; }
+    public int GetRadiusLevel(){ return mRadiusLevel; }
+    public int GetKLevel(){ return mKLevel; }
 
     public String ToJSON(){
         return "{ \"graphic\" : \"" + mGraphic + "\", " +
-                "\"radius\" : \"" + mRadius + "\", " +
-                "\"mass\" : \"" + mMass + "\", " +
-                "\"k\" : \"" + mK + "\", " +
+                "\"radiusLevel\" : " + mRadiusLevel + ", " +
+                "\"massLevel\" : " + mMassLevel + ", " +
+                "\"kLevel\" : " + mKLevel + ", " +
                 "\"plow\" : " + mPlow + "}";
     }
 
     public void FromJSON(JSONObject object) throws JSONException{
         mGraphic = object.getInt("graphic");
-        mRadius = object.getString("radius");
-        mMass = object.getString("mass");
-        mK = object.getString("k");
+
+        mRadiusLevel = object.getInt("radiusLevel");
+        mMassLevel = object.getInt("massLevel");
+        mKLevel = object.getInt("kLevel");
+
         mPlow = object.getBoolean("plow");
     }
 
@@ -41,34 +53,62 @@ public class UserFlail{
         Resources resources = GameApp.App.getResources();
 
         mGraphic = 0;
-        mRadius = resources.getString(R.string.flail_default_radius);
-        mMass = resources.getString(R.string.flail_default_mass);
-        mK = resources.getString(R.string.flail_default_k);
+
+        mRadiusLevel = 0;
+        mMassLevel = 0;
+        mKLevel = 0;
+
         mPlow = false;
     }
 
     public Flail GetFlail(){
         Resources resources = GameApp.App.getResources();
-        String packageName = GameApp.App.getPackageName();
-
-        int id_mass = resources.getIdentifier("flail_mass_" + mMass, "raw", packageName);
-        int id_radius = resources.getIdentifier("flail_radius_" + mRadius, "raw", packageName);
-        int id_k = resources.getIdentifier("flail_k_" + mK, "raw", packageName);
 
         TypedValue out = new TypedValue();
 
-        resources.getValue(id_mass, out, true);
-        double FLAIL_MASS = (double) out.getFloat();
+        resources.getValue(R.raw.flail_mass_base, out, true);
+        double massBase = (double) out.getFloat();
+        resources.getValue(R.raw.flail_mass_multiplier, out, true);
+        double massMultiplier = (double) out.getFloat();
 
-        resources.getValue(id_radius, out, true);
-        double FLAIL_RADIUS = (double) out.getFloat();
+        resources.getValue(R.raw.flail_radius_base, out, true);
+        double radiusBase = (double) out.getFloat();
+        resources.getValue(R.raw.flail_radius_multiplier, out, true);
+        double radiusMultiplier = (double) out.getFloat();
 
-        resources.getValue(id_k, out, true);
-        double FLAIL_K = (double) out.getFloat();
+        resources.getValue(R.raw.flail_k_base, out, true);
+        double kBase = (double) out.getFloat();
+        resources.getValue(R.raw.flail_k_multiplier, out, true);
+        double kMultiplier = (double) out.getFloat();
 
-        Flail f = new Flail(FLAIL_MASS, FLAIL_RADIUS, FLAIL_K);
-        f.setIsPlow(mPlow);
+        double mass = massBase + (massMultiplier * mMassLevel);
+        double radius = radiusBase + (radiusMultiplier * mRadiusLevel);
+        double k = kBase + (kMultiplier * mKLevel);
+
+        Flail f = new Flail(mass, radius, k);
+        f.IsPlow = mPlow;
 
         return f;
+    }
+
+    public void UpgradeMass(){
+        mMassLevel ++;
+
+        //TODO change 0 to 2
+        if(mMassLevel > 2) mMassLevel = 0;
+    }
+
+    public void UpgradeRadius(){
+        mRadiusLevel ++;
+
+        //TODO change 0 to 2
+        if(mRadiusLevel > 2) mRadiusLevel = 0;
+    }
+
+    public void UpgradeK(){
+        mKLevel ++;
+
+        //TODO change 0 to 2
+        if(mKLevel > 2) mKLevel = 0;
     }
 }

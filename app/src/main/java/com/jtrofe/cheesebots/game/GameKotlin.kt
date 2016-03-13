@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import com.jtrofe.cheesebots.GameActivity
+import com.jtrofe.cheesebots.GameActivityKotlin
 import com.jtrofe.cheesebots.GameApp
-import com.jtrofe.cheesebots.SpriteHandler
-import com.jtrofe.cheesebots.physics.Engine
-import com.jtrofe.cheesebots.physics.PhysicsView
-import com.jtrofe.cheesebots.physics.Vec
+import com.jtrofe.cheesebots.SpriteHandlerKotlin
+import com.jtrofe.cheesebots.physics.EngineKotlin
+import com.jtrofe.cheesebots.physics.PhysicsViewKotlin
+import com.jtrofe.cheesebots.physics.VecKotlin
 import com.jtrofe.cheesebots.physics.objects.*
 import java.util.ArrayList
 import java.util.Random
@@ -18,16 +18,16 @@ import kotlin.concurrent.thread
 /**
  * Created by MAIN on 2/10/16.
  */
-open public class Game(private var mPhysicsView: PhysicsView){
-
-    private var mEngine:Engine? = null
+open public class GameKotlin{//(private var mPhysicsView: PhysicsViewKotlin){
+/*
+    private var mEngine: EngineKotlin? = null
     public var SpritesLoaded:Boolean = false
 
-    public fun GetEngine():Engine?{
+    public fun GetEngine(): EngineKotlin?{
         return mEngine
     }
 
-    public var TouchPoint:Vec = Vec(-1, -1)
+    public var TouchPoint: VecKotlin = VecKotlin(-1, -1)
 
     //
     // Game variables
@@ -46,7 +46,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
     private var mScreenHeight:Int = 0
     private var mLandscape:Boolean = true
 
-    public var GameContext:GameActivity? = null
+    public var GameContext: GameActivityKotlin? = null
 
 
 
@@ -63,7 +63,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
         return mLandscape
     }
 
-    public fun SetPhysicsView(physicsView:PhysicsView){
+    public fun SetPhysicsView(physicsView: PhysicsViewKotlin){
         mPhysicsView = physicsView
     }
 
@@ -72,7 +72,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
         mScreenHeight = Math.min(width, height)
 
         mLandscape = (width > height)
-        mEngine?.SetWorldSize(Vec(mScreenWidth, mScreenHeight))
+        mEngine?.SetWorldSize(VecKotlin(mScreenWidth, mScreenHeight))
     }
 
     public var SpriteSheets:List<Bitmap> = ArrayList()
@@ -82,7 +82,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
     private var mBotWeights = doubleArray(50.0, 0.0, 0.0, 0.0)
 
     init{
-        mEngine = Engine(Vec(1500, 500), this)
+        mEngine = EngineKotlin(VecKotlin(1500, 500), this)
     }
 
     open public fun Update(timeStep:Double){
@@ -92,7 +92,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
 
         mEngine?.Step(timeStep)
 
-        if(mEngine?.Bodies?.filter{ it.Type == GameObject.TYPE_CHEESE }?.size() == 0 && !mComplete
+        if(mEngine?.Bodies?.filter{ it.Type == GameObjectKotlin.TYPE_CHEESE }?.size() == 0 && !mComplete
             && mEngine!!.CheeseAdded){
             OnComplete()
         }
@@ -120,7 +120,7 @@ open public class Game(private var mPhysicsView: PhysicsView){
 
         val r = mEngine!!.GetWorldSize().y * 0.1
 
-        val c: Cheese = Cheese(cheesePos, r, 400.0)
+        val c: CheeseKotlin = CheeseKotlin(cheesePos, r, 400.0)
 
         mEngine?.AddBody(c)
 
@@ -166,30 +166,30 @@ open public class Game(private var mPhysicsView: PhysicsView){
             }
         }
 
-        var b:Bot
+        var b: BotKotlin
         when(randIndex){
             0 -> {
-                b = Bot(Vec(x, y), 50.0, 100, 60, 0.1, SpriteHandler.SHEET_SMALL_BOT)
+                b = BotKotlin(VecKotlin(x, y), 50.0, 100, 60, 0.1, SpriteHandlerKotlin.SHEET_SMALL_BOT)
                 b.MainColor = Color.parseColor("#FF9900")
                 b.SecondaryColor = Color.parseColor("#006745")
             }
             1 -> {
-                b = Bot(Vec(x, y), 80.0, 85, 100, 0.1, SpriteHandler.SHEET_MEDIUM_BOT, 300.0)
+                b = BotKotlin(VecKotlin(x, y), 80.0, 85, 100, 0.1, SpriteHandlerKotlin.SHEET_MEDIUM_BOT, 300.0)
                 b.MainColor = Color.parseColor("#463DB7")
                 b.SecondaryColor = Color.parseColor("#27AF82")
             }
             2 -> {
-                b = Bot(Vec(x, y), 200.0, 80, 220, 0.2, SpriteHandler.SHEET_LARGE_BOT, 500.0)
-                b.SetImageSize(Vec(124, 220))
+                b = BotKotlin(VecKotlin(x, y), 200.0, 80, 220, 0.2, SpriteHandlerKotlin.SHEET_LARGE_BOT, 500.0)
+                b.SetImageSize(VecKotlin(124, 220))
                 b.MainColor = Color.parseColor("#D46A6A")
             }
             3 -> {
-                b = Bot(Vec(x, y), 320.0, 162, 176, 0.4, SpriteHandler.SHEET_GIANT_BOT, 800.0)
-                b.SetImageSize(Vec(320, 325))
+                b = BotKotlin(VecKotlin(x, y), 320.0, 162, 176, 0.4, SpriteHandlerKotlin.SHEET_GIANT_BOT, 800.0)
+                b.SetImageSize(VecKotlin(320, 325))
                 b.MainColor = Color.parseColor("#F8F74E")
                 b.SecondaryColor = Color.parseColor("#2F187D")
             }
-            else -> b = Bot(Vec(x, y), 80.0, 85, 100, 0.1, SpriteHandler.SHEET_MEDIUM_BOT, 300.0)
+            else -> b = BotKotlin(VecKotlin(x, y), 80.0, 85, 100, 0.1, SpriteHandlerKotlin.SHEET_MEDIUM_BOT, 300.0)
         }
 
         mBotWeights[1] += 0.05
@@ -208,5 +208,5 @@ open public class Game(private var mPhysicsView: PhysicsView){
         if(mBotsDestroyed % 50 == 0){
             addBot()
         }
-    }
+    }*/
 }

@@ -4,78 +4,78 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import com.jtrofe.cheesebots.game.Game
+import com.jtrofe.cheesebots.game.GameKotlin
 import com.jtrofe.cheesebots.physics.controllers.*
-import com.jtrofe.cheesebots.physics.objects.GameObject
+import com.jtrofe.cheesebots.physics.objects.GameObjectKotlin
 import java.util.ArrayList
 import java.util.Random
 
 /**
  * Created by MAIN on 2/8/16.
  */
-public class Engine(private var mWorldSize:Vec = Vec(100.0, 100.0), private var mGame: Game){
-
-    public fun GetWorldSize():Vec{
+public class EngineKotlin{//(private var mWorldSize: VecKotlin = VecKotlin(100.0, 100.0), private var mGame: GameKotlin){
+/*
+    public fun GetWorldSize(): VecKotlin {
         return mWorldSize
     }
 
-    public fun SetWorldSize(worldSize:Vec){
+    public fun SetWorldSize(worldSize: VecKotlin){
         mWorldSize = worldSize
 
-        TouchPoint = Vec(worldSize.x * 0.3, worldSize.y * 0.5)
+        TouchPoint = VecKotlin(worldSize.x * 0.3, worldSize.y * 0.5)
     }
 
     private var mArrowCount = 1000.0
-    public var TouchPoint:Vec = Vec()
+    public var TouchPoint: VecKotlin = VecKotlin()
 
     public fun ResetTouchPoint(){
-        TouchPoint = Vec(mWorldSize.x * 0.3, mWorldSize.y * 0.5)
+        TouchPoint = VecKotlin(mWorldSize.x * 0.3, mWorldSize.y * 0.5)
     }
 
-    public fun GetGame():Game{
+    public fun GetGame(): GameKotlin {
         return mGame
     }
-    private var mControllers = ArrayList<Controller>()
+    private var mControllers = ArrayList<ControllerKotlin>()
 
     // For jitter effects
     public val JitterController:JitterControl = JitterControl(this)
-    private var mOffset = Vec()
+    private var mOffset = VecKotlin()
 
-    public fun SetOffset(offset: Vec) {
+    public fun SetOffset(offset: VecKotlin) {
         mOffset = offset
     }
 
     var CheeseAdded:Boolean = false
 
-    var Bodies = ArrayList<GameObject>()
-    var BodiesToAdd = ArrayList<GameObject>()
-    var BodiesToRemove = ArrayList<GameObject>()
+    var Bodies = ArrayList<GameObjectKotlin>()
+    var BodiesToAdd = ArrayList<GameObjectKotlin>()
+    var BodiesToRemove = ArrayList<GameObjectKotlin>()
 
 
 
     init{
-        mControllers.add(BotController(this))
-        mControllers.add(CheeseController(this))
-        mControllers.add(FlailController(this))
-        mControllers.add(ParticleController(this))
+        mControllers.add(BotControllerKotlin(this))
+        mControllers.add(CheeseControllerKotlin(this))
+        mControllers.add(FlailControllerKotlin(this))
+        mControllers.add(ParticleControllerKotlin(this))
     }
 
 
-    public fun AddBody(obj:GameObject){
+    public fun AddBody(obj: GameObjectKotlin){
         BodiesToAdd.add(obj)
     }
 
-    public fun RemoveBody(obj:GameObject){
+    public fun RemoveBody(obj: GameObjectKotlin){
         BodiesToRemove.add(obj)
     }
 
     private fun addWaiting(){
         Bodies.addAll(BodiesToAdd)
 
-        BodiesToAdd = ArrayList<GameObject>()
+        BodiesToAdd = ArrayList<GameObjectKotlin>()
 
         if(!CheeseAdded){
-            if(Bodies.filter{ it.Type == GameObject.TYPE_CHEESE }.size() != 0){
+            if(Bodies.filter{ it.Type == GameObjectKotlin.TYPE_CHEESE }.size() != 0){
                 CheeseAdded = true
             }
         }
@@ -84,7 +84,7 @@ public class Engine(private var mWorldSize:Vec = Vec(100.0, 100.0), private var 
     private fun removeWaiting(){
         Bodies.removeAll(BodiesToRemove)
 
-        BodiesToRemove = ArrayList<GameObject>()
+        BodiesToRemove = ArrayList<GameObjectKotlin>()
     }
 
     private fun resetForces(){
@@ -194,7 +194,7 @@ public class Engine(private var mWorldSize:Vec = Vec(100.0, 100.0), private var 
         canvas.drawPath(p, paint)
     }
 
-    public inner class JitterControl(private val mEngine: Engine) {
+    public inner class JitterControl(private val mEngine: EngineKotlin) {
         private var mCountdownStart = 0
         private var mCountdown = 0
 
@@ -231,15 +231,15 @@ public class Engine(private var mWorldSize:Vec = Vec(100.0, 100.0), private var 
                 val dx = Math.sin(angle)
                 val dy = -Math.cos(angle)
 
-                val offset = Vec(dx * jitter_amount, dy * jitter_amount)
+                val offset = VecKotlin(dx * jitter_amount, dy * jitter_amount)
 
                 mEngine.SetOffset(offset)
 
                 mCountdown --
             } else {
-                mEngine.SetOffset(Vec())
+                mEngine.SetOffset(VecKotlin())
             }
         }
     }
-
+*/
 }
