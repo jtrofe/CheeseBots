@@ -142,15 +142,15 @@ public class FlailController extends Controller{
 
             if(speed > 10){
                 Vec v = Vec.RandomDir(20);
-                Particle p = new Particle(point_of_collision, v, m.bot.MainColor, 50);
+                Particle p = new Particle(point_of_collision, v, m.bot.GetMainColor(), 50);
                 mEngine.AddBody(p);
 
                 v = Vec.RandomDir(20);
-                p = new Particle(point_of_collision, v, m.bot.MainColor, 50);
+                p = new Particle(point_of_collision, v, m.bot.GetSecondaryColor(), 50);
                 mEngine.AddBody(p);
 
                 v = Vec.RandomDir(20);
-                p = new Particle(point_of_collision, v, m.bot.SecondaryColor, 50);
+                p = new Particle(point_of_collision, v, m.bot.GetTernaryColor(), 50);
                 mEngine.AddBody(p);
             }
         }

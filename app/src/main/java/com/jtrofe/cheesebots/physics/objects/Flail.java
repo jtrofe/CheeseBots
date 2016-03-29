@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.jtrofe.cheesebots.GameApp;
-import com.jtrofe.cheesebots.SpriteHandler;
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.Vec;
 
 /**

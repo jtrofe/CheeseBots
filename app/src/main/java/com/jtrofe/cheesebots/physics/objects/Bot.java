@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.jtrofe.cheesebots.GameApp;
-import com.jtrofe.cheesebots.SpriteHandler;
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.Vec;
 
 import java.util.ArrayList;
@@ -20,8 +20,39 @@ public class Bot extends GameObject{
     public static final int STATE_WALKING = 0;
     public static final int STATE_EATING = 1;
 
-    public int MainColor = Color.RED;
-    public int SecondaryColor = Color.YELLOW;
+    private int mMainColor = Color.RED;
+    private int mSecondaryColor = Color.YELLOW;
+    private int mTernaryColor = Color.BLUE;
+    private int fillColor;
+
+    public int GetMainColor(){ return mMainColor; }
+    public int GetSecondaryColor(){ return mSecondaryColor; }
+    public int GetTernaryColor(){ return mTernaryColor; }
+
+    public void SetMainColor(int color){
+        mMainColor = color;
+        setFillColor();
+    }
+
+    public void SetSecondaryColor(int color){
+        mSecondaryColor = color;
+        setFillColor();
+    }
+
+    public void SetTernaryColor(int color){
+        mTernaryColor = color;
+        setFillColor();
+    }
+
+    private void setFillColor(){
+        if(System.currentTimeMillis() % 3 == 0){
+            fillColor = mMainColor;
+        }else if(System.currentTimeMillis() % 2 == 0){
+            fillColor = mSecondaryColor;
+        }else{
+            fillColor = mTernaryColor;
+        }
+    }
 
     public double CurrentFrame = 0;
 
@@ -75,6 +106,8 @@ public class Bot extends GameObject{
         mTotalHealth = totalHealth;
         mHealthPoints = totalHealth;
     }
+
+
 
     public Bot(Vec position, double mass, int w, int h, double eatingSpeed, int spriteSheetIndex){
         this(position, mass, w, h, eatingSpeed, spriteSheetIndex, 100);
@@ -181,13 +214,13 @@ public class Bot extends GameObject{
         if(GameApp.CurrentGame.SpritesLoaded){
             canvas.drawBitmap(GameApp.CurrentGame.SpriteSheets.get(mSpriteSheetIndex), src, dst, null);
         }else{
-            SpriteHandler.PAINT.setColor(MainColor);
-            SpriteHandler.PAINT.setStyle(Paint.Style.STROKE);
+            SpriteHandler.PAINT.setColor(fillColor);
+            SpriteHandler.PAINT.setStyle(Paint.Style.FILL);
 
             float wf = (float) w;
             float hf = (float) h;
 
-            canvas.drawRect(mPosition.xf() - wf, mPosition.yf() - hf, mPosition.xf() + wf,
+            canvas.drawOval(mPosition.xf() - wf, mPosition.yf() - hf, mPosition.xf() + wf,
                     mPosition.yf() + hf, SpriteHandler.PAINT);
         }
 

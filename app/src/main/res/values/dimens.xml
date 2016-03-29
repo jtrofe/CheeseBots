@@ -16,4 +16,11 @@
 
     <item name="flail_k_base" format="float" type="raw" >0.5</item>
     <item name="flail_k_multiplier" format="float" type="raw" >0.4</item>
+
+    <!-- Cheese values -->
+    <item name="cheese_radius_base" format="float" type="raw">50</item>
+    <item name="cheese_radius_multiplier" format="float" type="raw">30</item>
+
+    <item name="cheese_density_base" format="float" type="raw">0.012732</item>
+    <item name="cheese_density_multiplier" format="float" type="raw">0.001</item>
 </resources>

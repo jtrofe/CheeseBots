@@ -89,7 +89,8 @@ public class BotController extends Controller{
             for(int i=0;i<particleCount;i++){
                 Vec v = Vec.RandomDir(20);
 
-                int color = rnd.nextBoolean() ? b.SecondaryColor : b.MainColor;
+                int color = rnd.nextBoolean() ? b.GetSecondaryColor() : b.GetTernaryColor();
+                if(rnd.nextBoolean()) color = b.GetMainColor();
 
                 Particle p = new Particle(b.GetPosition(), v, color, 40);
 

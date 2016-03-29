@@ -3,11 +3,9 @@ package com.jtrofe.cheesebots.game;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.util.Log;
 
 import com.jtrofe.cheesebots.GameActivity;
 import com.jtrofe.cheesebots.GameApp;
-import com.jtrofe.cheesebots.SpriteHandler;
 import com.jtrofe.cheesebots.physics.Engine;
 import com.jtrofe.cheesebots.physics.PhysicsView;
 import com.jtrofe.cheesebots.physics.Vec;
@@ -80,7 +78,7 @@ public class Game {
 
     public List<Bitmap> SpriteSheets = new ArrayList<>();
 
-    private double[] mBotWeights = new double[]{ 50.0, 0.0, 0.0, 0.0};
+    private double[] mBotWeights = new double[]{ 20.0, 0.0, 0.0, 0.0};
 
     public Game(PhysicsView physicsView){
         mPhysicsView = physicsView;
@@ -124,7 +122,8 @@ public class Game {
 
         double radius = mEngine.GetWorldSize().y * 0.1;
 
-        Cheese c = new Cheese(cheesePos, radius, 400.0);
+        Cheese c = new Cheese(0, radius, 400.0);
+        c.SetPosition(cheesePos);
 
         mEngine.AddBody(c);
 
@@ -161,7 +160,8 @@ public class Game {
         int randIndex = -1;
         double rand = rnd.nextDouble() * totalWeight;
 
-        for(int i=0;i<mBotWeights.length-1;i++){
+
+        for(int i=0;i<mBotWeights.length;i++){
             rand -= mBotWeights[i];
 
             if(rand <= 0){
@@ -176,29 +176,34 @@ public class Game {
         switch(randIndex){
             case 0:
                 b = new Bot(pos, 50.0, 100, 60, 0.1, SpriteHandler.SHEET_SMALL_BOT);
-                b.MainColor = Color.parseColor("#FF9900");
-                b.SecondaryColor = Color.parseColor("#006745");
+                b.SetMainColor(Color.parseColor("#FF9900"));
+                b.SetSecondaryColor(Color.parseColor("#006745"));
+                b.SetTernaryColor(Color.parseColor("#665EC5"));
                 break;
             case 1:
                 b = new Bot(pos, 80.0, 85, 100, 0.1, SpriteHandler.SHEET_MEDIUM_BOT, 300.0);
-                b.MainColor = Color.parseColor("#463DB7");
-                b.SecondaryColor = Color.parseColor("#27AF82");
+                b.SetMainColor(Color.parseColor("#463DB7"));
+                b.SetSecondaryColor(Color.parseColor("#27AF82"));
+                b.SetTernaryColor(Color.parseColor("#4BBF99"));
                 break;
             case 2:
                 b = new Bot(pos, 200, 80, 220, 0.2, SpriteHandler.SHEET_LARGE_BOT, 500.0);
                 b.SetImageSize(new Vec(124, 220));
-                b.MainColor = Color.parseColor("#D46A6A");
+                b.SetMainColor(Color.parseColor("#D46A6A"));
+                b.SetTernaryColor(Color.parseColor("#801515"));
                 break;
             case 3:
                 b = new Bot(pos, 320, 162, 176, 0.4, SpriteHandler.SHEET_GIANT_BOT, 800.0);
                 b.SetImageSize(new Vec(320, 325));
-                b.MainColor = Color.parseColor("#F8F74E");
-                b.SecondaryColor = Color.parseColor("#2F187D");
+                b.SetMainColor(Color.parseColor("#F8F74E"));
+                b.SetSecondaryColor(Color.parseColor("#2F187D"));
+                b.SetTernaryColor(Color.parseColor("#E78EC2"));
                 break;
             default:
                 b = new Bot(pos, 50.0, 100, 60, 0.1, SpriteHandler.SHEET_SMALL_BOT);
-                b.MainColor = Color.parseColor("#FF9900");
-                b.SecondaryColor = Color.parseColor("#006745");
+                b.SetMainColor(Color.parseColor("#FF9900"));
+                b.SetSecondaryColor(Color.parseColor("#006745"));
+                b.SetTernaryColor(Color.parseColor("#665EC5"));
                 break;
         }
 
@@ -212,10 +217,11 @@ public class Game {
     }
 
     public void OnBotDestroyed(){
-        mBotsDestroyed ++;
-
         addBot();
 
+        if(mComplete) return;
+
+        mBotsDestroyed ++;
         if(mBotsDestroyed % 50 == 0) addBot();
     }
 }

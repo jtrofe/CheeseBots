@@ -1,9 +1,12 @@
-package com.jtrofe.cheesebots;
+package com.jtrofe.cheesebots.game;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+
+import com.jtrofe.cheesebots.GameApp;
+import com.jtrofe.cheesebots.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +62,7 @@ public class SpriteHandler {
 
         sheetList.add(fetchSpriteSheet(resources, R.raw.flail_frames, 300, 100));
 
-        sheetList.add(fetchSpriteSheet(resources, R.raw.cheese_frames, 300, 300));
+        sheetList.add(fetchSpriteSheet(resources, R.raw.cheese_frames, 600, 300));
 
         return sheetList;
     }

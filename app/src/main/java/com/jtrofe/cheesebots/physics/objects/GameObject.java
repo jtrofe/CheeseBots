@@ -3,7 +3,7 @@ package com.jtrofe.cheesebots.physics.objects;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
-import com.jtrofe.cheesebots.SpriteHandler;
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.Vec;
 
 /**

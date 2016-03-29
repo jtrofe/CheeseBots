@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.PhysicsView;
 
 import java.util.List;

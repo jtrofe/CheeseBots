@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots.inventory;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -9,8 +10,6 @@ import android.widget.FrameLayout;
 import com.jtrofe.cheesebots.R;
 import com.jtrofe.cheesebots.game.UserData.Storage;
 import com.jtrofe.cheesebots.game.UserData.UserFlail;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by MAIN on 3/10/16
@@ -65,7 +64,7 @@ public class UpgradeView extends FrameLayout implements View.OnClickListener{
     }
 
     @Override
-    public void onClick(@NotNull View v){
+    public void onClick(@NonNull View v){
         String tag = v.getTag().toString();
 
         if(mFlail == null) return;

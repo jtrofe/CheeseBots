@@ -50,8 +50,6 @@ public class UserFlail{
     }
 
     public void LoadDefault(){
-        Resources resources = GameApp.App.getResources();
-
         mGraphic = 0;
 
         mRadiusLevel = 0;

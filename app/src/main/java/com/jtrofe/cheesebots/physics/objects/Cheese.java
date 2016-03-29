@@ -9,13 +9,15 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 
 import com.jtrofe.cheesebots.GameApp;
-import com.jtrofe.cheesebots.SpriteHandler;
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.Vec;
 
 /**
  * Created by MAIN on 3/12/16
  */
 public class Cheese extends GameObject{
+
+    private int mGraphicIndex;
 
     private double mStartRadius;
     private double mRadius;
@@ -31,9 +33,14 @@ public class Cheese extends GameObject{
         return mRadius;
     }
 
-    public Cheese(Vec position, double startRadius, double startAmount){
-        super(position);
+    public void SetPosition(Vec position){
+        mPosition = position.copy();
+    }
 
+    public Cheese(int graphicIndex, double startRadius, double startAmount){
+        super(new Vec());
+
+        mGraphicIndex = graphicIndex;
         mStartRadius = startRadius;
         mRadius = mStartRadius;
 
@@ -60,20 +67,25 @@ public class Cheese extends GameObject{
 
             // Create a mask bitmap
             //TODO replace getWidth and getHeight to cheese-specific values
-            Bitmap mask = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+            int bitmapSize = 300;
+            Bitmap mask = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888);
 
             // Get the current radius of cheese relating to the size of the source bitmap and draw the circle
             float p = (float) (mAmountLeft / mStartAmount);
-            float bitmapRadius = (original.getWidth() * p) / 2f;
-            float center = original.getWidth() / 2f;
+            float bitmapRadius = (bitmapSize * p) / 2f;
+            float center = bitmapSize / 2f;
             new Canvas(mask).drawCircle(center, center, bitmapRadius, new Paint());
 
             // Create a bitmap that will contain the complete cheese image
-            Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+            Bitmap result = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888);
 
             // Draw the original cheese bitmap, then mask it
+            int left = mGraphicIndex * bitmapSize;
             Canvas tempCanvas = new Canvas(result);
-            tempCanvas.drawBitmap(original, 0f, 0f, null);
+            Rect tempSrc = new Rect(left, 0, left + bitmapSize, bitmapSize);
+            Rect tempDst = new Rect(0, 0, bitmapSize, bitmapSize);
+            tempCanvas.drawBitmap(original, tempSrc, tempDst, null);
+            //tempCanvas.drawBitmap(original, 0f, 0f, null);
 
 
             SpriteHandler.PAINT.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
@@ -83,14 +95,28 @@ public class Cheese extends GameObject{
 
             //TODO replace 300 with cheese-specific dimensions
             int sr = (int) mStartRadius;
-            Rect src = new Rect(0, 0, 300, 300);
+            Rect src = new Rect(0, 0, bitmapSize, bitmapSize);
             Rect dst = new Rect(mPosition.xi() - sr, mPosition.yi() - sr,
                     mPosition.xi() + sr, mPosition.yi() + sr);
 
 
             canvas.drawBitmap(result, src, dst, null);
+
         }else{
-            SpriteHandler.PAINT.setColor(Color.YELLOW);
+            String colorString;
+            switch(mGraphicIndex){
+                case 0:
+                    colorString = "#ECDFBF";
+                    break;
+                case 1:
+                    colorString = "#FFDD75";
+                    break;
+                default:
+                    colorString = "#ECDFBF";
+
+            }
+            SpriteHandler.PAINT.setColor(Color.parseColor(colorString));
+            SpriteHandler.PAINT.setStyle(Paint.Style.FILL);
 
             canvas.drawCircle(mPosition.xf(), mPosition.yf(), (float) mRadius, SpriteHandler.PAINT);
         }

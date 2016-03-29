@@ -4,9 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 
-import com.jtrofe.cheesebots.SpriteHandler;
+import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.game.Game;
 import com.jtrofe.cheesebots.physics.controllers.BotController;
 import com.jtrofe.cheesebots.physics.controllers.CheeseController;
@@ -143,7 +142,6 @@ public class Engine {
         addWaiting();
         removeWaiting();
     }
-
 
     /**
      * Draw the current state
