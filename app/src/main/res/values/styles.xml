@@ -5,6 +5,19 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <!-- Inventory styles -->
+    <style name="InventoryButton">
+        <item name="android:textColor">@color/inventory_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/inventory_button</item>
+    </style>
+    <style name="InventoryGaugeView">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
     <style name="InventoryCheckBox">
         <item name="android:layout_width">14dp</item>
         <item name="android:layout_height">14dp</item>
@@ -15,5 +28,24 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Upgrade dialog styles -->
+    <style name="Upgrade">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="Upgrade.Label" parent="Upgrade">
+        <item name="android:textColor">@color/inventory_text_color</item>
+    </style>
+    <style name="Upgrade.GaugeView" parent="Upgrade">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginEnd">20dp</item>
+    </style>
+    <style name="Upgrade.Button" parent="Upgrade">
+        <item name="android:background">@drawable/inventory_button</item>
+        <item name="android:src">@android:drawable/ic_input_add</item>
+        <item name="android:tint">@color/inventory_text_color</item>
+        <item name="android:visibility">invisible</item>
     </style>
 </resources>

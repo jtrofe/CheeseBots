@@ -48,14 +48,6 @@ public class User{
 
             FromJSON(jsonObject);
 
-
-            UserFlail f = new UserFlail();
-            f.LoadDefault();
-            mFlails.add(f);
-            f = new UserFlail();
-            f.LoadDefault();
-            mFlails.add(f);
-
             Log.i("Storage", "User loaded successfully");
         }catch(JSONException e){
             mName = "Kilroy";

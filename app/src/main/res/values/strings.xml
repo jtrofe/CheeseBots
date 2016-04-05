@@ -24,4 +24,7 @@
     <string name="flail_info_mass">Weight</string>
     <string name="flail_info_radius">Size</string>
     <string name="flail_info_k">Spring strength</string>
+
+        <!-- Upgrade flail dialog -->
+    <string name="upgrade_flail_dialog_title">Upgrade Flail</string>
 </resources>

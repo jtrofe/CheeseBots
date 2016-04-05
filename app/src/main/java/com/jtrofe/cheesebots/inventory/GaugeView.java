@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.jtrofe.cheesebots.R;
+import com.jtrofe.cheesebots.game.UserData.UserFlail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,6 @@ import java.util.List;
  * Created by MAIN on 3/8/16
  */
 public class GaugeView extends LinearLayout{
-
-    private static int POINT_COUNT = 3;
 
     private List<ImageView> mBoxes;
 
@@ -33,12 +32,16 @@ public class GaugeView extends LinearLayout{
     public GaugeView(Context context, AttributeSet attrs, int defStyleAttrs){
         super(context, attrs, defStyleAttrs);
 
+        if(isInEditMode()) return;
+
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         this.setOrientation(HORIZONTAL);
 
         mBoxes = new ArrayList<>();
 
-        for(int i=0;i<POINT_COUNT;i++){
+        int pointCount = UserFlail.MAX_UPGRADE_LEVEL;
+
+        for(int i=0;i<pointCount;i++){
             ImageView v = (ImageView) inflater.inflate(R.layout.inventory_check_box, this, false);
             this.addView(v);
 
@@ -48,7 +51,9 @@ public class GaugeView extends LinearLayout{
     }
 
     public void SetGauge(int value){
-        for(int i=0;i<POINT_COUNT;i++){
+        int pointCount = UserFlail.MAX_UPGRADE_LEVEL;
+
+        for(int i=0;i<pointCount;i++){
             ImageView v = mBoxes.get(i);
 
             v.setBackgroundResource(R.drawable.inventory_value_unchecked);

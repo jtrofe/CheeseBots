@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/inventory_background"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:background="@color/inventory_light_background"
+        android:layout_alignTop="@+id/upgrade_content"
+        android:layout_alignBottom="@id/upgrade_content"
+        android:layout_alignStart="@id/upgrade_content"
+        android:layout_alignEnd="@id/upgrade_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/upgrade_content"
+        android:background="@drawable/inventory_border"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/upgrade_title"
+            android:layout_alignTop="@+id/upgrade_label_scrap"
+            android:layout_alignBottom="@+id/upgrade_label_scrap"
+            android:gravity="center_vertical"
+            android:text="Upgrade Flail"
+            style="@style/Upgrade.Label"/>
+
+        <include layout="@layout/label_scrap"
+            android:layout_toEndOf="@id/upgrade_title"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/upgrade_label_scrap" />
+
+
+        <RelativeLayout
+            android:id="@+id/upgrade_layout_mass"
+            android:layout_below="@id/upgrade_label_scrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/upgrade_mass_label"
+                android:text="Mass"
+                style="@style/Upgrade.Label"/>
+
+            <com.jtrofe.cheesebots.inventory.GaugeView
+                android:id="@+id/upgrade_mass_gauge"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/upgrade_mass_button"
+                android:layout_alignBottom="@id/upgrade_mass_button"
+                style="@style/Upgrade.GaugeView" />
+
+            <ImageButton
+                android:id="@+id/upgrade_mass_button"
+                android:layout_below="@id/upgrade_mass_label"
+                android:layout_toEndOf="@id/upgrade_mass_gauge"
+                style="@style/Upgrade.Button" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/upgrade_layout_radius"
+            android:layout_below="@+id/upgrade_layout_mass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/upgrade_radius_label"
+                android:text="Size"
+                style="@style/Upgrade.Label"/>
+
+            <com.jtrofe.cheesebots.inventory.GaugeView
+                android:id="@+id/upgrade_radius_gauge"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/upgrade_radius_button"
+                android:layout_alignBottom="@id/upgrade_radius_button"
+                style="@style/Upgrade.GaugeView" />
+
+            <ImageButton
+                android:id="@+id/upgrade_radius_button"
+                android:layout_below="@id/upgrade_radius_label"
+                android:layout_toEndOf="@+id/upgrade_radius_gauge"
+                style="@style/Upgrade.Button" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/upgrade_layout_k"
+            android:layout_below="@id/upgrade_layout_radius"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/upgrade_k_label"
+                android:text="Spring strength"
+                style="@style/Upgrade.Label"/>
+
+            <com.jtrofe.cheesebots.inventory.GaugeView
+                android:id="@+id/upgrade_k_gauge"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/upgrade_k_label"
+                android:layout_alignTop="@+id/upgrade_k_button"
+                android:layout_alignBottom="@id/upgrade_k_button"
+                style="@style/Upgrade.GaugeView" />
+
+            <ImageButton
+                android:id="@+id/upgrade_k_button"
+                android:layout_below="@id/upgrade_k_label"
+                android:layout_toEndOf="@+id/upgrade_k_gauge"
+                style="@style/Upgrade.Button" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_alignTop="@id/upgrade_content"
+        android:layout_alignBottom="@id/upgrade_content"
+        android:layout_alignStart="@id/upgrade_content"
+        android:layout_alignEnd="@id/upgrade_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

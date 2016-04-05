@@ -1,59 +1,82 @@
 package com.jtrofe.cheesebots;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.PointF;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.PopupWindow;
+import android.widget.ImageButton;
 
 import com.jtrofe.cheesebots.game.UserData.UserFlail;
 import com.jtrofe.cheesebots.inventory.FlailAdapter;
-import com.jtrofe.cheesebots.inventory.UpgradeView;
+import com.jtrofe.cheesebots.inventory.UpgradeFlailDialog;
 
 /**
  * Created by MAIN on 3/7/16
  */
 public class InventoryActivity extends Activity implements View.OnClickListener{
 
+    private static final int TAG_UPGRADE_FLAIL = 0;
+    private static final int TAG_EXIT = 1;
+
     Button upgradeButton;
+
+    FlailAdapter flailAdapter;
+    RecyclerView flailScrollView;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-
         setContentView(R.layout.activity_inventory);
 
-        RecyclerView rView = (RecyclerView) findViewById(R.id.rView);
+        // Get views
+        flailScrollView = (RecyclerView) findViewById(R.id.rView);
 
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rView.setLayoutManager(manager);
-
-        FlailAdapter adapter = new FlailAdapter(GameApp.CurrentUser.GetAllFlails());
-        rView.setAdapter(adapter);
-
+        ImageButton exitButton = (ImageButton) findViewById(R.id.inventory_button_exit);
         upgradeButton = (Button) findViewById(R.id.inventory_button_upgrade);
 
+        // Add adapters to scroll views
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        flailScrollView.setLayoutManager(manager);
+        flailAdapter = new FlailAdapter(GameApp.CurrentUser.GetAllFlails());
+        flailScrollView.setAdapter(flailAdapter);
+
+        // Set button flags
+        upgradeButton.setTag(TAG_UPGRADE_FLAIL);
+        exitButton.setTag(TAG_EXIT);
+
+        // Set on click listeners
         upgradeButton.setOnClickListener(this);
+        exitButton.setOnClickListener(this);
+    }
+
+    public void RefreshFlails(){
+        flailAdapter.notifyDataSetChanged();
+        //flailAdapter = new FlailAdapter(GameApp.CurrentUser.GetAllFlails());
+        //flailScrollView.setAdapter(flailAdapter);
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(@NonNull View v){
+        int tag = (int) v.getTag();
 
-        UpgradeView popup = new UpgradeView(this);
-        int flailIndex = GameApp.CurrentUser.GetSelectedFlailIndex();
-        UserFlail f = GameApp.CurrentUser.GetAllFlails().get(flailIndex);
-        popup.SetFlail(f);
+        switch (tag){
+            case TAG_UPGRADE_FLAIL:
+                int flailIndex = GameApp.CurrentUser.GetSelectedFlailIndex();
+                UserFlail f = GameApp.CurrentUser.GetAllFlails().get(flailIndex);
 
-        PopupWindow popupWindow = new PopupWindow(popup, WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
+                UpgradeFlailDialog.Create(this, f);
+                break;
+            case TAG_EXIT:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        popupWindow.showAsDropDown(upgradeButton);
+                startActivity(intent);
+                finish();
+                break;
+        }
     }
 }

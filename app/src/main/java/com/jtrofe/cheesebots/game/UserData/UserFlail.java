@@ -109,4 +109,34 @@ public class UserFlail{
         //TODO change 0 to 2
         if(mKLevel > 2) mKLevel = 0;
     }
+
+    public static final int UPGRADE_MASS = 1;
+    public static final int UPGRADE_RADIUS = 2;
+    public static final int UPGRADE_K = 3;
+
+    public static final int MAX_UPGRADE_LEVEL = 3;
+
+    public long GetUpgradeCost(int type){
+        long cost = 0;
+
+        long GRAPHIC_MULTIPLIER = 100;
+        long ITEM_MULTIPLIER = 20;
+
+        switch(type){
+            case UPGRADE_MASS:
+                cost = mGraphic * GRAPHIC_MULTIPLIER + (mMassLevel + 1) * ITEM_MULTIPLIER;
+
+                break;
+            case UPGRADE_RADIUS:
+                cost = mGraphic * GRAPHIC_MULTIPLIER + (mRadiusLevel + 1) * ITEM_MULTIPLIER;
+
+                break;
+            case UPGRADE_K:
+                cost = mGraphic * GRAPHIC_MULTIPLIER + (mKLevel + 1) * ITEM_MULTIPLIER;
+
+                break;
+        }
+
+        return cost;
+    }
 }

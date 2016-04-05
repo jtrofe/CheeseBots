@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ import java.util.List;
 public class FlailAdapter extends RecyclerView.Adapter<FlailAdapter.FlailViewHolder> implements View.OnClickListener{
 
     public static class FlailViewHolder extends RecyclerView.ViewHolder{
-        CardView cv;
+        FrameLayout cv;
 
         RelativeLayout flailFrame;
 
@@ -41,7 +42,7 @@ public class FlailAdapter extends RecyclerView.Adapter<FlailAdapter.FlailViewHol
         public FlailViewHolder(View itemView, FlailAdapter adapter){
             super(itemView);
 
-            cv = (CardView) itemView.findViewById(R.id.cv);
+            cv = (FrameLayout) itemView.findViewById(R.id.cv);
 
             flailFrame = (RelativeLayout) itemView.findViewById(R.id.flailFrame);
 
