@@ -93,9 +93,9 @@ public class FlailAdapter extends RecyclerView.Adapter<FlailAdapter.FlailViewHol
             flailViewHolder.flailFrame.setBackgroundResource(R.drawable.inventory_card_unselected);
         }
         int graphic = flails.get(i).GetGraphic();
-        int massLevel = flails.get(i).GetMassLevel();
-        int radiusLevel = flails.get(i).GetRadiusLevel();
-        int kLevel = flails.get(i).GetKLevel();
+        int massLevel = flails.get(i).GetLevel(UserFlail.TYPE_MASS);
+        int radiusLevel = flails.get(i).GetLevel(UserFlail.TYPE_RADIUS);
+        int kLevel = flails.get(i).GetLevel(UserFlail.TYPE_K);
 
         flailViewHolder.flailImage.setImageResource(R.drawable.cheese_frames);
 

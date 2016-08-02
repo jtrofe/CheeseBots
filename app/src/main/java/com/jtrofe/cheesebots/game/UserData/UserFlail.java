@@ -15,6 +15,12 @@ import org.json.JSONObject;
  */
 public class UserFlail{
 
+    public static final int TYPE_MASS = 1;
+    public static final int TYPE_RADIUS = 2;
+    public static final int TYPE_K = 3;
+
+    public static final int MAX_UPGRADE_LEVEL = 3;
+
     private int mGraphic = 0;
 
     private int mRadiusLevel;
@@ -27,9 +33,18 @@ public class UserFlail{
         return mGraphic;
     }
 
-    public int GetMassLevel(){ return mMassLevel; }
-    public int GetRadiusLevel(){ return mRadiusLevel; }
-    public int GetKLevel(){ return mKLevel; }
+    public int GetLevel(int type){
+        switch(type){
+            case TYPE_MASS:
+                return mMassLevel;
+            case TYPE_RADIUS:
+                return mRadiusLevel;
+            case TYPE_K:
+                return mKLevel;
+            default:
+                return 0;
+        }
+    }
 
     public String ToJSON(){
         return "{ \"graphic\" : \"" + mGraphic + "\", " +
@@ -79,64 +94,54 @@ public class UserFlail{
         resources.getValue(R.raw.flail_k_multiplier, out, true);
         double kMultiplier = (double) out.getFloat();
 
+        //TODO Remove these lines if/when you want to implement the upgrades again
+        mMassLevel = 1;
+        mRadiusLevel = 1;
+        mKLevel = 1;
+        mGraphic = 0;
+        mPlow = false;
+
         double mass = massBase + (massMultiplier * mMassLevel);
         double radius = radiusBase + (radiusMultiplier * mRadiusLevel);
         double k = kBase + (kMultiplier * mKLevel);
 
-        Flail f = new Flail(mass, radius, k);
+        Flail f = new Flail(mass, radius, k, mGraphic);
         f.IsPlow = mPlow;
 
         return f;
     }
 
-    public void UpgradeMass(){
-        mMassLevel ++;
-
-        //TODO change 0 to 2
-        if(mMassLevel > 2) mMassLevel = 0;
-    }
-
-    public void UpgradeRadius(){
-        mRadiusLevel ++;
-
-        //TODO change 0 to 2
-        if(mRadiusLevel > 2) mRadiusLevel = 0;
-    }
-
-    public void UpgradeK(){
-        mKLevel ++;
-
-        //TODO change 0 to 2
-        if(mKLevel > 2) mKLevel = 0;
-    }
-
-    public static final int UPGRADE_MASS = 1;
-    public static final int UPGRADE_RADIUS = 2;
-    public static final int UPGRADE_K = 3;
-
-    public static final int MAX_UPGRADE_LEVEL = 3;
-
-    public long GetUpgradeCost(int type){
-        long cost = 0;
-
-        long GRAPHIC_MULTIPLIER = 100;
-        long ITEM_MULTIPLIER = 20;
-
+    public void Upgrade(int type){
+        //TODO change 0 to 2 after if statements
         switch(type){
-            case UPGRADE_MASS:
-                cost = mGraphic * GRAPHIC_MULTIPLIER + (mMassLevel + 1) * ITEM_MULTIPLIER;
+            case TYPE_MASS:
+                mMassLevel ++;
 
+                if(mMassLevel > 2) mMassLevel = 0;
                 break;
-            case UPGRADE_RADIUS:
-                cost = mGraphic * GRAPHIC_MULTIPLIER + (mRadiusLevel + 1) * ITEM_MULTIPLIER;
+            case TYPE_RADIUS:
+                mRadiusLevel ++;
 
+                if(mRadiusLevel > 2) mRadiusLevel = 0;
                 break;
-            case UPGRADE_K:
-                cost = mGraphic * GRAPHIC_MULTIPLIER + (mKLevel + 1) * ITEM_MULTIPLIER;
+            case TYPE_K:
+                mKLevel ++;
 
+                if(mKLevel > 2) mKLevel = 0;
                 break;
         }
+    }
 
-        return cost;
+    public long GetUpgradeCost(int type){
+        long GRAPHIC_MULTIPLIER = 2000;
+        long LEVEL_MULTIPLIER = 1000;
+
+        long baseCost = (mGraphic + 1) * GRAPHIC_MULTIPLIER;
+
+        long level = (GetLevel(type) + 1);
+
+        long levelCost = level * level * LEVEL_MULTIPLIER;
+
+        return baseCost + levelCost;
     }
 }

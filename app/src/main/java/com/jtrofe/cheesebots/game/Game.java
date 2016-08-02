@@ -6,6 +6,7 @@ import android.graphics.Color;
 
 import com.jtrofe.cheesebots.GameActivity;
 import com.jtrofe.cheesebots.GameApp;
+import com.jtrofe.cheesebots.game.UserData.Storage;
 import com.jtrofe.cheesebots.physics.Engine;
 import com.jtrofe.cheesebots.physics.PhysicsView;
 import com.jtrofe.cheesebots.physics.Vec;
@@ -42,6 +43,7 @@ public class Game {
     private boolean mComplete = false;
 
     private int mBotsDestroyed = 0;
+    private long mScrapAdded = 0;
 
     public boolean IsComplete(){
         return mComplete;
@@ -110,7 +112,18 @@ public class Game {
         String r = (mBotsDestroyed == 1) ? "robot" : "robots";
 
         GameContext.SetScore("");
+        //TODO add message about scrap once upgrading is implemented
+        //GameContext.SetCompleteMessage("Congrats, you destroyed " + mBotsDestroyed + " " + r + "\nYou gained "
+        //        + mScrapAdded + " pieces of scrap");
         GameContext.SetCompleteMessage("Congrats, you destroyed " + mBotsDestroyed + " " + r);
+
+        GameContext.FinalScore = mBotsDestroyed;
+
+        Storage.SaveUser();
+
+
+        // Database stuff
+
     }
 
     public void Initialize(){
@@ -122,7 +135,8 @@ public class Game {
 
         double radius = mEngine.GetWorldSize().y * 0.1;
 
-        Cheese c = new Cheese(0, radius, 400.0);
+        //TODO replace with CurrentUser.GetCheeses() (multiple cheese) when upgrades are to be implemented
+        Cheese c = new Cheese(1, radius, 100.0);
         c.SetPosition(cheesePos);
 
         mEngine.AddBody(c);
@@ -216,12 +230,17 @@ public class Game {
         mEngine.AddBody(b);
     }
 
-    public void OnBotDestroyed(){
+    public void OnBotDestroyed(long scrap){
         addBot();
 
         if(mComplete) return;
 
         mBotsDestroyed ++;
         if(mBotsDestroyed % 50 == 0) addBot();
+
+        mScrapAdded += scrap;
+        GameContext.SetScrap(mScrapAdded + "");
+
+        GameApp.CurrentUser.AddScrap(scrap);
     }
 }

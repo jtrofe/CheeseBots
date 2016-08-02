@@ -33,8 +33,7 @@ public class FlailController extends Controller{
         Vec handle_point = flail.HandlePoint.copy();
 
         if(handle_point.x != -1 || handle_point.y != -1){
-            double radius = flail.GetRadius();
-            Vec attach_point = flail.LocalVectorToWorldVector(new Vec(-radius, radius));
+            Vec attach_point = flail.GetAttachPoint();
             Vec X = handle_point.Subtract(attach_point);
             double MAX_FORCE = flail.GetMass() * 20.0;
             Vec force = (X.ScalarMultiply(flail.GetK())).Clamp(MAX_FORCE);

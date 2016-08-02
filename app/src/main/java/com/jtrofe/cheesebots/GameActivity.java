@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.physics.PhysicsView;
@@ -25,6 +28,14 @@ public class GameActivity extends Activity{
     // UI
     private TextView mScoreView;
     private TextView mMessageView;
+    private TextView mScrapView;
+
+    public EditText mNameInput;
+    public Button mSubmitButton;
+
+
+    public final GameActivity me = this;
+    public int FinalScore;
 
     /**
      * Hide the navigation buttons so the
@@ -71,12 +82,27 @@ public class GameActivity extends Activity{
         mScoreView = (TextView) findViewById(R.id.destroyedCounter);
 
         mMessageView = (TextView) findViewById(R.id.messageText);
+        mScrapView = (TextView) findViewById(R.id.game_text_scrap);
+
+        mNameInput = (EditText) findViewById(R.id.inputName);
+        mSubmitButton = (Button) findViewById(R.id.buttonSubmitScore);
+
+        mNameInput.setText(GameApp.CurrentUser.GetName());
 
         mMessageView.setText("");
+
+        SetScrap("0");
 
         if(GameApp.CurrentGame.IsComplete()){
             GameApp.CurrentGame.OnComplete();
         }
+
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnSubmitClick();
+            }
+        });
     }
 
     @Override
@@ -103,6 +129,17 @@ public class GameActivity extends Activity{
         }
     }
 
+    public void SetScrap(final String scrap){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //TODO remove when upgrades are implemented
+                mScrapView.setVisibility(View.GONE);
+                //mScrapView.setText("Scrap: " + scrap);
+            }
+        });
+    }
+
     public void SetScore(final String score){
         runOnUiThread(new Runnable() {
             @Override
@@ -119,5 +156,23 @@ public class GameActivity extends Activity{
                 mMessageView.setText(msg);
             }
         });
+    }
+
+    public void MakeToast(final String msg){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(me, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void OnSubmitClick(){
+        String name = mNameInput.getText().toString();
+        if(name.isEmpty()){
+            Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
+        }else{
+            GameApp.Database.SubmitScore(name, FinalScore);
+        }
     }
 }

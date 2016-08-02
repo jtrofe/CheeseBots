@@ -43,6 +43,12 @@ public class SpriteHandler {
             new int[]{4, 5, 6, 7, 8, 9} // Giant bot
         );
 
+    public static final List<int[]> FLAIL_FRAMES = Arrays.asList(
+            new int[]{0},               // Bowling ball
+            new int[]{1},               // Spiky ball
+            new int[]{2, 3, 4, 5, 4, 3} // Plasma ball
+        );
+
     /**
      * Load all the necessary sprite sheets
      * @return List of sprite sheet bitmaps, in the order of the static int constants
@@ -60,7 +66,7 @@ public class SpriteHandler {
 
         sheetList.add(fetchSpriteSheet(resources, R.raw.bot_frames_giant, 3200, 975));
 
-        sheetList.add(fetchSpriteSheet(resources, R.raw.flail_frames, 300, 100));
+        sheetList.add(fetchSpriteSheet(resources, R.raw.flail_frames, 600, 100));
 
         sheetList.add(fetchSpriteSheet(resources, R.raw.cheese_frames, 600, 300));
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.jtrofe.cheesebots.game.UserData.UserFlail;
 import com.jtrofe.cheesebots.inventory.FlailAdapter;
@@ -27,6 +28,8 @@ public class InventoryActivity extends Activity implements View.OnClickListener{
     FlailAdapter flailAdapter;
     RecyclerView flailScrollView;
 
+    private TextView scrapLabel;
+
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -37,6 +40,7 @@ public class InventoryActivity extends Activity implements View.OnClickListener{
 
         ImageButton exitButton = (ImageButton) findViewById(R.id.inventory_button_exit);
         upgradeButton = (Button) findViewById(R.id.inventory_button_upgrade);
+        scrapLabel = (TextView) findViewById(R.id.scrap_label_text);
 
         // Add adapters to scroll views
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -51,12 +55,17 @@ public class InventoryActivity extends Activity implements View.OnClickListener{
         // Set on click listeners
         upgradeButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
+
+        // Update labels
+        UpdateScrapLabel();
+    }
+
+    public void UpdateScrapLabel(){
+        scrapLabel.setText(GameApp.CurrentUser.GetScrap() + "");
     }
 
     public void RefreshFlails(){
         flailAdapter.notifyDataSetChanged();
-        //flailAdapter = new FlailAdapter(GameApp.CurrentUser.GetAllFlails());
-        //flailScrollView.setAdapter(flailAdapter);
     }
 
     @Override

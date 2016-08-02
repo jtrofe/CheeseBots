@@ -78,6 +78,8 @@ public class BotController extends Controller{
     private void checkHealth(Bot b){
         if(b.IsAlive()) return;
 
+        long scrap = b.GetScrap();
+
         mEngine.RemoveBody(b);
 
         Random rnd = new Random();
@@ -98,7 +100,7 @@ public class BotController extends Controller{
             }
         }
 
-        GameApp.CurrentGame.OnBotDestroyed();
+        GameApp.CurrentGame.OnBotDestroyed(scrap);
 
         mEngine.JitterController.StartJitter(20);
     }

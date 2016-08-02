@@ -20,7 +20,7 @@ public class User{
 
     private String mName = "Kilroy";
 
-    private int mScrap = 0;
+    private long mScrap = 0;
 
     private List<UserFlail> mFlails = new ArrayList<>();
     private List<UserCheese> mCheeses = new ArrayList<>();
@@ -28,11 +28,19 @@ public class User{
     private int mSelectedFlail = 0;
     private int[] mSelectedCheeses = new int[]{0, -1, -1};
 
+    public String GetName(){
+        return mName;
+    }
+
+    public void SetName(String name){
+        mName = name;
+    }
+
     public int GetSelectedFlailIndex(){
         return mSelectedFlail;
     }
 
-    public int GetScrap(){
+    public long GetScrap(){
         return mScrap;
     }
 
@@ -47,6 +55,9 @@ public class User{
             JSONObject jsonObject = new JSONObject(json);
 
             FromJSON(jsonObject);
+
+            // TODO REMOVE THIS
+            mScrap += 10000;
 
             Log.i("Storage", "User loaded successfully");
         }catch(JSONException e){
@@ -92,7 +103,7 @@ public class User{
 
     public void FromJSON(JSONObject object) throws JSONException{
         mName = object.getString("name");
-        mScrap = object.getInt("scrap");
+        mScrap = object.getLong("scrap");
 
         mFlails = new ArrayList<>();
         JSONArray flails = object.getJSONArray("flails");
@@ -153,5 +164,19 @@ public class User{
 
     public Flail GetSelectedFlail(){
         return mFlails.get(mSelectedFlail).GetFlail();
+    }
+
+    public void AddScrap(long scrap){
+        mScrap += scrap;
+    }
+
+    public boolean CanBuy(long scrapCost){
+        return scrapCost <= mScrap;
+    }
+
+    public void Buy(long scrapCost){
+        mScrap -= scrapCost;
+
+        Storage.SaveUser();
     }
 }

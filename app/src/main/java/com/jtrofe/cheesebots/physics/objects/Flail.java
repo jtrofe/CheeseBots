@@ -19,6 +19,13 @@ public class Flail extends GameObject {
     private double mK;
     public boolean IsPlow = false;
 
+    private int mGraphicIndex = 0;
+    private double CurrentFrame = 0;
+
+    public int GetGraphic(){
+        return mGraphicIndex;
+    }
+
     public double GetRadius(){
         return mRadius;
     }
@@ -29,11 +36,12 @@ public class Flail extends GameObject {
 
     public Vec HandlePoint = new Vec();
 
-    public Flail(double mass, double radius, double k){
+    public Flail(double mass, double radius, double k, int graphicIndex){
         super(new Vec(), mass);
 
         mRadius = radius;
         mK = k;
+        mGraphicIndex = graphicIndex;
 
         Type = GameObject.TYPE_FLAIL;
 
@@ -56,13 +64,36 @@ public class Flail extends GameObject {
 
 
     private Rect getFlailSrc(){
-        return new Rect(0, 0, 100, 100);
+        int[] frames = SpriteHandler.FLAIL_FRAMES.get(mGraphicIndex).clone();
+
+        if(CurrentFrame >= frames.length) CurrentFrame = 0.0;
+
+        int f = (int) CurrentFrame;
+
+        int x = frames[f];
+
+        int left = x * 100;
+
+        return new Rect(left, 0, left + 100, 100);
+    }
+
+    public Vec GetAttachPoint(){
+        if(mGraphicIndex == 2){
+            return mPosition;
+        }else{
+            return LocalVectorToWorldVector(new Vec(-mRadius, mRadius));
+        }
     }
 
     @Override
     public void Draw(Canvas canvas){
+
+        if(mGraphicIndex == 2) mAngle += 0.2;
+
         if(HandlePoint.x != -1 || HandlePoint.y != -1){
-            Vec attachPoint = LocalVectorToWorldVector(new Vec(-mRadius, mRadius));
+
+
+            Vec attachPoint = GetAttachPoint();
 
             float HANDLE_WIDTH = 4f;
 
@@ -76,6 +107,7 @@ public class Flail extends GameObject {
 
         int ri = (int) mRadius;
         Rect src = getFlailSrc();
+        CurrentFrame += 0.2;
         Rect dst = new Rect(mPosition.xi() - ri, mPosition.yi() - ri,
                             mPosition.xi() + ri, mPosition.yi() + ri);
 

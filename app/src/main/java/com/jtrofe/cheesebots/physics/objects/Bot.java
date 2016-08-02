@@ -11,6 +11,7 @@ import com.jtrofe.cheesebots.physics.Vec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by MAIN on 3/12/16
@@ -65,6 +66,16 @@ public class Bot extends GameObject{
     private double mHealthPoints;
 
     private int mSpriteSheetIndex;
+
+    /**
+     * When the bot is destroyed its scrap gets added to the user's.
+     * Amount of scrap yielded is based on sprite index.
+     */
+    public long GetScrap(){
+        int level = mSpriteSheetIndex + 1;
+        long rand = (int) (new Random().nextDouble() * 10) - 5;
+        return level * level * 10 + rand;
+    }
 
     public double GetBoundRadius(){ return mBoundRadius; }
 

@@ -58,6 +58,11 @@ public class UserCheese{
         resources.getValue(R.raw.cheese_density_multiplier, out, true);
         double densityMultiplier = (double) out.getFloat();
 
+        //TODO Remove this when you want to implement upgrades again
+        mRadiusLevel = 1;
+        mDensityLevel = 1;
+        mGraphicIndex = 1;
+
         double radius = radiusBase + (mRadiusLevel * radiusMultiplier);
         double density = densityBase + (mDensityLevel * densityMultiplier);
 
