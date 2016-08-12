@@ -39,6 +39,8 @@ public class Game {
     //
     // Game variables
     //
+    private boolean mPaused = false;
+
     private boolean mInitialized = false;
     private boolean mComplete = false;
 
@@ -53,6 +55,14 @@ public class Game {
     private boolean mLandscape = true;
 
     public GameActivity GameContext = null;
+
+    public void SetPaused(boolean paused){
+        mPaused = paused;
+    }
+
+    public boolean IsPaused(){
+        return mPaused;
+    }
 
     public boolean IsInitialized(){
         return mInitialized;
@@ -93,7 +103,9 @@ public class Game {
 
         if(!mComplete) GameContext.SetScore(mBotsDestroyed + "");
 
-        mEngine.Step(timeStep);
+        if(!mPaused){
+            mEngine.Step(timeStep);
+        }
 
         if(!mComplete && mEngine.CheeseAdded){
             if(mEngine.CountObjectType(GameObject.TYPE_CHEESE) == 0){
@@ -109,21 +121,11 @@ public class Game {
     public void OnComplete(){
         mComplete = true;
 
-        String r = (mBotsDestroyed == 1) ? "robot" : "robots";
+        GameContext.OnComplete(mBotsDestroyed, mScrapAdded);
+    }
 
-        GameContext.SetScore("");
-        //TODO add message about scrap once upgrading is implemented
-        //GameContext.SetCompleteMessage("Congrats, you destroyed " + mBotsDestroyed + " " + r + "\nYou gained "
-        //        + mScrapAdded + " pieces of scrap");
-        GameContext.SetCompleteMessage("Congrats, you destroyed " + mBotsDestroyed + " " + r);
-
-        GameContext.FinalScore = mBotsDestroyed;
-
-        Storage.SaveUser();
-
-
-        // Database stuff
-
+    public void SetBorderColor(int color){
+        mEngine.SetBorderColor(color);
     }
 
     public void Initialize(){
@@ -136,7 +138,7 @@ public class Game {
         double radius = mEngine.GetWorldSize().y * 0.1;
 
         //TODO replace with CurrentUser.GetCheeses() (multiple cheese) when upgrades are to be implemented
-        Cheese c = new Cheese(1, radius, 100.0);
+        Cheese c = new Cheese(1, radius, 10.0);
         c.SetPosition(cheesePos);
 
         mEngine.AddBody(c);

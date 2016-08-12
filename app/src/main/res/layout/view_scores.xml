@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="invisible"
+    android:id="@+id/layout_scores"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="40dp"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/inventory_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:background="@color/inventory_light_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/layout_scores_rows"
+        android:orientation="vertical"
+        android:background="@drawable/inventory_border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Highscores"
+            android:textColor="@color/inventory_text_color"
+            android:layout_margin="5dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/place_0"
+            style="@style/Place">
+
+            <ImageView
+                android:id="@+id/star_0"
+                style="@style/Place.Star"
+                android:tint="@color/place_gold" />
+
+            <TextView
+                android:id="@+id/name_0"
+                style="@style/Place.Name" />
+
+            <TextView
+                android:id="@+id/score_0"
+                style="@style/Place.Score" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/place_1"
+            style="@style/Place">
+
+            <ImageView
+                android:id="@+id/star_1"
+                style="@style/Place.Star"
+                android:tint="@color/place_silver" />
+
+            <TextView
+                android:id="@+id/name_1"
+                style="@style/Place.Name" />
+
+            <TextView
+                android:id="@+id/score_1"
+                style="@style/Place.Score" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/place_2"
+            style="@style/Place">
+
+            <ImageView
+                android:id="@+id/star_2"
+                style="@style/Place.Star"
+                android:tint="@color/place_bronze" />
+
+            <TextView
+                android:id="@+id/name_2"
+                style="@style/Place.Name" />
+
+            <TextView
+                android:id="@+id/score_2"
+                style="@style/Place.Score" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:background="@drawable/inventory_border"
+        android:layout_alignTop="@+id/layout_scores_rows"
+        android:layout_alignBottom="@+id/layout_scores_rows"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

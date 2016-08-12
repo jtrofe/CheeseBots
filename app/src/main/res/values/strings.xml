@@ -7,7 +7,7 @@
     <!-- Menu strings -->
     <string name="button_play">Play</string>
     <string name="button_inventory">Inventory</string>
-    <string name="button_highscores">Highscores (Inactive)</string>
+    <string name="button_highscores">View highscores</string>
 
     <!-- JSON values -->
     <string name="flail_default_mass">large</string>
@@ -27,4 +27,8 @@
 
         <!-- Upgrade flail dialog -->
     <string name="upgrade_flail_dialog_title">Upgrade Flail</string>
+
+    <!-- Ads -->
+    <string name="banner_ad_id">ca-app-pub-1491511126231325/8245597095</string>
+    <string name="test_ad_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

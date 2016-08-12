@@ -34,6 +34,8 @@ public class User{
 
     public void SetName(String name){
         mName = name;
+
+        Storage.SaveUser();
     }
 
     public int GetSelectedFlailIndex(){

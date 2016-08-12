@@ -143,26 +143,42 @@ public class Engine {
         removeWaiting();
     }
 
+    private int mBorderColor = Color.WHITE;
+    private int mBorderCount = 0;
+
+    public void SetBorderColor(int color){
+        mBorderColor = color;
+    }
+
     /**
      * Draw the current state
      */
     public void Draw(Canvas canvas){
         int saveCount = canvas.save();
 
-
         //  If the surface is in landscape mode then rotate
         //  the canvas before drawing objects. Then restore
         //  its rotation after
-
         if(!mGame.IsLandscape()){
             canvas.rotate(90.0f, canvas.getWidth() / 2.0f, canvas.getWidth() / 2.0f);
         }
         canvas.translate(mOffset.xf(), mOffset.yf());
 
         // TODO come up with a better background
-        SpriteHandler.PAINT.setColor(Color.WHITE);
+        SpriteHandler.PAINT.setColor(mBorderColor);
         SpriteHandler.PAINT.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(50f, 50f, mWorldSize.xf() - 50f, mWorldSize.yf() - 50f, SpriteHandler.PAINT);
+
+        if(mBorderColor != Color.WHITE){
+            mBorderCount ++;
+            if(mBorderCount == 10) mBorderCount = 0;
+
+            Float b = 50f - mBorderCount;
+
+            canvas.drawRect(b, b, mWorldSize.xf() - b, mWorldSize.yf() - b, SpriteHandler.PAINT);
+
+        }else{
+            canvas.drawRect(50f, 50f, mWorldSize.xf() - 50f, mWorldSize.yf() - 50f, SpriteHandler.PAINT);
+        }
 
         for(GameObject obj:Bodies){
             obj.Draw(canvas);

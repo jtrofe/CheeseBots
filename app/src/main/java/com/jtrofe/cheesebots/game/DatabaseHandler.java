@@ -47,8 +47,8 @@ public class DatabaseHandler {
 
             HttpURLConnection httpCnn = (HttpURLConnection) url.openConnection();
             httpCnn.connect();
-            httpCnn.setConnectTimeout(3000);
-            httpCnn.setReadTimeout(3000);
+            httpCnn.setConnectTimeout(10000);
+            httpCnn.setReadTimeout(10000);
 
             InputStream in = httpCnn.getInputStream();
 
@@ -89,50 +89,50 @@ public class DatabaseHandler {
         t.start();
     }
 
-    public void SubmitScore(final String name, final int score){
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = "http://www.jtrofe.com/cheese_api/submitScore/";
+    public String GetScores(){
+        String url = "http://www.jtrofe.com/cheese_api/getScores/" + deviceId;
 
-                String params = "Hello+my+name+is+";
-                try {
-                    params += URLEncoder.encode(name, "UTF-8");
-                }catch(UnsupportedEncodingException e){
-                    url += "";
-                }
+        return GET(url);
+    }
 
-                params += "+%7C";
-                params += "My+ID+is+" + deviceId + "%7C";
-                params += "I+killed+" + score + "+robots%7C";
-                url += params;
-                System.out.println("Submitting to " + url);
-                String resp = GET(url);
+    public String SubmitScore(final String name, final int score){
+        String url = "http://www.jtrofe.com/cheese_api/submitScore/";
 
-                System.out.println("Parsing GET response " + resp);
+        String params = "Hello+my+name+is+";
+        try {
+            params += URLEncoder.encode(name, "UTF-8");
+        }catch(UnsupportedEncodingException e){
+            url += "";
+        }
 
-                String msg;
-                try{
-                    CurrentPlace = Integer.parseInt(resp);
+        params += "+%7C";
+        params += "My+ID+is+" + deviceId + "%7C";
+        params += "I+killed+" + score + "+robots%7C";
+        url += params;
+        System.out.println("Submitting to " + url);
+        String resp = GET(url);
 
-                    if(CurrentPlace == 1){
-                        msg = "You got the gold!";
-                    }else if(CurrentPlace == 2){
-                        msg = "You got the silver!";
-                    }else if(CurrentPlace == 3){
-                        msg = "You got the bronze!";
-                    }else{
-                        msg = "Score submitted.";
-                    }
-                }catch (NumberFormatException e){
-                    msg = "Error submitting score";
-                }
+        System.out.println("Parsing GET response " + resp);
 
-                GameApp.CurrentGame.GameContext.MakeToast(msg);
 
+
+        String msg;
+        try{
+            CurrentPlace = Integer.parseInt(resp);
+
+            if(CurrentPlace == 1){
+                msg = "You got the gold!";
+            }else if(CurrentPlace == 2){
+                msg = "You got the silver!";
+            }else if(CurrentPlace == 3){
+                msg = "You got the bronze!";
+            }else{
+                msg = "Score submitted.";
             }
-        });
+        }catch (NumberFormatException e){
+            msg = "Error submitting score";
+        }
 
-        t.start();
+        return msg;
     }
 }
