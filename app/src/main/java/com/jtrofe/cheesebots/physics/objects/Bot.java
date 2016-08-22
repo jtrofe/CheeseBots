@@ -67,6 +67,8 @@ public class Bot extends GameObject{
 
     private int mSpriteSheetIndex;
 
+    public int GetSpriteSheetIndex(){ return mSpriteSheetIndex; }
+
     /**
      * When the bot is destroyed its scrap gets added to the user's.
      * Amount of scrap yielded is based on sprite index.

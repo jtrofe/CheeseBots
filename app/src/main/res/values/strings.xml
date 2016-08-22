@@ -7,7 +7,7 @@
     <!-- Menu strings -->
     <string name="button_play">Play</string>
     <string name="button_inventory">Inventory</string>
-    <string name="button_highscores">View highscores</string>
+    <string name="button_highscores">Highscores</string>
 
     <!-- JSON values -->
     <string name="flail_default_mass">large</string>

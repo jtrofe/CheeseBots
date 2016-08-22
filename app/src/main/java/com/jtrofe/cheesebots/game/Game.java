@@ -101,6 +101,14 @@ public class Game {
     public void Update(double timeStep){
         if(!mInitialized) return;
 
+        if(!firstBotsAdded){
+            long t = System.currentTimeMillis() - firstTime;
+
+            if(t > 3000){
+                createFirstBots();
+            }
+        }
+
         if(!mComplete) GameContext.SetScore(mBotsDestroyed + "");
 
         if(!mPaused){
@@ -143,13 +151,22 @@ public class Game {
 
         mEngine.AddBody(c);
 
-        for(int i=0;i<5;i++){
-            addBot();
-        }
-
         Flail f = GameApp.CurrentUser.GetSelectedFlail();
 
         mEngine.AddBody(f);
+
+        firstBotsAdded = false;
+        firstTime = System.currentTimeMillis();
+    }
+
+    private boolean firstBotsAdded;
+    private long firstTime;
+
+    private void createFirstBots(){
+        for(int i=0;i<5;i++){
+            addBot();
+        }
+        firstBotsAdded = true;
     }
 
     private void addBot(){
@@ -233,6 +250,7 @@ public class Game {
     }
 
     public void OnBotDestroyed(long scrap){
+
         addBot();
 
         if(mComplete) return;

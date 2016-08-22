@@ -1,12 +1,10 @@
-package com.jtrofe.cheesebots.physics;
+package com.jtrofe.cheesebots.game;
 
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +28,13 @@ public class ScoresLoader{
     }
 
     public void LoadScores(){
+        Log.d("SCORES", "Getting scores");
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 String resp = GameApp.Database.GetScores();
+
+                Log.d("SCORES", "Scores received");
 
                 displayScores(resp);
             }
@@ -43,7 +44,6 @@ public class ScoresLoader{
     }
 
     private void displayScores(String response){
-        Log.d("ANIMATION", response);
         final String[] names = new String[3];
         final long[] scores = new long[3];
         try{
@@ -57,6 +57,7 @@ public class ScoresLoader{
             scores[1] = places.getJSONObject(1).getLong("score");
             scores[2] = places.getJSONObject(2).getLong("score");
         }catch(JSONException e){
+            e.printStackTrace();
             mContext.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -89,27 +90,30 @@ public class ScoresLoader{
                 score_1.setText(scores[1] + "");
                 score_2.setText(scores[2] + "");
 
-                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.expand_horizontal);
+                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.expand);
 
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
                         mScoresLayout.setVisibility(View.VISIBLE);
-                        Log.d("ANIMATION", mScoresLayout.getVisibility() + "");
+                        Log.d("SCORES", "Animation starting");
                     }
 
                     @Override
                     public void onAnimationEnd(Animation animation){
+                        Log.d("SCORES", "Animation ended");
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
+                    public void onAnimationRepeat(Animation animation) {}
                 });
 
+                Log.d("SCORES", "Invoking animation");
+
+                mScoresLayout.setVisibility(View.INVISIBLE);
                 mScoresLayout.startAnimation(animation);
                 mScoresLayout.invalidate();
+                mScoresLayout.requestLayout();
             }
         });
     }

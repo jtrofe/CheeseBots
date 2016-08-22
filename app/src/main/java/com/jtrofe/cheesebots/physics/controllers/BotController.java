@@ -1,6 +1,9 @@
 package com.jtrofe.cheesebots.physics.controllers;
 
+import android.view.SoundEffectConstants;
+
 import com.jtrofe.cheesebots.GameApp;
+import com.jtrofe.cheesebots.game.SoundHandler;
 import com.jtrofe.cheesebots.physics.Engine;
 import com.jtrofe.cheesebots.physics.Vec;
 import com.jtrofe.cheesebots.physics.objects.Bot;
@@ -99,6 +102,28 @@ public class BotController extends Controller{
                 mEngine.AddBody(p);
             }
         }
+
+        int soundId;
+
+        switch(b.GetSpriteSheetIndex()){
+            case 0:
+                soundId = SoundHandler.EFFECT_POP_SMALL;
+                break;
+            case 1:
+                soundId = SoundHandler.EFFECT_POP_MEDIUM;
+                break;
+            case 2:
+                soundId = SoundHandler.EFFECT_POP_LARGE;
+                break;
+            case 3:
+                soundId = SoundHandler.EFFECT_POP_GIANT;
+                break;
+            default:
+                soundId = SoundHandler.EFFECT_POP_SMALL;
+                break;
+        }
+
+        GameApp.CurrentGame.GameContext.SoundEffects.Play(soundId);
 
         GameApp.CurrentGame.OnBotDestroyed(scrap);
 

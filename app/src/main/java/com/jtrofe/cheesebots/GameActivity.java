@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,13 +16,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jtrofe.cheesebots.game.SoundHandler;
 import com.jtrofe.cheesebots.game.SpriteHandler;
 import com.jtrofe.cheesebots.game.UserData.Storage;
 import com.jtrofe.cheesebots.physics.PhysicsView;
-import com.jtrofe.cheesebots.physics.ScoresLoader;
+import com.jtrofe.cheesebots.game.ScoresLoader;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -39,12 +43,19 @@ public class GameActivity extends Activity{
     private TextView mMessageView;
     private TextView mScrapView;
 
-    public EditText mNameInput;
-    public Button mSubmitButton;
+    // Game over variables
+    private View mGameOverLayout;
+    private View mSubmitLayout;
+    private EditText mNameInput;
+    private ImageButton mSubmitButton;
 
+    private String mFinalName;
+    private int mFinalScore;
+    private String mSubmitMessage;
 
-    public final GameActivity me = this;
-    public int FinalScore;
+    private GameActivity me;
+
+    public SoundHandler SoundEffects;
 
     /**
      * Hide the navigation buttons so the
@@ -70,12 +81,14 @@ public class GameActivity extends Activity{
 
         setContentView(R.layout.activity_game);
 
-        mPhysicsView = new PhysicsView(this);
-
+        // Get game views
         FrameLayout frame = (FrameLayout) findViewById(R.id.gameFrame);
 
+        // Create physics view and add to the game frame
+        mPhysicsView = new PhysicsView(this);
         frame.addView(mPhysicsView);
 
+        // Load the sprite sheets into the physics view on a new thread
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -86,16 +99,39 @@ public class GameActivity extends Activity{
         });
         t.start();
 
+        // Set self-referential variables
         GameApp.CurrentGame.GameContext = this;
+        me = this;
 
+        // Get UI views
+        Button exitButton = (Button) findViewById(R.id.button_exit);
+        Button retryButton = (Button) findViewById(R.id.button_retry);
         mScoreView = (TextView) findViewById(R.id.destroyedCounter);
-
         mMessageView = (TextView) findViewById(R.id.messageText);
         mScrapView = (TextView) findViewById(R.id.game_text_scrap);
 
+        // Get the game over views
+        mGameOverLayout = findViewById(R.id.layout_game_over);
+        mSubmitLayout = findViewById(R.id.layout_submit_score);
+        mSubmitButton = (ImageButton) mSubmitLayout.findViewById(R.id.input_button);
+        mNameInput = (EditText) mSubmitLayout.findViewById(R.id.input_name);
+
+        //mNameInput.setText(GameApp.CurrentUser.GetName());
+
+        // Set initial texts
+        mMessageView.setText("");
+        SetScrap("0");
+
+        // If the orientation has changed or anything keep game completed if it was
+        if(GameApp.CurrentGame.IsComplete()){
+            GameApp.CurrentGame.OnComplete();
+        }
+
+        // Set listeners
+
         mMessageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 if(GameApp.CurrentGame != null){
                     if(!GameApp.CurrentGame.IsComplete()){
                         boolean paused = GameApp.CurrentGame.IsPaused();
@@ -114,41 +150,39 @@ public class GameActivity extends Activity{
             }
         });
 
-        //mNameInput = (EditText) findViewById(R.id.inputName);
-        //mSubmitButton = (Button) findViewById(R.id.buttonSubmitScore);
-
-        //mNameInput.setText(GameApp.CurrentUser.GetName());
-
-        mMessageView.setText("");
-
-        SetScrap("0");
-
-        if(GameApp.CurrentGame.IsComplete()){
-            GameApp.CurrentGame.OnComplete();
-        }
-
-        /*mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OnSubmitClick();
-            }
-        });*/
-
-        Button exitButton = (Button) findViewById(R.id.button_exit);
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 Quit();
             }
         });
 
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Retry();
+            }
+        });
+
         stopAds();
+
+        SoundEffects = new SoundHandler(this);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        SoundEffects.Destroy();
+        SoundEffects = null;
     }
 
     @Override
     public void onResume(){
         super.onResume();
         mPhysicsView.Resume();
+
+        if(SoundEffects == null) SoundEffects = new SoundHandler(this);
 
         if(GameApp.CurrentGame != null){
             if(GameApp.CurrentGame.IsPaused() || GameApp.CurrentGame.IsComplete()){
@@ -185,6 +219,16 @@ public class GameActivity extends Activity{
                 Quit();
             }
         }
+    }
+
+    public void Retry(){
+        stopAds();
+        GameApp.CurrentGame = null;
+
+        finish();
+
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
     }
 
     public void Quit(){
@@ -249,117 +293,137 @@ public class GameActivity extends Activity{
         });
     }
 
-    public void OnComplete(int score, long scrapAdded){
+    public void OnComplete(final int score, final long scrapAdded){
+        mFinalScore = score;
 
-        FinalScore = score;
+        // Clear the score text view
         SetScore("");
 
-        // Final views
-        final View layoutOver = findViewById(R.id.layout_game_over);
-        final View layoutSubmit = findViewById(R.id.layout_submit_score);
-        final EditText nameInput = (EditText) findViewById(R.id.input_name);
-
-        // Final objects
-        final Animation expand = AnimationUtils.loadAnimation(this, R.anim.expand_horizontal);
-        final Animation collapse = AnimationUtils.loadAnimation(this, R.anim.collapse_horizontal);
-        final ScoresLoader scoresLoader = new ScoresLoader(this, findViewById(R.id.layout_scores));
-
-        // Create congrats message
-        //TODO add message about scrap once upgrading is implemented
-        String r = (score == 1) ? "robot" : "robots";
-        final String congratsMessage = "Congrats, you destroyed " + score + " " + r;
-
-
-        expand.setAnimationListener(new AnimListener(layoutSubmit));
-
-
-
-        layoutSubmit.findViewById(R.id.input_button).setOnClickListener(new View.OnClickListener() {
+        // Create the crazy runnable tree
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        final String name = nameInput.getText().toString();
-
-                        if(name.trim().isEmpty()){
-                            MakeToast("Please enter a name");
-                            return;
-                        }
-
-                        GameApp.CurrentUser.SetName(name);
-
-
-                        layoutSubmit.startAnimation(collapse);
-                        layoutSubmit.invalidate();
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String msg = GameApp.Database.SubmitScore(name, FinalScore);
-
-                                scoresLoader.LoadScores();
-                                MakeToast(msg);
-
-                                if(msg.equals("You got the gold!")){
-                                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCFFDF00"));
-                                }else if(msg.equals("You got the silver!")){
-                                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCD3D3D3"));
-
-                                }else if(msg.equals("You got the bronze!")){
-                                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCC9AE5D"));
-
-                                }
-
-                            }
-                        }).start();
-
-                    }
-                });
+            public void onClick(@NonNull View v) {
+                runOnUiThread(onSubmitClick);
             }
         });
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                startAds();
-
-                mMessageView.setText(congratsMessage);
-
-                nameInput.setText(GameApp.CurrentUser.GetName());
-
-                layoutOver.setVisibility(View.VISIBLE);
-
-                layoutSubmit.startAnimation(expand);
-                layoutSubmit.invalidate();
-            }
-        });
+        // Start UI thread
+        runOnUiThread(onGameOver);
 
         Storage.SaveUser();
     }
 
-    public class AnimListener implements Animation.AnimationListener{
-        View view;
+    private Runnable onSubmitClick = new Runnable(){
+        @Override
+        public void run(){
+            // Make sure the user entered a name. Quit if they didn't
+            final String name = mNameInput.getText().toString();
+            if(name.trim().isEmpty()){
+                Toast.makeText(me, "Please enter a name", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        public AnimListener(View v){
-            super();
-            view = v;
+            // Update user profile
+            mFinalName = name;
+            GameApp.CurrentUser.SetName(name);
+
+            // Create the animation to shrink the submit layout
+            Animation collapse = AnimationUtils.loadAnimation(me, R.anim.collapse);
+            collapse.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    onCollapseEnd();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            mSubmitLayout.startAnimation(collapse);
+            mSubmitLayout.invalidate();
         }
+    };
 
-        @Override
-        public void onAnimationStart(Animation animation) {
-            view.setVisibility(View.VISIBLE);
-        }
+    private void onCollapseEnd(){
+        Log.d("SCORES", "Removing submit button");
+        mSubmitButton.setOnClickListener(null);
+        mSubmitLayout.setVisibility(View.GONE);
+        mSubmitLayout.clearAnimation();
 
-        @Override
-        public void onAnimationEnd(Animation animation){}
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {}
+        new Thread(submitScore).start();
     }
 
+    private Runnable submitScore = new Runnable() {
+        @Override
+        public void run() {
+            mSubmitMessage = GameApp.Database.SubmitScore(mFinalName, mFinalScore);
 
+            runOnUiThread(displayMessage);
+        }
+    };
+
+    private Runnable displayMessage = new Runnable(){
+        @Override
+        public void run(){
+
+            Toast.makeText(me, mSubmitMessage, Toast.LENGTH_SHORT).show();
+
+            switch (mSubmitMessage){
+                case "You got the gold!":
+                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCFFDF00"));
+                    break;
+                case "You got the silver!":
+                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCD3D3D3"));
+                    break;
+                case "You got the bronze!":
+                    GameApp.CurrentGame.SetBorderColor(Color.parseColor("#CCC9AE5D"));
+                    break;
+            }
+
+            // Load highscores
+            new ScoresLoader(me, findViewById(R.id.layout_scores)).LoadScores();
+        }
+    };
+
+    private Runnable onGameOver = new Runnable() {
+        @Override
+        public void run(){
+            startAds();
+
+
+            // Create congrats message TODO add message about scrap once upgrading is implemented
+            String r = (mFinalScore == 1) ? "robot" : "robots";
+            String congratsMessage = "Congrats, you destroyed " + mFinalScore + " " + r;
+
+            mMessageView.setText(congratsMessage);
+
+            mNameInput.setText(GameApp.CurrentUser.GetName());
+
+            mGameOverLayout.setVisibility(View.VISIBLE);
+
+            Animation expand = AnimationUtils.loadAnimation(me, R.anim.expand);
+            expand.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    mSubmitLayout.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {}
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+
+            mSubmitLayout.startAnimation(expand);
+            mSubmitLayout.invalidate();
+        }
+    };
+
+
+    // ADS
     private void startAds(){
         AdView adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -373,6 +437,4 @@ public class GameActivity extends Activity{
         adView.destroy();
         adView.setVisibility(View.INVISIBLE);
     }
-
-
 }

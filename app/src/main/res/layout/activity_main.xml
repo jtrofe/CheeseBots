@@ -5,12 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:background="@drawable/inventory_background"
+        android:animateLayoutChanges="true"
         android:layout_margin="10dp"
-        android:layout_above="@+id/layout_scores"
+        android:layout_above="@+id/layout_scores_holder"
+        android:gravity="center_horizontal|center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/relativeLayout">
 
         <Button
             android:id="@+id/button_play"
@@ -20,33 +23,48 @@
             android:layout_marginTop="30dp"
             android:text="@string/button_play" />
 
-        <!--<Button
+        <!-<Button
             android:id="@+id/button_inventory"
             android:text="@string/button_inventory"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />-->
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>-->
+
+    <Button
+        android:layout_marginTop="80dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/button_play"
+        android:background="@drawable/button"
+        android:text="Play"
+        android:textColor="#FFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout android:layout_above="@+id/adView"
+        android:id="@+id/layout_scores_holder"
+        android:padding="20dp"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/window"
+        android:animateLayoutChanges="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/button_highscores"
+            android:layout_centerInParent="true"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#FFF"
+            android:text="Highscores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <include
+
+            layout="@layout/view_scores"/>
 
     </RelativeLayout>
-
-        <Button android:layout_above="@+id/adView"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginBottom="30dp"
-
-            android:layout_centerHorizontal="true"
-            style="@style/InventoryButton"
-            android:id="@+id/button_highscores"
-            android:text="@string/button_highscores" />
-
-
-        <include android:layout_above="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_height="wrap_content"
-
-            layout="@layout/view_scores" />
-
 
     <com.google.android.gms.ads.AdView
         android:visibility="invisible"

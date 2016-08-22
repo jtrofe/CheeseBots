@@ -3,7 +3,7 @@
 
     <!-- Inventory colors -->
     <color name="inventory_main_background">#000000</color>
-    <color name="inventory_light_background">#f4badd</color>
+    <color name="inventory_light_background">#F4BADD</color>
     <color name="inventory_text_color">#801515</color>
     <color name="inventory_background">#e78ec2</color>
     <color name="inventory_shadow">#d46a6a</color>
@@ -11,4 +11,7 @@
     <color name="place_gold">#CCFFDF00</color>
     <color name="place_silver">#CCD3D3D3</color>
     <color name="place_bronze">#CCC9AE5D</color>
+
+    <!-- Scoreboard colors -->
+    <color name="scoreboard_text_color">#F4BADD</color>
 </resources>
