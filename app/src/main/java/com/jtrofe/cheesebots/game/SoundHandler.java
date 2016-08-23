@@ -17,6 +17,8 @@ public class SoundHandler{
     public static int EFFECT_POP_MEDIUM = 1;
     public static int EFFECT_POP_LARGE = 2;
     public static int EFFECT_POP_GIANT = 3;
+    public static int EFFECT_MUNCH = 4;
+    public static int EFFECT_DENT = 5;
 
     private Context mContext;
     private SoundPool mPool;
@@ -30,7 +32,7 @@ public class SoundHandler{
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
         mPool = new SoundPool.Builder()
-                .setMaxStreams(10)
+                .setMaxStreams(20)
                 .setAudioAttributes(attrs)
                 .build();
 
@@ -50,6 +52,8 @@ public class SoundHandler{
         mSoundIds[EFFECT_POP_MEDIUM] = mPool.load(mContext, R.raw.pop_medium, 1);
         mSoundIds[EFFECT_POP_LARGE] = mPool.load(mContext, R.raw.pop_large, 1);
         mSoundIds[EFFECT_POP_GIANT] = mPool.load(mContext, R.raw.pop_giant, 1);
+        mSoundIds[EFFECT_MUNCH] = mPool.load(mContext, R.raw.munch, 1);
+        mSoundIds[EFFECT_DENT] = mPool.load(mContext, R.raw.dent, 1);
     }
 
 
@@ -58,6 +62,15 @@ public class SoundHandler{
             @Override
             public void run() {
                 mPool.play(mSoundIds[id], 1, 1, 1, 0, 1);
+            }
+        }).start();
+    }
+
+    public void Play(final int id, final float rate, final float volume){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mPool.play(mSoundIds[id], volume, volume, 1, 0, rate);
             }
         }).start();
     }

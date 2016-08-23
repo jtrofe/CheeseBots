@@ -3,6 +3,7 @@ package com.jtrofe.cheesebots.physics.controllers;
 import android.view.SoundEffectConstants;
 
 import com.jtrofe.cheesebots.GameApp;
+import com.jtrofe.cheesebots.game.Game;
 import com.jtrofe.cheesebots.game.SoundHandler;
 import com.jtrofe.cheesebots.physics.Engine;
 import com.jtrofe.cheesebots.physics.Vec;
@@ -179,6 +180,10 @@ public class BotController extends Controller{
 
         if(cheese_vector.Length() < c.cheese.GetRadius() + b.GetHalfHeight() + 10){
             c.cheese.Eat(b.GetEatingSpeed());
+
+            if(new Random().nextFloat() < 0.1){
+                GameApp.CurrentGame.GameContext.SoundEffects.Play(SoundHandler.EFFECT_MUNCH);
+            }
 
             if(b.State != Bot.STATE_EATING) b.State = Bot.STATE_EATING;
         }else{

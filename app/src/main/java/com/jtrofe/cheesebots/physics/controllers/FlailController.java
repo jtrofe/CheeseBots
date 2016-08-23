@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots.physics.controllers;
 
 import com.jtrofe.cheesebots.GameApp;
+import com.jtrofe.cheesebots.game.SoundHandler;
 import com.jtrofe.cheesebots.physics.Engine;
 import com.jtrofe.cheesebots.physics.Vec;
 import com.jtrofe.cheesebots.physics.objects.Bot;
@@ -11,6 +12,7 @@ import com.jtrofe.cheesebots.physics.objects.Particle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by MAIN on 3/12/16
@@ -137,6 +139,30 @@ public class FlailController extends Controller{
 
             if(damage > 0.5 && speed > 10){
                 m.bot.ApplyDamage(damage);
+            }
+
+            // Make a noise
+            float minSoundSpeed = 6;
+            if(new Random().nextFloat() < 0.6 && speed > minSoundSpeed){
+                // Normalize the speed to 0-1
+                float rateCutoff = 40;
+                float rate = Math.min(((float) speed - minSoundSpeed), rateCutoff)/rateCutoff;
+
+                rate = 1/rate;
+
+                rate = rate * rate;
+
+                // Adjust to 0.2-1
+                rate = 0.2f + (rate * 0.8f);
+
+                // Adjust for bot size (Bigger bot, lower rate)
+                rate -= ((m.bot.GetSpriteSheetIndex() - 1) * 0.4);
+
+
+                rate *= 2;
+
+                GameApp.CurrentGame.GameContext.SoundEffects.Play(SoundHandler.EFFECT_DENT, rate, 0.1f);
+
             }
 
             if(speed > 10){

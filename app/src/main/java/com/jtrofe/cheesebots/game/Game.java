@@ -146,7 +146,7 @@ public class Game {
         double radius = mEngine.GetWorldSize().y * 0.1;
 
         //TODO replace with CurrentUser.GetCheeses() (multiple cheese) when upgrades are to be implemented
-        Cheese c = new Cheese(1, radius, 10.0);
+        Cheese c = new Cheese(1, radius, 400.0);
         c.SetPosition(cheesePos);
 
         mEngine.AddBody(c);

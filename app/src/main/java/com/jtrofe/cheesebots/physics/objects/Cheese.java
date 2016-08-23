@@ -54,7 +54,11 @@ public class Cheese extends GameObject{
         mAmountLeft -= amount;
         if(mAmountLeft < 0) mAmountLeft = 0.0;
 
-        mRadius = (mAmountLeft / mStartAmount) * mStartRadius;
+        float p = (float) (mAmountLeft / mStartAmount);
+
+        p = (float) Math.sin(p * (Math.PI / 2));
+
+        mRadius = p * mStartRadius;
     }
 
     @Override
@@ -72,6 +76,9 @@ public class Cheese extends GameObject{
 
             // Get the current radius of cheese relating to the size of the source bitmap and draw the circle
             float p = (float) (mAmountLeft / mStartAmount);
+
+            p = (float) Math.sin(p * (Math.PI / 2));
+
             float bitmapRadius = (bitmapSize * p) / 2f;
             float center = bitmapSize / 2f;
             new Canvas(mask).drawCircle(center, center, bitmapRadius, new Paint());
