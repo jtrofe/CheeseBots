@@ -3,16 +3,22 @@ package com.jtrofe.cheesebots;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.jtrofe.cheesebots.game.ScoresLoader;
+import com.jtrofe.cheesebots.game.SpriteHandler;
+import com.jtrofe.cheesebots.physics.PhysicsView;
+
+import java.util.List;
 
 /**
  * Created by MAIN on 3/13/16
@@ -84,6 +90,24 @@ public class MainActivity extends Activity{
 
         startAds();
 
+        startAnimation();
+
+    }
+
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        stopAds();
+        if(mPhysicsView != null) mPhysicsView.Pause();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mPhysicsView.Resume();
+
+        startAds();
     }
 
     //private void openInventory(){
@@ -93,6 +117,7 @@ public class MainActivity extends Activity{
     //}
 
     private void startGame() {
+        GameApp.CurrentGame = null;
 
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.collapse);
 
@@ -117,6 +142,30 @@ public class MainActivity extends Activity{
 
         PlayButton.startAnimation(anim);
         PlayButton.invalidate();
+    }
+
+
+    private PhysicsView mPhysicsView;
+
+    private void startAnimation(){
+
+        // Get game views
+        FrameLayout frame = (FrameLayout) findViewById(R.id.gameFrame);
+
+        // Create physics view and add to the game frame
+        mPhysicsView = new PhysicsView(this, true);
+        frame.addView(mPhysicsView);
+
+        // Load the sprite sheets into the physics view on a new thread
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Bitmap> spriteSheets = SpriteHandler.GetSpriteSheets();
+
+                mPhysicsView.SetSpriteSheets(spriteSheets);
+            }
+        });
+        t.start();
     }
 
 

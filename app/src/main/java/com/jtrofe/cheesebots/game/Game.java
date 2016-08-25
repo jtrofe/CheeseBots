@@ -26,6 +26,10 @@ public class Game {
 
     private PhysicsView mPhysicsView;
 
+    public Boolean IsMainPage(){
+        return mPhysicsView.IsMainPage();
+    }
+
     private Engine mEngine;
 
     public boolean SpritesLoaded = false;
@@ -105,11 +109,12 @@ public class Game {
             long t = System.currentTimeMillis() - firstTime;
 
             if(t > 3000){
+                firstBotsAdded = true;
                 createFirstBots();
             }
         }
 
-        if(!mComplete) GameContext.SetScore(mBotsDestroyed + "");
+        if(!mComplete && GameContext != null) GameContext.SetScore(mBotsDestroyed + "");
 
         if(!mPaused){
             mEngine.Step(timeStep);
@@ -141,19 +146,33 @@ public class Game {
         mComplete = false;
         mBotsDestroyed = 0;
 
-        Vec cheesePos = mEngine.GetWorldSize().ScalarMultiply(0.5);
+        if(mPhysicsView.IsMainPage()){
+            Vec cheesePos = mEngine.GetWorldSize().ScalarMultiply(0.5);
+            //cheesePos.x -= mEngine.GetWorldSize().x * 1.1;
 
-        double radius = mEngine.GetWorldSize().y * 0.1;
+            double radius = mEngine.GetWorldSize().y * 0.1;
 
-        //TODO replace with CurrentUser.GetCheeses() (multiple cheese) when upgrades are to be implemented
-        Cheese c = new Cheese(1, radius, 400.0);
-        c.SetPosition(cheesePos);
+            Cheese c = new Cheese(1, radius, 400.0);
+            c.SetPosition(cheesePos);
 
-        mEngine.AddBody(c);
+            mEngine.AddBody(c);
 
-        Flail f = GameApp.CurrentUser.GetSelectedFlail();
+        }else{
 
-        mEngine.AddBody(f);
+            Vec cheesePos = mEngine.GetWorldSize().ScalarMultiply(0.5);
+
+            double radius = mEngine.GetWorldSize().y * 0.1;
+
+            //TODO replace with CurrentUser.GetCheeses() (multiple cheese) when upgrades are to be implemented
+            Cheese c = new Cheese(1, radius, 400.0);
+            c.SetPosition(cheesePos);
+
+            mEngine.AddBody(c);
+
+            Flail f = GameApp.CurrentUser.GetSelectedFlail();
+
+            mEngine.AddBody(f);
+        }
 
         firstBotsAdded = false;
         firstTime = System.currentTimeMillis();
@@ -163,7 +182,11 @@ public class Game {
     private long firstTime;
 
     private void createFirstBots(){
-        for(int i=0;i<5;i++){
+        int maxBots = 5;
+        if(IsMainPage()){
+            maxBots += new Random().nextInt(10);
+        }
+        for (int i = 0; i < maxBots; i++) {
             addBot();
         }
         firstBotsAdded = true;

@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class PhysicsView extends SurfaceView implements Runnable{
 
+    private Boolean mMainPage;
+    public Boolean IsMainPage(){ return mMainPage; }
+
     private static final int MAX_FPS = 40;
     private static final int FRAME_PERIOD = 1000 / MAX_FPS;
 
@@ -65,6 +68,25 @@ public class PhysicsView extends SurfaceView implements Runnable{
 
     public PhysicsView(Context context){
         super(context);
+
+        mMainPage = false;
+
+        mHolder = getHolder();
+        mHolder.addCallback(surfaceCallback);
+
+        if(GameApp.CurrentGame == null){
+            mGame = new Game(this);
+            GameApp.CurrentGame = mGame;
+        }else{
+            mGame = GameApp.CurrentGame;
+            mGame.SetPhysicsView(this);
+        }
+    }
+
+    public PhysicsView(Context context, Boolean mainPage){
+        super(context);
+
+        mMainPage = mainPage;
 
         mHolder = getHolder();
         mHolder.addCallback(surfaceCallback);

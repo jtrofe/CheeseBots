@@ -179,9 +179,9 @@ public class BotController extends Controller{
         Vec cheese_vector = c.cheese.GetPosition().Subtract(b.GetPosition());
 
         if(cheese_vector.Length() < c.cheese.GetRadius() + b.GetHalfHeight() + 10){
-            c.cheese.Eat(b.GetEatingSpeed());
+            if(!mEngine.IsMainPage()) c.cheese.Eat(b.GetEatingSpeed());
 
-            if(new Random().nextFloat() < 0.1){
+            if(new Random().nextFloat() < 0.1 && !mEngine.IsMainPage()){
                 GameApp.CurrentGame.GameContext.SoundEffects.Play(SoundHandler.EFFECT_MUNCH);
             }
 

@@ -1,6 +1,7 @@
 package com.jtrofe.cheesebots.physics.controllers;
 
 import com.jtrofe.cheesebots.physics.Engine;
+import com.jtrofe.cheesebots.physics.Vec;
 import com.jtrofe.cheesebots.physics.objects.Cheese;
 import com.jtrofe.cheesebots.physics.objects.GameObject;
 
@@ -18,6 +19,19 @@ public class CheeseController extends Controller{
 
         for(GameObject obj:mEngine.Bodies){
             if(obj.Type != GameObject.TYPE_CHEESE) continue;
+
+            if(mEngine.IsMainPage()){
+                if(obj.GetPosition().x > mEngine.GetWorldSize().x * 1.1){
+                    Vec p = mEngine.GetWorldSize().ScalarMultiply(0.5);
+                    p.x -= mEngine.GetWorldSize().x * 1.1;
+
+                    ((Cheese) obj).SetPosition(p);
+                }
+
+                Vec v = new Vec(mEngine.GetWorldSize().x / 100, 0);
+
+                ((Cheese) obj).SetPosition(obj.GetPosition().Add(v));
+            }
 
             if(((Cheese) obj).GetAmountLeft() <= 0){
 

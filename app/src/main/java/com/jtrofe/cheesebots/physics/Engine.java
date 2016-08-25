@@ -23,6 +23,10 @@ import java.util.Random;
  */
 public class Engine {
 
+    public Boolean IsMainPage(){
+        return mGame.IsMainPage();
+    }
+
     private Vec mWorldSize = new Vec(100, 100);
 
     public Vec GetWorldSize(){ return mWorldSize.copy(); }
@@ -164,20 +168,22 @@ public class Engine {
         }
         canvas.translate(mOffset.xf(), mOffset.yf());
 
-        // TODO come up with a better background
-        SpriteHandler.PAINT.setColor(mBorderColor);
-        SpriteHandler.PAINT.setStyle(Paint.Style.STROKE);
+        if(!IsMainPage()) {
+            // TODO come up with a better background
+            SpriteHandler.PAINT.setColor(mBorderColor);
+            SpriteHandler.PAINT.setStyle(Paint.Style.STROKE);
 
-        if(mBorderColor != Color.WHITE){
-            mBorderCount ++;
-            if(mBorderCount == 10) mBorderCount = 0;
+            if (mBorderColor != Color.WHITE) {
+                mBorderCount++;
+                if (mBorderCount == 10) mBorderCount = 0;
 
-            Float b = 50f - mBorderCount;
+                Float b = 50f - mBorderCount;
 
-            canvas.drawRect(b, b, mWorldSize.xf() - b, mWorldSize.yf() - b, SpriteHandler.PAINT);
+                canvas.drawRect(b, b, mWorldSize.xf() - b, mWorldSize.yf() - b, SpriteHandler.PAINT);
 
-        }else{
-            canvas.drawRect(50f, 50f, mWorldSize.xf() - 50f, mWorldSize.yf() - 50f, SpriteHandler.PAINT);
+            } else {
+                canvas.drawRect(50f, 50f, mWorldSize.xf() - 50f, mWorldSize.yf() - 50f, SpriteHandler.PAINT);
+            }
         }
 
         for(GameObject obj:Bodies){
@@ -191,7 +197,7 @@ public class Engine {
     }
 
     private void drawTouchPoint(Canvas canvas){
-        if(mArrowCount <= 0) return;
+        if(mArrowCount <= 0 || mGame.IsMainPage()) return;
 
         mArrowCount--;
 
