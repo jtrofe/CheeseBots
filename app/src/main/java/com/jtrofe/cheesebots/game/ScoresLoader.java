@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,6 +103,12 @@ public class ScoresLoader{
                     @Override
                     public void onAnimationEnd(Animation animation){
                         Log.d("SCORES", "Animation ended");
+
+                        ProgressBar progress = (ProgressBar) mContext.findViewById(R.id.score_progress);
+
+                        if(progress != null){
+                            progress.setVisibility(View.INVISIBLE);
+                        }
                     }
 
                     @Override

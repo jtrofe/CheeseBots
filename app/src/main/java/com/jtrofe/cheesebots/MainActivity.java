@@ -11,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -29,6 +30,7 @@ public class MainActivity extends Activity{
 
     // Views
     private Button PlayButton;
+    public ProgressBar ProgressSpinner;
 
 
     @Override
@@ -39,6 +41,7 @@ public class MainActivity extends Activity{
 
         setContentView(R.layout.activity_main);
 
+        ProgressSpinner = (ProgressBar) findViewById(R.id.score_progress);
         PlayButton = (Button) findViewById(R.id.button_play);
         //Button inventoryButton = (Button) findViewById(R.id.button_inventory);
         final Button scoresButton = (Button) findViewById(R.id.button_highscores);
@@ -62,6 +65,7 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(@NonNull View v) {
 
+
                 Animation anim = AnimationUtils.loadAnimation(me, R.anim.collapse);
 
                 anim.setAnimationListener(new Animation.AnimationListener() {
@@ -73,6 +77,7 @@ public class MainActivity extends Activity{
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         scoresButton.setVisibility(View.GONE);
+                        ProgressSpinner.setVisibility(View.VISIBLE);
                         loader.LoadScores();
 
                     }
@@ -117,6 +122,7 @@ public class MainActivity extends Activity{
     //}
 
     private void startGame() {
+        if(GameApp.CurrentGame != null) GameApp.CurrentGame.End();
         GameApp.CurrentGame = null;
 
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.collapse);

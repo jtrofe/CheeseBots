@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -223,6 +224,7 @@ public class GameActivity extends Activity{
 
     public void Retry(){
         stopAds();
+        if(GameApp.CurrentGame != null) GameApp.CurrentGame.End();
         GameApp.CurrentGame = null;
 
         finish();
@@ -233,6 +235,7 @@ public class GameActivity extends Activity{
 
     public void Quit(){
         stopAds();
+        if(GameApp.CurrentGame != null) GameApp.CurrentGame.End();
         GameApp.CurrentGame = null;
 
         finish();
@@ -347,10 +350,15 @@ public class GameActivity extends Activity{
     };
 
     private void onCollapseEnd(){
-        Log.d("SCORES", "Removing submit button");
         mSubmitButton.setOnClickListener(null);
         mSubmitLayout.setVisibility(View.GONE);
         mSubmitLayout.clearAnimation();
+
+        ProgressBar progress = (ProgressBar) findViewById(R.id.score_progress);
+
+        if(progress != null){
+            progress.setVisibility(View.VISIBLE);
+        }
 
         new Thread(submitScore).start();
     }

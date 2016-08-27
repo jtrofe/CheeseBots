@@ -148,7 +148,7 @@ public class Game {
 
         if(mPhysicsView.IsMainPage()){
             Vec cheesePos = mEngine.GetWorldSize().ScalarMultiply(0.5);
-            //cheesePos.x -= mEngine.GetWorldSize().x * 1.1;
+            cheesePos.x -= mEngine.GetWorldSize().x * 1.1;
 
             double radius = mEngine.GetWorldSize().y * 0.1;
 
@@ -285,5 +285,13 @@ public class Game {
         GameContext.SetScrap(mScrapAdded + "");
 
         GameApp.CurrentUser.AddScrap(scrap);
+    }
+
+    public void End(){
+        for(Bitmap b:SpriteSheets){
+            b.recycle();
+        }
+
+        System.gc();
     }
 }
